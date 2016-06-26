@@ -1,0 +1,25 @@
+{
+  "name": "database-browser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "compression": "^1.6.2",
+    "express": "^4.14.0",
+    "mysql": "^2.11.1",
+    "pug": "^2.0.0-beta3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.6",
+    "electron-prebuilt": "^1.2.5",
+    "node-sass": "^3.8.0",
+    "postcss": "^5.0.21"
+  },
+  "scripts": {
+    "start": "electron .",
+    "web": "NODE_ENV=production node web/index.js"
+  },
+  "author": "JSON object",
+  "license": "ISC"
+}
