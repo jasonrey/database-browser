@@ -1,0 +1,41 @@
+extends html
+
+block body
+	#content
+		#connections.tab
+			.panels
+				.panel-sidebar
+					h2 Connections
+					ul
+						li user@hostname
+						li user@hostname
+						li user@hostname
+						li user@hostname
+				.panel-separator
+				.panel-content
+					form
+						h2 New Connection
+						.group
+							label Hostname
+							input(type="text")
+						.group
+							label Username
+							input(type="text")
+						.group
+							label Password
+							input(type="password")
+						.group
+							label Port
+							input(type="text")
+		#database.tab
+		#query.tab
+		#settings.tab
+
+	#menu
+		#main-menu
+			button#menu-connections.icon.icon-folder
+			button#menu-database.icon.icon-server
+			button#menu-query.icon.icon-search
+
+		#bottom-menu
+			button#menu-settings.icon.icon-cog

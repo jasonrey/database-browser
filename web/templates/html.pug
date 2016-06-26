@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+	head
+		base(href="/")
+
+		meta(charset="UTF-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui")
+
+		block prehead
+
+		block stylesheets
+			link(rel="stylesheet", type="text/css", href="assets/css/index.css")
+
+		script(type="text/javascript", src="assets/static/jquery-3.0.0.min.js")
+
+		block scripts
+			script(type="text/javascript", src="assets/js/index.js")
+
+		block posthead
+
+		block title
+			title Database Browser
+
+	body(data-tab="connections")
+		block body
