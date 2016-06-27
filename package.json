@@ -1,7 +1,6 @@
 {
   "name": "database-browser",
   "version": "1.0.0",
-  "description": "",
   "main": "main.js",
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -21,5 +20,14 @@
     "web": "NODE_ENV=production node web/index.js"
   },
   "author": "JSON object",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasonrey/database-browser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jasonrey/database-browser/issues"
+  },
+  "homepage": "https://github.com/jasonrey/database-browser#readme",
+  "description": ""
 }
