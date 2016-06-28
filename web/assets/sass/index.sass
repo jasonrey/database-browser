@@ -81,15 +81,17 @@ form
 
 		&.blue
 			color: $blue700
+			background-color: $blue50
 
 			&:hover, &:focus
-				background-color: $blue50
+				background-color: $blue300
 
 		&.green
 			color: $green700
+			background-color: $green50
 
 			&:hover, &:focus
-				background-color: $green50
+				background-color: $green300
 
 #menu
 	width: 48px
@@ -150,6 +152,7 @@ body[data-tab="settings"] #settings
 	min-width: 250px
 	max-width: 400px
 	width: 25%
+	position: relative
 
 	h2
 		font-size: 14px
@@ -180,20 +183,47 @@ body[data-tab="settings"] #settings
 
 #connections
 	.panel-sidebar
-		box-sizing: border-box
-		padding: 0 8px
+		h2
+			position: absolute
+			top: 0
+			left: 8px
+			right: 8px
+
+		#connections-list
+			padding: 56px 0 8px 0
+			height: 100%
+			box-sizing: border-box
 
 		ul
-			padding: 8px 0
+			height: 100%
+			overflow: auto
 
 		li
 			height: 40px
 			line-height: 40px
-			padding: 0 8px
+			padding: 0 16px
 			cursor: pointer
+			position: relative
+
+			button
+				position: absolute
+				top: 0
+				right: 0
+				width: 40px
+				height: 40px
+				line-height: 40px
+				text-align: center
+				display: none
+				color: $grey500
 
 			&:hover
 				background-color: $grey200
+
+				button
+					display: block
+
+					&:hover
+						color: $red500
 
 	.panel-content
 		display: flex
