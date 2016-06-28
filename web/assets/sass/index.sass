@@ -1,6 +1,6 @@
 @import 'base'
 
-$basecolor: #f5f5f5
+$basecolor: $grey50
 
 body
 	height: 100%
@@ -8,45 +8,89 @@ body
 	background-color: $basecolor
 
 form
+	h2
+		text-transform: uppercase
+		color: $grey500
+		font-size: 16px
+		padding: 16px 0 16px 0
+		text-align: center
+		font-weight: normal
+		border-bottom: 1px solid $grey300
+		background-color: $bluegrey50
+
 	.group
 		position: relative
-		margin: 8px
+		padding: 12px 0
 		height: 48px
-		border-radius: 4px
-		border: 1px solid $grey300
+		border-bottom: 1px solid $grey300
 
-		label
-			display: block
+		&::before
+			content: ''
 			position: absolute
 			top: 0
 			left: 0
 			width: 100%
 			height: 100%
+			background-color: $grey100
+			opacity: 0
+			transition: opacity .3s
+
+		label
+			display: block
+			position: absolute
+			top: 16px
+			left: 0
+			width: 100%
+			height: 100%
 			line-height: 48px
 			box-sizing: border-box
-			padding: 0 16px
+			font-size: 14px
+			text-transform: uppercase
+			padding: 0 24px
 			transform-origin: top left
 			transition: transform .1s
-			color: $grey500
+			color: $grey400
+			transform: scale(1) translateY(4px)
 
 		input
 			display: block
 			width: 100%
 			box-sizing: border-box
 			position: absolute
-			bottom: 0
+			bottom: 6px
 			left: 0
 			height: 36px
 			background-color: transparent
 			border: 0
 			outline: 0
-			padding: 0 8px
+			padding: 0 16px
 			font-size: 16px
 			font-family: sans-serif
+
+		&.focus
+			&::before
+				opacity: 1
 
 		&.active
 			label
 				transform: scale(0.7) translateY(-8px)
+
+	button
+		height: 64px
+		line-height: 64px
+		text-transform: uppercase
+
+		&.blue
+			color: $blue700
+
+			&:hover, &:focus
+				background-color: $blue50
+
+		&.green
+			color: $green700
+
+			&:hover, &:focus
+				background-color: $green50
 
 #menu
 	width: 48px
@@ -55,6 +99,7 @@ form
 	top: 0
 	left: 0
 	background-color: $blue700
+	background-image: linear-gradient($blue600, $blue800)
 	color: white
 
 	button
@@ -147,7 +192,26 @@ body[data-tab="settings"] #settings
 			line-height: 40px
 			padding: 0 8px
 			cursor: pointer
-			border-radius: 4px
 
 			&:hover
-				background-color: white
+				background-color: $grey200
+
+	.panel-content
+		display: flex
+
+	#new-connection
+		width: 90%
+		max-width: 500px
+		margin: auto
+		background-color: $grey50
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.15)
+		box-sizing: border-box
+
+		.actions
+			display: flex
+
+			button
+				width: 50%
+
+				&:first-child
+					border-right: 1px solid $grey300

@@ -13,7 +13,7 @@ block body
 						li user@hostname
 				.panel-separator
 				.panel-content
-					form
+					form#new-connection
 						h2 New Connection
 						.group
 							label Hostname
@@ -27,6 +27,11 @@ block body
 						.group
 							label Port
 							input(type="text")
+						.actions
+							button.blue(type="button")
+								i.icon.icon-plus
+							button.green(type="button")
+								i.icon.icon-check
 		#database.tab
 		#query.tab
 		#settings.tab

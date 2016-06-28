@@ -14,8 +14,13 @@ $(() => {
 			input = group.find('input');
 
 		input.focus();
+	});
 
-		group.addClass('active');
+	BODY.on('focus', 'form .group input', function(event) {
+		let input = $(this),
+			group = input.parents('.group');
+
+		group.addClass('active focus');
 	});
 
 	BODY.on('blur', 'form .group input', function(event) {
@@ -25,5 +30,7 @@ $(() => {
 		if (input.val() === '') {
 			group.removeClass('active');
 		}
+
+		group.removeClass('focus');
 	});
 });
