@@ -17,7 +17,8 @@
   },
   "scripts": {
     "start": "electron .",
-    "web": "NODE_ENV=production node web/index.js"
+    "web": "NODE_ENV=production node web/index.js",
+    "dev": "node web/index.js"
   },
   "author": "JSON object",
   "license": "ISC",
