@@ -102,7 +102,14 @@ block body
 							button.green(type="button")
 								i.icon.icon-arrow-right
 		#database.tab
+			.panels
+				.panel-sidebar
+					select#databases
+				.panel-separator
+				.panel-content
+			.current-connection user@hostname
 		#query.tab
+			.current-connection
 		#settings.tab
 
 	#menu

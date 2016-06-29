@@ -141,6 +141,7 @@ body[data-tab="settings"] #settings
 		display: none
 		width: 100%
 		height: 100%
+		position: relative
 
 .panels
 	width: 100%
@@ -244,3 +245,21 @@ body[data-tab="settings"] #settings
 
 				&:first-child
 					border-right: 1px solid $grey300
+
+#database
+	.current-connection
+		height: 32px
+		line-height: 32px
+		position: absolute
+		top: 0
+		left: 0
+		width: 100%
+		border-bottom: 1px solid $grey300
+		font-size: 14px
+		padding: 0 16px
+		box-sizing: border-box
+		background-image: linear-gradient(90deg, $green100, $grey100 20%)
+
+	.panels
+		padding: 32px 0 0 0
+		box-sizing: border-box
