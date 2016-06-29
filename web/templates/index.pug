@@ -104,10 +104,49 @@ block body
 		#database.tab
 			.panels
 				.panel-sidebar
-					select#databases
+					.current-connection
+						span.connection-status
+						span.connection-name user@hostname
+					#databases
+						i.select-dropdown.icon-fa.icon-angle-down
+						select
+							option test
+							option test
+							option test
+							option test
+					#tables-list
+						ul
+							li
+								button.icon-fa.icon-dir-right Test
+								ul.table-columns
+									li id
+									li name
+									li date
+									li address
+							li
+								button.icon-fa.icon-dir-right Test
+								ul.table-columns
+									li id
+									li name
+									li date
+									li address
+							li
+								button.icon-fa.icon-dir-right Test
+								ul.table-columns
+									li id
+									li name
+									li date
+									li address
+							li
+								button.icon-fa.icon-dir-right Test
+								ul.table-columns
+									li id
+									li name
+									li date
+									li address
+
 				.panel-separator
 				.panel-content
-			.current-connection user@hostname
 		#query.tab
 			.current-connection
 		#settings.tab

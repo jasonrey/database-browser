@@ -33,4 +33,10 @@ $(() => {
 
 		group.removeClass('focus');
 	});
+
+	$('#tables-list').on('click', 'button', function(event) {
+		let item = $(this).parents('li');
+
+		item.toggleClass('expand');
+	});
 });
