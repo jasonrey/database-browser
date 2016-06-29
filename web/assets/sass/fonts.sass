@@ -7,40 +7,43 @@
 	font-weight: normal
 	font-style: normal
 
-[data-icon]::before
-	display: inline-block
-	font-family: "feather"
-	content: attr(data-icon)
-	font-style: normal
-	font-weight: normal
-	font-variant: normal
-	text-transform: none
-	speak: none
-	line-height: 1
-	-webkit-font-smoothing: antialiased
-	-moz-osx-font-smoothing: grayscale
+@font-face
+	font-family: 'fontawesome';
+	src: url('../fonts/fontawesome.eot?4739402');
+	src: url('../fonts/fontawesome.eot?4739402#iefix') format('embedded-opentype'), url('../fonts/fontawesome.woff2?4739402') format('woff2'), url('../fonts/fontawesome.woff?4739402') format('woff'), url('../fonts/fontawesome.ttf?4739402') format('truetype'), url('../fonts/fontawesome.svg?4739402#fontawesome') format('svg');
+	font-weight: normal;
+	font-style: normal;
 
 [class^="icon-"],
 [class*=" icon-"]
-	display: inline-block
-	font-family: "feather"
-	font-style: normal
-	font-weight: normal
-	font-variant: normal
-	text-transform: none
-	speak: none
-	line-height: 1
-	-webkit-font-smoothing: antialiased
-	-moz-osx-font-smoothing: grayscale
+	&::before
+		display: inline-block
+		font-family: "feather"
+		font-style: normal
+		font-weight: normal
+		font-variant: normal
+		text-transform: none
+		speak: none
+		line-height: 1
+		-webkit-font-smoothing: antialiased
+		-moz-osx-font-smoothing: grayscale
+		margin: 0 8px 0 0
+
+	&.icon-fa
+		&::before
+			font-family: "fontawesome"
+
+i
+	&[class^="icon-"],
+	&[class*=" icon-"]
+		&::before
+			margin: 0
 
 .icon-eye::before
 	content: "\e000"
 
 .icon-paper-clip::before
 	content: "\e001"
-
-.icon-mail::before
-	content: "\e002"
 
 .icon-mail::before
 	content: "\e002"
@@ -77,9 +80,6 @@
 
 .icon-clipboard::before
 	content: "\e013"
-
-.icon-clock::before
-	content: "\e014"
 
 .icon-clock::before
 	content: "\e014"
@@ -428,3 +428,17 @@
 
 .icon-ellipsis::before
 	content: "\e129"
+
+.icon-angle-down::before
+	content: '\e800'
+
+.icon-angle-right::before
+	content: '\e801'
+
+.icon-dir-down::before
+	content: '\e802'
+
+.icon-dir-right::before
+	content: '\e803'
+
+
