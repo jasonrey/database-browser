@@ -34,9 +34,27 @@ $(() => {
 		group.removeClass('focus');
 	});
 
-	$('#tables-list').on('click', 'button', function(event) {
+	$('#tables-list').on('click', '.table-name', function(event) {
+		let item = $(this).parents('li'),
+			siblings = item.siblings();
+
+		siblings.removeClass('active');
+
+		item.addClass('active');
+	});
+
+	$('#tables-list').on('click', '.expand', function(event) {
 		let item = $(this).parents('li');
 
-		item.toggleClass('expand');
+		item.toggleClass('expanded');
+	});
+
+	$('#tables-list').on('click', '.edit', function(event) {
+		let item = $(this).parents('li'),
+			siblings = item.siblings();
+
+		siblings.removeClass('active');
+
+		item.addClass('active');
 	});
 });

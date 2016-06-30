@@ -333,47 +333,213 @@ body[data-tab="settings"] #settings
 			height: 100%
 			overflow: auto
 
-			li
-				button
-					display: block
-					width: 100%
+			> li
+				position: relative
+				cursor: pointer
+
+				.expand
+					position: absolute
+					top: 0
+					left: 0
+					width: 32px
 					height: 32px
 					line-height: 32px
-					padding: 0 0 0 16px
-					text-align: left
+					font-size: 14px
+					color: $grey500
+					text-align: center
 
-					&::before
-						font-size: 14px
-						color: $grey300
-						transition: transform .1s
+					i
+						display: block
 
-				&.expand
+					&:hover
+						color: $grey700
+
+				.table-name
+					padding: 0 32px
+					height: 32px
+					line-height: 32px
+
+				.edit
+					position: absolute
+					top: 0
+					right: 0
+					width: 32px
+					height: 32px
+					line-height: 32px
+					color: $grey500
+					display: none
+
+					&:hover
+						color: $grey700
+
+				&:hover
+					.table-name
+						background-color: $grey200
+
+					.edit
+						display: block
+
+				&.active
+					.table-name
+						background-color: $grey300
+
+				&.expanded
 					.table-columns
 						display: block
 
-					button
-						&::before
+					.expand
+						color: $grey500
+
+						i
 							transform: rotate(90deg)
-
-				&:hover
-					button
-						background-color: $grey200
-
-						&::before
-							color: $grey500
 
 		.table-columns
 			display: none
 
 			li
+				position: relative
 				height: 24px
 				line-height: 24px
 				font-size: 12px
 				color: $grey700
-				padding: 0 16px 0 32px
+				padding: 0 8px 0 24px
+				display: flex
+				cursor: default
 
 				&::before
-					content: '- '
+					content: '-'
+					color: $grey500
+					margin: 0 4px 0 0
+
+				div
+					flex-grow: 1
+
+				span
+					font-size: 10px
+					color: $grey500
+					margin: 0 0 0 4px
 
 				&:hover
 					background-color: $grey200
+
+	.panel-content
+		display: flex
+		flex-direction: column
+
+		.result-panel
+			flex-grow: 1
+
+		.query-panel
+			height: 150px
+			border-top: 1px solid $grey300
+
+.panel-box
+	background-color: $grey50
+	position: relative
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 2px
+
+	&::before
+		display: block
+		font-size: 10px
+		font-weight: 300
+		padding: 0 8px
+		position: absolute
+		top: 0
+		left: 0
+		height: 24px
+		line-height: 24px
+		color: $grey500
+
+.result-panel
+	display: flex
+	flex-direction: column
+	padding: 8px
+
+	.command
+		padding: 24px 16px
+
+		&::before
+			content: 'COMMAND'
+
+	.result
+		margin: 8px 0 0 0
+		flex-grow: 1
+
+		&::before
+			content: 'RESULT'
+
+	.table
+		position: absolute
+		top: 24px
+		left: 0
+		bottom: 0
+		width: 100%
+		overflow: auto
+
+	table
+		font-size: 14px
+
+		thead
+			border-bottom: 1px solid $grey300
+
+		th
+			font-weight: 500
+
+			&.text
+				min-width: 150px
+
+		td
+			vertical-align: top
+
+		th, td
+			padding: 8px 16px
+			border-left: 1px solid $grey200
+
+			&:first-child
+				border-left: 0
+
+		tr
+			border-bottom: 1px solid $grey200
+
+			&:last-child
+				border-bottom: 0
+
+.query-panel
+	position: relative
+
+	&::before
+		display: block
+		content: 'SQL QUERY'
+		font-size: 10px
+		padding: 0 48px 0 8px
+		position: absolute
+		top: 0
+		left: 0
+		width: 100%
+		height: 24px
+		line-height: 24px
+		color: $grey500
+		background-color: white
+		font-weight: 300
+
+	.editor
+		padding: 24px 8px 0 8px
+		box-sizing: border-box
+		height: 100%
+		outline: 0
+		overflow: auto
+		margin: 0 48px 0 0
+
+	.run
+		position: absolute
+		top: 0
+		right: 0
+		width: 48px
+		height: 100%
+		background-color: $grey100
+		color: $green500
+		cursor: pointer
+
+		&:hover
+			background-color: $green50
+			color: $green700

@@ -117,45 +117,302 @@ block body
 					#tables-list
 						ul
 							li
-								button.icon-fa.icon-dir-right Test
+								.table-name Test
+								.expand
+									i.icon-fa.icon-dir-right
+								button.edit
+									i.icon.icon-paper
 								ul.table-columns
-									li id
-									li name
-									li date
-									li address
+									li
+										div id
+										span pk int
+									li
+										div name
+										span varchar
+									li
+										div date
+										span datetime
+									li
+										div address
+										span text
+									li
+										div age
+										span int
 							li
-								button.icon-fa.icon-dir-right Test
+								.table-name Test
+								.expand
+									i.icon-fa.icon-dir-right
+								button.edit
+									i.icon.icon-paper
 								ul.table-columns
-									li id
-									li name
-									li date
-									li address
-							li
-								button.icon-fa.icon-dir-right Test
-								ul.table-columns
-									li id
-									li name
-									li date
-									li address
-							li
-								button.icon-fa.icon-dir-right Test
-								ul.table-columns
-									li id
-									li name
-									li date
-									li address
-
+									li
+										div id
+										span pk int
+									li
+										div name
+										span varchar
+									li
+										div date
+										span datetime
+									li
+										div address
+										span text
+									li
+										div age
+										span int
 				.panel-separator
 				.panel-content
+					.result-panel
+						.command.panel-box select * from whatever;
+						.result.panel-box
+							.table
+								table
+									thead
+										tr
+											th id
+											th name
+											th address
+											th age test
+											th ip
+											th date
+											th.text comment
+											th.text comment
+											th status
+											th bla
+											th bla
+											th bla
+											th bla
+											th bla
+									tbody
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+										tr
+											td 1
+											td Test test test
+											td Test test test test test test
+											td 12
+											td 123.123.123.123
+											td 1234.12-12-12-12-12-12
+											td Text text text text text text text text text text text text text text text text text
+											td Text text text text text text text text text text text text text text text text text
+											td 1
+											td 1
+											td bl1a
+											td 1
+											td bl1a
+											td bla
+
+					.query-panel
+						.editor(contenteditable="true")
+						button.run
+							i.icon.icon-play
+
 		#query.tab
 			.current-connection
 		#settings.tab
 
 	#menu
 		#main-menu
-			button#menu-connections.icon.icon-folder
-			button#menu-database.icon.icon-server
-			button#menu-query.icon.icon-search
+			button#menu-connections
+				i.icon.icon-folder
+			button#menu-database
+				i.icon.icon-server
+			button#menu-query
+				i.icon.icon-search
 
 		#bottom-menu
-			button#menu-settings.icon.icon-cog
+			button#menu-settings
+				i.icon.icon-cog
