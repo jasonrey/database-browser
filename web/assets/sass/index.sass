@@ -10,12 +10,13 @@ body
 form
 	h2
 		text-transform: uppercase
-		color: $grey500
+		color: $grey700
 		font-size: 14px
 		padding: 16px 0 16px 0
 		text-align: center
 		border-bottom: 1px solid $grey300
 		background-color: $bluegrey50
+		font-weight: 500
 
 	.group
 		position: relative
@@ -48,8 +49,9 @@ form
 			padding: 0 24px
 			transform-origin: top left
 			transition: transform .1s
-			color: $grey400
+			color: $grey500
 			transform: scale(1) translateY(4px)
+			font-weight: 300
 
 		input
 			display: block
@@ -64,7 +66,7 @@ form
 			outline: 0
 			padding: 0 16px
 			font-size: 16px
-			font-family: sans-serif
+			font-family: inherit
 
 		&.focus
 			&::before
@@ -75,23 +77,21 @@ form
 				transform: scale(0.7) translateY(-8px)
 
 	button
-		height: 64px
-		line-height: 64px
+		height: 48px
+		line-height: 48px
 		text-transform: uppercase
 
 		&.blue
-			color: $blue700
-			background-color: $blue50
+			color: $blue500
 
 			&:hover, &:focus
-				background-color: $blue300
+				background-color: $blue50
 
 		&.green
-			color: $green700
-			background-color: $green50
+			color: $green500
 
 			&:hover, &:focus
-				background-color: $green300
+				background-color: $green50
 
 #menu
 	width: 48px
@@ -157,6 +157,7 @@ body[data-tab="settings"] #settings
 
 	h2
 		font-size: 14px
+		font-weight: 500
 		height: 48px
 		line-height: 48px
 		padding: 0 8px
@@ -366,11 +367,8 @@ body[data-tab="settings"] #settings
 					width: 32px
 					height: 32px
 					line-height: 32px
-					color: $grey500
+					color: $blue500
 					display: none
-
-					&:hover
-						color: $grey700
 
 				&:hover
 					.table-name
@@ -523,23 +521,35 @@ body[data-tab="settings"] #settings
 		font-weight: 300
 
 	.editor
-		padding: 24px 8px 0 8px
+		padding: 0 8px
+		position: absolute
+		top: 24px
+		bottom: 40px
+		left: 0
+		width: 100%
 		box-sizing: border-box
-		height: 100%
 		outline: 0
 		overflow: auto
-		margin: 0 48px 0 0
+		font-size: 12px
 
-	.run
+	.actions
 		position: absolute
-		top: 0
-		right: 0
-		width: 48px
-		height: 100%
+		bottom: 0
+		width: 100%
+		height: 40px
 		background-color: $grey100
-		color: $green500
+
+		&::after
+			content: ''
+			display: table
+			clear: both
+
+	button
+		width: 48px
+		height: 40px
 		cursor: pointer
+		color: $blue500
+		float: right
 
 		&:hover
-			background-color: $green50
-			color: $green700
+			background-color: $blue50
