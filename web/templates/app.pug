@@ -1,0 +1,16 @@
+extends index
+
+block prehead
+	script.
+		if (typeof module === 'object') {
+			window.module = module;
+			module = undefined;
+		}
+
+block posthead
+	script.
+		if (window.module) module = window.module;
+
+block postbody
+	script.
+		require('./../renderer.js');
