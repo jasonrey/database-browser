@@ -35,10 +35,10 @@ script#result-table-row(type="text/html")
 
 //- name - column name
 //- type - column type
-script#result-table-head-cell
+script#result-table-head-cell(type="text/html")
 	th(class="{{type}}") {{name}}
 
 //- value - cell value
 //- type - cell type
-script#result-table-cell
+script#result-table-cell(type="text/html")
 	tr(class="{{type}}") {{value}}
