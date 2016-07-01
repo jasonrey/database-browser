@@ -1,0 +1,44 @@
+//- name - user@server
+script#servers-list-item(type="text/html")
+	li
+		span {{name}}
+		button
+			i.icon.icon-stack
+
+//- name - database name
+script#databases-list-item(type="text/html")
+	option {{name}}
+
+//- name - table name
+//- columns - table columns from template#table-columns-item
+script#tables-list-item(type="text/html")
+	li
+		.table-name {{name}}
+		.expand
+			i.icon-fa.icon-dir-right
+		button.edit
+			i.icon.icon-stack
+		ul.table-columns {{columns}}
+			//- template#table-column-item
+
+//- name - column name
+//- type - column type
+script#table-columns-item(type="text/html")
+	li
+		div {{name}}
+		span {{type}}
+
+//- cells - table columns from template#result-table-head-cell/#result-table-cell
+script#result-table-row(type="text/html")
+	tr {{cells}}
+		//- template#result-table-head-cell/#result-table-cell
+
+//- name - column name
+//- type - column type
+script#result-table-head-cell
+	th(class="{{type}}") {{name}}
+
+//- value - cell value
+//- type - cell type
+script#result-table-cell
+	tr(class="{{type}}") {{value}}
