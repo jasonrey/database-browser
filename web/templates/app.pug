@@ -7,10 +7,10 @@ block prehead
 			module = undefined;
 		}
 
+block append scripts
+	script.
+		require('./../renderer.js');
+
 block posthead
 	script.
 		if (window.module) module = window.module;
-
-block postbody
-	script.
-		require('./../renderer.js');

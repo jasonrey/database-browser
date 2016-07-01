@@ -6,6 +6,9 @@ block append stylesheets
 block append scripts
 	script(type="text/javascript", src="assets/js/index.js")
 
+block append posthead
+	script(type="text/javascript", src="assets/js/handler.js")
+
 block body
 	#content.panels(data-tab="servers", data-content="new")
 		.panel-sidebar
@@ -44,16 +47,16 @@ block body
 					h2 New Connection
 					.group
 						label Hostname
-						input(type="text")
+						input(type="text", name="hostname")
 					.group
 						label Username
-						input(type="text")
+						input(type="text", name="username")
 					.group
 						label Password
-						input(type="password")
+						input(type="password", name="password")
 					.group
 						label Port
-						input(type="text")
+						input(type="number", name="port")
 					.actions
 						button.blue(type="button")
 							i.icon.icon-plus

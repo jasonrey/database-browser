@@ -41,6 +41,12 @@ $(() => {
 		CONTENT.attr('data-content', 'new');
 	});
 
+	TABNAV.on('click', 'button', function() {
+		let button = $(this),
+			name = button.attr('data-name');
+
+		CONTENT.attr('data-tab', name);
+	});
 
 	TABLESLIST.on('click', '.table-name', function() {
 		let item = $(this).parents('li'),
@@ -66,10 +72,20 @@ $(() => {
 		item.addClass('active');
 	});
 
-	TABNAV.on('click', 'button', function() {
-		let button = $(this),
-			name = button.attr('data-name');
+	let NEWCONNECTIONFORM = $('#new'),
+		NEWCONNECTIONFORMINPUTS = NEWCONNECTIONFORM.find('input');
 
-		CONTENT.attr('data-tab', name);
+	NEWCONNECTIONFORM.on('click', 'button', function() {
+		let button = $(this);
+
+		let data = {};
+
+		for (let input of NEWCONNECTIONFORMINPUTS) {
+			data[input.name] = input.value;
+		}
+
+		if (button.hasClass('blue')) {
+
+		}
 	});
 });
