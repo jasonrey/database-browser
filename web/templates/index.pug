@@ -7,7 +7,7 @@ block append scripts
 	script(type="text/javascript", src="assets/js/index.js")
 
 block body
-	#content.panels(data-tab="servers", data-content="result")
+	#content.panels(data-tab="servers", data-content="new")
 		.panel-sidebar
 			.tab-bar
 				button(data-name="servers")
@@ -33,9 +33,10 @@ block body
 							//- template#databases-list-item
 					ul#tables-list
 						//- template#tables-list-item
-			#connection
+			#connection(data-state="")
 				span.status
-				.name user@hostname
+				.name
+					//- current connection user@host
 		.panel-separator
 		.panel-content
 			#new.content

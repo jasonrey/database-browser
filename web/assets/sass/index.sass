@@ -416,15 +416,15 @@ form
 		width: 8px
 		height: 8px
 		border-radius: 50%
-		background-color: $orange500
+		background-color: $red500
 		vertical-align: middle
 		margin: 12px 8px
 
-	&.error
+	&[data-state="connecting"]
 		.status
-			background-color: $red500
+			background-color: $orange500
 
-	&.connected
+	&[data-state="connected"]
 		.status
 			background-color: $green500
 
