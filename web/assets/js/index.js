@@ -3,21 +3,30 @@ $(() => {
 
 	let BODY = $('body');
 
-	BODY.on('click', 'form .group', function(event) {
+	let TABLESLIST = $('#tables-list');
+
+	let CONTENT = $('#content');
+	let TABNAV = CONTENT.find('.tab-bar');
+	let TABCONTENT = CONTENT.find('.tab-content');
+
+	let PANELSIDEBAR = CONTENT.find('.panel-sidebar');
+	let PANELCONTENT = CONTENT.find('.panel-content');
+
+	BODY.on('click', 'form .group', function() {
 		let group = $(this),
 			input = group.find('input');
 
 		input.focus();
 	});
 
-	BODY.on('focus', 'form .group input', function(event) {
+	BODY.on('focus', 'form .group input', function() {
 		let input = $(this),
 			group = input.parents('.group');
 
 		group.addClass('active focus');
 	});
 
-	BODY.on('blur', 'form .group input', function(event) {
+	BODY.on('blur', 'form .group input', function() {
 		let input = $(this),
 			group = input.parents('.group');
 
@@ -28,9 +37,12 @@ $(() => {
 		group.removeClass('focus');
 	});
 
-	let TABLESLIST = $('#tables-list');
+	BODY.on('click', '#add-server', function() {
+		CONTENT.attr('data-content', 'new');
+	});
 
-	TABLESLIST.on('click', '.table-name', function(event) {
+
+	TABLESLIST.on('click', '.table-name', function() {
 		let item = $(this).parents('li'),
 			siblings = item.siblings();
 
@@ -39,13 +51,13 @@ $(() => {
 		item.addClass('active');
 	});
 
-	TABLESLIST.on('click', '.expand', function(event) {
+	TABLESLIST.on('click', '.expand', function() {
 		let item = $(this).parents('li');
 
 		item.toggleClass('expanded');
 	});
 
-	TABLESLIST.on('click', '.edit', function(event) {
+	TABLESLIST.on('click', '.edit', function() {
 		let item = $(this).parents('li'),
 			siblings = item.siblings();
 
@@ -53,10 +65,6 @@ $(() => {
 
 		item.addClass('active');
 	});
-
-	let CONTENT = $('#content');
-	let TABNAV = CONTENT.find('.tab-bar');
-	let TABCONTENT = CONTENT.find('.tab-content');
 
 	TABNAV.on('click', 'button', function() {
 		let button = $(this),

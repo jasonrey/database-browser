@@ -142,6 +142,7 @@ form
 	width: 3px
 	// cursor: ew-resize
 	position: relative
+	z-index: 1
 
 	&::after
 		content: ''
@@ -156,28 +157,11 @@ form
 	flex-grow: 1
 	background-color: white
 
-#new-connection
-	display: none
-	width: 90%
-	max-width: 500px
-	margin: auto
-	background-color: $grey50
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.1)
-	box-sizing: border-box
-
-	.actions
-		display: flex
-
-		button
-			width: 50%
-
-			&:first-child
-				border-right: 1px solid $grey300
-
 #content
 	.panel-sidebar
 		display: flex
 		flex-direction: column
+		flex-shrink: 0;
 
 		.tab-bar
 			height: 40px
@@ -237,15 +221,19 @@ form
 		display: block
 
 	.panel-content
+		position: relative
+
+		.content
+			position: absolute
+			top: 0
+			left: 0
+			bottom: 150px
+			width: 100%
+			display: none
+
+	&[data-content="new"] .panel-content #new,
+	&[data-content="result"] .panel-content #result
 		display: flex
-		flex-direction: column
-
-		.result-panel
-			flex-grow: 1
-
-		.query-panel
-			height: 150px
-			border-top: 1px solid $grey300
 
 #servers
 
@@ -460,40 +448,73 @@ form
 		.status
 			background-color: $green500
 
-.panel-box
-	position: relative
-
-	&::before
-		display: block
-		font-size: 10px
-		font-weight: 300
-		padding: 0 8px
-		position: absolute
-		top: 0
-		left: 0
-		height: 24px
-		line-height: 24px
-		color: $grey500
-		width: 100%
+#new
+	form
+		width: 90%
+		max-width: 500px
+		margin: auto
+		background-color: $grey50
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1)
 		box-sizing: border-box
-		border-bottom: 1px solid $grey300
 
-.result
+	.actions
+		display: flex
+
+		button
+			width: 50%
+
+			&:first-child
+				border-right: 1px solid $grey300
+
+#result
 	flex-grow: 1
 	position: relative
+	flex-direction: column
 
-	&::before
-		content: 'RESULT'
+	.command
+		padding: 8px 16px
+		flex-shrink: 0
+
+		&::before
+			content: 'SQL'
+			font-size: 10px
+			font-weight: 300
+			color: $grey700
+			margin: 0 8px 0 0
+
+	.result-box
+		flex-grow: 1
+		margin: 8px 16px 16px 16px
+		background-color: $grey50
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
+		position: relative
+
+	.meta
+		position: relative
+		flex-shrink: 0
+		height: 24px
+		line-height: 24px
+		padding: 0 24px 0 8px
+
+	.total
+		&::before
+			content: 'Total Rows:'
+			font-size: 10px
+			font-weight: 300
+			color: $grey700
+			margin: 0 8px 0 0
 
 	.export
 		position: absolute
 		top: 0
 		right: 0
-		font-size: 12px
 		width: 24px
 		height: 24px
 		line-height: 24px
 		color: $blue500
+
+		&:hover
+			background-color: $blue50
 
 	.table
 		position: absolute
@@ -505,7 +526,7 @@ form
 
 	table
 		thead
-			border-bottom: 1px solid $grey300
+			background-color: $bluegrey100
 
 		th
 			font-weight: 500
@@ -529,9 +550,13 @@ form
 			&:last-child
 				border-bottom: 0
 
-.query-panel
-	position: relative
-	flex-shrink: 0;
+#query-panel
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
+	height: 150px
+	border-top: 1px solid $grey300
 
 	&::before
 		display: block
