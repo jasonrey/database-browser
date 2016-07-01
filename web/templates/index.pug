@@ -1,427 +1,595 @@
 extends html
 
 block body
-	#content
-		#connections.tab
-			.panels
-				.panel-sidebar
-					h2 Connections
-					#connections-list
-						ul
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-							li
-								span user@hostname
-								button
-									i.icon.icon-cross
-				.panel-separator
-				.panel-content
-					form#new-connection
-						h2 New Connection
-						.group
-							label Hostname
-							input(type="text")
-						.group
-							label Username
-							input(type="text")
-						.group
-							label Password
-							input(type="password")
-						.group
-							label Port
-							input(type="text")
-						.actions
-							button.blue(type="button")
-								i.icon.icon-plus
-							button.green(type="button")
-								i.icon.icon-arrow-right
-		#database.tab
-			.panels
-				.panel-sidebar
-					.current-connection
-						span.connection-status
-						span.connection-name user@hostname
+	#content.panels(data-tab="servers")
+		.panel-sidebar
+			.tab-bar
+				button(data-name="servers")
+					i.icon.icon-server
+				button(data-name="tables")
+					i.icon.icon-columns
+				button(data-name="queries")
+					i.icon.icon-folder
+				button(data-name="history")
+					i.icon.icon-clock
+				button(data-name="settings")
+					i.icon.icon-cog
+			.tab-content
+				#servers.tab
+					button#add-server.icon.icon-plus New Server
+					ul#servers-list
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+						li
+							span user@hostname
+							button
+								i.icon.icon-stack
+				#tables.tab
 					#databases
-						i.select-dropdown.icon-fa.icon-angle-down
+						i.icon.icon-layout
+						i.icon-fa.icon-angle-down
 						select
 							option test
 							option test
 							option test
 							option test
-					#tables-list
-						ul
-							li
-								.table-name Test
-								.expand
-									i.icon-fa.icon-dir-right
-								button.edit
-									i.icon.icon-location-2
-								ul.table-columns
-									li
-										div id
-										span pk int
-									li
-										div name
-										span varchar
-									li
-										div date
-										span datetime
-									li
-										div address
-										span text
-									li
-										div age
-										span int
-							li
-								.table-name Test
-								.expand
-									i.icon-fa.icon-dir-right
-								button.edit
-									i.icon.icon-location-2
-								ul.table-columns
-									li
-										div id
-										span pk int
-									li
-										div name
-										span varchar
-									li
-										div date
-										span datetime
-									li
-										div address
-										span text
-									li
-										div age
-										span int
-				.panel-separator
-				.panel-content
-					.result.panel-box
-						button.export
-							i.icon.icon-download
-						.table
-							table
-								thead
-									tr
-										th id
-										th name
-										th address
-										th age test
-										th ip
-										th date
-										th.text comment
-										th.text comment
-										th status
-										th bla
-										th bla
-										th bla
-										th bla
-										th bla
-								tbody
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
-									tr
-										td 1
-										td Test test test
-										td Test test test test test test
-										td 12
-										td 123.123.123.123
-										td 1234.12-12-12-12-12-12
-										td Text text text text text text text text text text text text text text text text text
-										td Text text text text text text text text text text text text text text text text text
-										td 1
-										td 1
-										td bl1a
-										td 1
-										td bl1a
-										td bla
+					ul#tables-list
+						li
+							.table-name Test
+							.expand
+								i.icon-fa.icon-dir-right
+							button.edit
+								i.icon.icon-stack
+							ul.table-columns
+								li
+									div id
+									span pk int
+								li
+									div name
+									span varchar
+								li
+									div date
+									span datetime
+								li
+									div address
+									span text
+								li
+									div age
+									span int
+						li
+							.table-name Test
+							.expand
+								i.icon-fa.icon-dir-right
+							button.edit
+								i.icon.icon-stack
+							ul.table-columns
+								li
+									div id
+									span pk int
+								li
+									div name
+									span varchar
+								li
+									div date
+									span datetime
+								li
+									div address
+									span text
+								li
+									div age
+									span int
+			#connection
+				span.status
+				.name user@hostname
+		.panel-separator
+		.panel-content
+			form#new-connection
+				h2 New Connection
+				.group
+					label Hostname
+					input(type="text")
+				.group
+					label Username
+					input(type="text")
+				.group
+					label Password
+					input(type="password")
+				.group
+					label Port
+					input(type="text")
+				.actions
+					button.blue(type="button")
+						i.icon.icon-plus
+					button.green(type="button")
+						i.icon.icon-arrow-right
+			.result.panel-box
+				button.export
+					i.icon.icon-download
+				.table
+					table
+						thead
+							tr
+								th id
+								th name
+								th address
+								th age test
+								th ip
+								th date
+								th.text comment
+								th.text comment
+								th status
+								th bla
+								th bla
+								th bla
+								th bla
+								th bla
+						tbody
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
+							tr
+								td 1
+								td Test test test
+								td Test test test test test test
+								td 12
+								td 123.123.123.123
+								td 1234.12-12-12-12-12-12
+								td Text text text text text text text text text text text text text text text text text
+								td Text text text text text text text text text text text text text text text text text
+								td 1
+								td 1
+								td bl1a
+								td 1
+								td bl1a
+								td bla
 
-					.query-panel
-						.editor(contenteditable="true")
-						.actions
-							button.run
-								i.icon.icon-play
-							button.save
-								i.icon.icon-plus
-							button.history
-								i.icon.icon-clock
-							button.star
-								i.icon.icon-heart
-		#query.tab
-			.panels
-				.panel-sidebar
-					.current-connection
-						span.connection-status
-						span.connection-name user@hostname
-					.query-panel
-						.editor(contenteditable="true")
-						.actions
-							button.run
-								i.icon.icon-play
-							button.save
-								i.icon.icon-plus
-				.panel-separator
-				.panel-content
-		#settings.tab
+			.query-panel
+				.editor(contenteditable="true")
+				.actions
+					button.run
+						i.icon.icon-play
+					button.save
+						i.icon.icon-plus
+					button.clear
+						i.icon.icon-cross
 
 	#menu
 		#main-menu

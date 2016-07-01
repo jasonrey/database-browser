@@ -44,7 +44,6 @@ form
 			height: 100%
 			line-height: 48px
 			box-sizing: border-box
-			font-size: 14px
 			text-transform: uppercase
 			padding: 0 24px
 			transform-origin: top left
@@ -94,6 +93,7 @@ form
 				background-color: $green50
 
 #menu
+	display: none
 	width: 48px
 	height: 100%
 	position: absolute
@@ -118,31 +118,6 @@ form
 	left: 0
 	width: 48px
 
-body[data-tab="connections"] #menu-connections,
-body[data-tab="database"] #menu-database,
-body[data-tab="query"] #menu-query,
-body[data-tab="settings"] #menu-settings
-	color: $blue700
-	background-color: $basecolor
-
-body[data-tab="connections"] #connections,
-body[data-tab="database"] #database,
-body[data-tab="query"] #query,
-body[data-tab="settings"] #settings
-	display: block
-
-#content
-	width: 100%
-	height: 100%
-	box-sizing: border-box
-	padding: 0 0 0 48px
-
-	.tab
-		display: none
-		width: 100%
-		height: 100%
-		position: relative
-
 .panels
 	width: 100%
 	height: 100%
@@ -150,9 +125,7 @@ body[data-tab="settings"] #settings
 	display: flex
 
 .panel-sidebar
-	min-width: 250px
-	max-width: 400px
-	width: 25%
+	width: 250px
 	position: relative
 
 	h2
@@ -183,100 +156,86 @@ body[data-tab="settings"] #settings
 	flex-grow: 1
 	background-color: white
 
-.current-connection
-	height: 24px
-	line-height: 24px
-	position: absolute
-	top: 0
-	left: 0
-	right: 0
-	border-bottom: 1px solid $grey300
-	font-size: 14px
-	margin: 0 8px
-	box-sizing: border-box;
+#new-connection
+	display: none
+	width: 90%
+	max-width: 500px
+	margin: auto
+	background-color: $grey50
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.1)
+	box-sizing: border-box
 
-	&.error
-		.connection-status
-			background-color: $red500
-
-	&.connected
-		.connection-status
-			background-color: $green500
-
-.connection-status
-	display: inline-block
-	width: 8px
-	height: 8px
-	border-radius: 50%
-	background-color: $yellow500
-	vertical-align: middle
-	margin: 0 8px
-
-#connections
-	.panel-sidebar
-		h2
-			position: absolute
-			top: 0
-			left: 8px
-			right: 8px
-
-	#connections-list
-		padding: 48px 0 8px 0
-		height: 100%
-		box-sizing: border-box
-
-		ul
-			height: 100%
-			overflow: auto
-
-		li
-			height: 32px
-			line-height: 32px
-			padding: 0 16px
-			cursor: pointer
-			position: relative
-
-			button
-				position: absolute
-				top: 0
-				right: 0
-				width: 32px
-				height: 32px
-				line-height: 32px
-				text-align: center
-				display: none
-				color: $grey500
-
-			&:hover
-				background-color: $grey200
-
-				button
-					display: block
-
-					&:hover
-						color: $red500
-
-	.panel-content
+	.actions
 		display: flex
 
-	#new-connection
-		width: 90%
-		max-width: 500px
-		margin: auto
-		background-color: $grey50
-		box-shadow: 0 0 2px rgba(0, 0, 0, 0.1)
-		box-sizing: border-box
+		button
+			width: 50%
 
-		.actions
-			display: flex
+			&:first-child
+				border-right: 1px solid $grey300
+
+#content
+	.panel-sidebar
+		display: flex
+		flex-direction: column
+
+		.tab-bar
+			height: 40px
+			line-height: 40px
+			text-align: center
+			border-bottom: 1px solid $grey300
+			box-sizing: border-box
 
 			button
-				width: 50%
+				width: 20%
+				height: inherit
+				line-height: inherit
+				color: $blue500
+				position: relative
+				font-size: 16px
 
-				&:first-child
-					border-right: 1px solid $grey300
+				&::after
+					content: ''
+					position: absolute
+					bottom: 0
+					left: 0
+					width: 100%
+					height: 2px
+					background-color: $blue500
+					transform: scaleX(0)
+					transition: transform .2s
 
-#database
+				&:hover
+					background-color: $blue50
+
+
+		.tab-content
+			flex-grow: 1
+			position: relative
+
+			.tab
+				display: none
+				position: absolute
+				top: 0
+				left: 0
+				width: 100%
+				height: 100%
+
+	&[data-tab="servers"] .tab-bar button:nth-child(1),
+	&[data-tab="tables"] .tab-bar button:nth-child(2),
+	&[data-tab="queries"] .tab-bar button:nth-child(3),
+	&[data-tab="history"] .tab-bar button:nth-child(4),
+	&[data-tab="settings"] .tab-bar button:nth-child(5)
+		&::after
+			transform: scaleX(1)
+
+	&[data-tab="servers"] #servers,
+	&[data-tab="tables"] #tables,
+	&[data-tab="queries"] #queries,
+	&[data-tab="history"] #history,
+	&[data-tab="settings"] #settings
+		display: block
+
 	.panel-content
 		display: flex
 		flex-direction: column
@@ -288,119 +247,159 @@ body[data-tab="settings"] #settings
 			height: 150px
 			border-top: 1px solid $grey300
 
-#databases
-	height: 24px
+#servers
+
+#add-server
 	position: absolute
-	top: 24px
+	bottom: 0
 	left: 0
-	right: 0
-	margin: 0 8px
-	border-bottom: 1px solid $grey300
+	display: block
+	width: 100%
+	height: 32px
+	line-height: 32px
+	color: $blue500
+	text-align: left
+	padding: 0 16px
+	border-top: 1px solid $grey300
 
-	&::before
-		content: 'DB'
-		font-size: 10px
-		position: absolute
-		top: 0
-		left: 0
-		width: 24px
-		height: 24px
-		line-height: 24px
-		display: block
-		text-align: center
-		color: $grey500
+	&:hover
+		background-color: $blue50
 
-	.select-dropdown
-		width: 24px
-		height: 24px
-		line-height: 24px
-		position: absolute
-		top: 0
-		right: 0
-		text-align: center
+#servers-list
+	position: absolute
+	top: 0
+	bottom: 32px
+	left: 0
+	width: 100%
+	overflow: auto
 
-	select
-		font-size: 14px
-		width: 100%
-		height: 24px
-		line-height: 24px;
-		border: 0
-		outline: 0
-		appearance: none
-		-webkit-appearance: none
-		border: 0
-		border-radius: 0
-		box-sizing: border-box
-		padding: 0 24px 0 24px
+	li
+		height: 32px
+		line-height: 32px
+		padding: 0 32px 0 16px
+		cursor: pointer
 		position: relative
-		background-color: transparent
-		color: inherit
 
-#tables-list
-	padding: 48px 0 8px 0
-	height: 100%
+		button
+			position: absolute
+			top: 0
+			right: 0
+			width: 32px
+			height: inherit
+			line-height: inherit
+			text-align: center
+			display: none
+			color: $blue500
+
+		&:hover
+			background-color: $grey200
+
+			button
+				display: block
+
+#tables
+
+#databases
+	position: absolute
+	top: 0
+	left: 0
+	width: 100%
+	height: 32px
+	line-height: 32px
+	border-bottom: 1px solid $grey300
+	cursor: pointer
 	box-sizing: border-box
 
-	> ul
-		height: 100%
-		overflow: auto
+	i
+		position: absolute
+		top: 0
+		width: 32px
+		height: 32px
+		line-height: 32px
+		display: block
+		text-align: center
 
-		> li
-			position: relative
-			cursor: pointer
+	i.icon-layout
+		left: 0
+		color: $blue500
 
-			.expand
-				position: absolute
-				top: 0
-				left: 0
-				width: 32px
-				height: 32px
-				line-height: 32px
-				font-size: 14px
-				color: $grey500
-				text-align: center
+	i.icon-angle-down
+		right: 0
+		color: $grey500
 
-				i
-					display: block
+	select
+		width: 100%
+		height: 32px
+		line-height: 32px;
+		box-sizing: border-box
+		padding: 0 32px 0 32px
 
-				&:hover
-					color: $grey700
+	&:hover
+		background-color: $blue50
 
-			.table-name
-				padding: 0 32px
-				height: 32px
-				line-height: 32px
+#tables-list
+	position: absolute
+	top: 32px
+	bottom: 0
+	left: 0
+	width: 100%
+	overflow: auto
 
-			.edit
-				position: absolute
-				top: 0
-				right: 0
-				width: 32px
-				height: 32px
-				line-height: 32px
-				color: $blue500
-				display: none
+	> li
+		position: relative
+		cursor: pointer
+
+		.expand
+			position: absolute
+			top: 0
+			left: 0
+			width: 32px
+			height: 32px
+			line-height: 32px
+			color: $grey500
+			text-align: center
+
+			i
+				display: block
 
 			&:hover
-				.table-name
-					background-color: $grey200
+				color: $grey700
 
-				.edit
-					display: block
+		.table-name
+			padding: 0 32px
+			height: 32px
+			line-height: 32px
 
-			&.active
-				.table-name
-					background-color: $grey300
+		.edit
+			position: absolute
+			top: 0
+			right: 0
+			width: 32px
+			height: 32px
+			line-height: 32px
+			color: $blue500
+			display: none
 
-			&.expanded
-				.table-columns
-					display: block
+		&:hover
+			.table-name
+				background-color: $grey200
 
-				.expand
-					color: $grey500
+			.edit
+				display: block
 
-					i
-						transform: rotate(90deg)
+		&.active
+			.table-name
+				background-color: $grey300
+
+		&.expanded
+			.table-columns
+				display: block
+
+			.expand
+				color: $grey500
+
+				i
+					transform: rotate(90deg)
 
 	.table-columns
 		display: none
@@ -430,6 +429,36 @@ body[data-tab="settings"] #settings
 
 			&:hover
 				background-color: $grey200
+
+#connection
+	height: 32px
+	line-height: 32px
+	position: relative
+	cursor: pointer
+	border-top: 1px solid $grey300
+	box-sizing: border-box
+
+	.name
+		padding: 0 8px 0 24px
+
+	.status
+		position: absolute
+		top: 0
+		left: 0
+		width: 8px
+		height: 8px
+		border-radius: 50%
+		background-color: $orange500
+		vertical-align: middle
+		margin: 12px 8px
+
+	&.error
+		.status
+			background-color: $red500
+
+	&.connected
+		.status
+			background-color: $green500
 
 .panel-box
 	position: relative
@@ -475,8 +504,6 @@ body[data-tab="settings"] #settings
 		overflow: auto
 
 	table
-		font-size: 14px
-
 		thead
 			border-bottom: 1px solid $grey300
 
@@ -504,6 +531,7 @@ body[data-tab="settings"] #settings
 
 .query-panel
 	position: relative
+	flex-shrink: 0;
 
 	&::before
 		display: block
@@ -524,7 +552,7 @@ body[data-tab="settings"] #settings
 		padding: 0 8px
 		position: absolute
 		top: 24px
-		bottom: 40px
+		bottom: 32px
 		left: 0
 		width: 100%
 		box-sizing: border-box
@@ -536,26 +564,22 @@ body[data-tab="settings"] #settings
 		position: absolute
 		bottom: 0
 		width: 100%
-		height: 40px
+		height: 32px
 		background-color: $grey50
-		box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.1)
+		border-top: 1px solid $grey300
+		box-sizing: border-box
 
 		&::after
 			content: ''
 			display: table
 			clear: both
 
-	button
-		width: 48px
-		height: 40px
-		cursor: pointer
-		color: $blue500
-		float: right
+		button
+			width: 32px
+			height: 32px
+			cursor: pointer
+			color: $blue500
+			float: right
 
-		&:hover
-			background-color: $blue50
-
-#query
-	.current-connection
-		// margin: 0
-		// padding: 0 8px
+			&:hover
+				background-color: $blue50

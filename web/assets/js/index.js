@@ -3,12 +3,6 @@ $(() => {
 
 	let BODY = $('body');
 
-	$('#menu').on('click', 'button', function(event) {
-		let button = $(this);
-
-		BODY.attr('data-tab', button.attr('id').split('-')[1]);
-	});
-
 	BODY.on('click', 'form .group', function(event) {
 		let group = $(this),
 			input = group.find('input');
@@ -34,7 +28,9 @@ $(() => {
 		group.removeClass('focus');
 	});
 
-	$('#tables-list').on('click', '.table-name', function(event) {
+	let TABLESLIST = $('#tables-list');
+
+	TABLESLIST.on('click', '.table-name', function(event) {
 		let item = $(this).parents('li'),
 			siblings = item.siblings();
 
@@ -43,18 +39,29 @@ $(() => {
 		item.addClass('active');
 	});
 
-	$('#tables-list').on('click', '.expand', function(event) {
+	TABLESLIST.on('click', '.expand', function(event) {
 		let item = $(this).parents('li');
 
 		item.toggleClass('expanded');
 	});
 
-	$('#tables-list').on('click', '.edit', function(event) {
+	TABLESLIST.on('click', '.edit', function(event) {
 		let item = $(this).parents('li'),
 			siblings = item.siblings();
 
 		siblings.removeClass('active');
 
 		item.addClass('active');
+	});
+
+	let CONTENT = $('#content');
+	let TABNAV = CONTENT.find('.tab-bar');
+	let TABCONTENT = CONTENT.find('.tab-content');
+
+	TABNAV.on('click', 'button', function() {
+		let button = $(this),
+			name = button.attr('data-name');
+
+		CONTENT.attr('data-tab', name);
 	});
 });
