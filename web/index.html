@@ -36,7 +36,6 @@
         </div>
         <div id="sidebar-tab-content">
           <div class="tab" id="servers">
-            <button class="icon icon-plus" id="add-server">New Server</button>
             <ul id="servers-list"></ul>
           </div>
           <div class="tab" id="tables">
@@ -57,12 +56,12 @@
             <h2 class="new-title">New Connection</h2>
             <h2 class="edit-title">Edit Connection</h2>
             <div class="group">
-              <label>Hostname</label>
-              <input type="text" name="hostname">
+              <label>Host</label>
+              <input type="text" name="host">
             </div>
             <div class="group">
-              <label>Username</label>
-              <input type="text" name="username">
+              <label>User</label>
+              <input type="text" name="user">
             </div>
             <div class="group">
               <label>Password</label>
@@ -117,7 +116,7 @@
       </div>
     </div>
     <script id="servers-list-item" type="text/html">
-      <li data-key="{{key}}"><span>{{username}}@{{hostname}}</span>
+      <li data-key="{{key}}"><span>{{user}}@{{host}}</span>
         <button class="edit"><i class="icon icon-stack"></i></button>
       </li>
     </script>
@@ -125,7 +124,7 @@
       <option>{{name}}</option>
     </script>
     <script id="tables-list-item" type="text/html">
-      <li>
+      <li data-name="{{name}}" title="{{name}}">
         <div class="table-name">{{name}}</div>
         <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
         <button class="edit"><i class="icon icon-stack"></i></button>

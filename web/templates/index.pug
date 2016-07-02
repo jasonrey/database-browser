@@ -25,7 +25,6 @@ block body
 					i.icon.icon-cog
 			#sidebar-tab-content
 				#servers.tab
-					button#add-server.icon.icon-plus New Server
 					ul#servers-list
 						//- template#servers-list-item
 				#tables.tab
@@ -47,11 +46,11 @@ block body
 					h2.new-title New Connection
 					h2.edit-title Edit Connection
 					.group
-						label Hostname
-						input(type="text", name="hostname")
+						label Host
+						input(type="text", name="host")
 					.group
-						label Username
-						input(type="text", name="username")
+						label User
+						input(type="text", name="user")
 					.group
 						label Password
 						input(type="password", name="password")

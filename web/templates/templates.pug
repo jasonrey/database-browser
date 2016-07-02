@@ -1,7 +1,7 @@
 //- name - user@server
 script#servers-list-item(type="text/html")
 	li(data-key="{{key}}")
-		span {{username}}@{{hostname}}
+		span {{user}}@{{host}}
 		button.edit
 			i.icon.icon-stack
 
@@ -12,7 +12,7 @@ script#databases-list-item(type="text/html")
 //- name - table name
 //- columns - table columns from template#table-columns-item
 script#tables-list-item(type="text/html")
-	li
+	li(data-name="{{name}}", title="{{name}}")
 		.table-name {{name}}
 		.expand
 			i.icon-fa.icon-dir-right

@@ -1,6 +1,9 @@
 $(function() {
 	'use strict';
 
+	// DB
+	var $db;
+
 	// Elements
 	var $$ = {};
 
@@ -13,6 +16,7 @@ $(function() {
 
 	$$.BODY = $('body');
 	$$.NEWCONNECTIONFORMINPUTS = $$.NEW.find('input');
+	$$.CONNECTIONNAME = $$.CONNECTION.find('.name');
 
 	// Bindings
 
@@ -39,10 +43,6 @@ $(function() {
 		}
 
 		group.removeClass('focus');
-	});
-
-	$$.ADDSERVER.on('click', function() {
-		$$.CONTENT.attr('data-content', 'new');
 	});
 
 	$$.SIDEBARTABNAV.on('click', 'button', function() {
@@ -104,7 +104,60 @@ $(function() {
 	});
 
 	$$.SERVERSLIST.on('click', 'span', function(event) {
-		// Connect
+		var item = $(this).parents('li'),
+			key = item.attr('data-key'),
+			data = $storage.get('servers.' + key);
+
+		$$.CONNECTION.attr('data-state', 'connecting');
+		$$.CONNECTIONNAME.text(data.user + '@' + data.host);
+		$$.CONTENT.attr('data-tab', 'tables');
+
+		if ($db && $db.constructor.name === 'DB') {
+			$db.close();
+		}
+
+		$db = DB.getInstance(data);
+
+		$db.q('show databases')
+			.then(function(response) {
+				$$.CONNECTION.attr('data-state', 'connected');
+
+				var html = '';
+
+				for (var i = 0; i < response.result.length; i++) {
+					html += $template('databases-list-item', {
+						name: response.result[i].Database
+					});
+				}
+
+				$$.DATABASESLIST.html(html);
+
+				$$.DATABASESLIST.trigger('change');
+			}).catch(function(err) {
+				$$.CONNECTION.attr('data-state', '');
+
+				// TODO: Show error in result
+			});
+	});
+
+	$$.DATABASESLIST.on('change', function() {
+		$db.q('use ??', [this.value])
+			.then(function(response) {
+				return $db.q('show tables');
+			}, function(err) {
+				// TODO: Show error in result
+			})
+			.then(function(response) {
+				var html = '';
+
+				for (var i = 0; i < response.result.length; i++) {
+					html += $template('tables-list-item', {
+						name: response.result[i][response.fields[0].name]
+					});
+				}
+
+				$$.TABLESLIST.html(html);
+			});
 	});
 
 	$$.NEW.on('click', 'button', function() {
@@ -125,7 +178,7 @@ $(function() {
 				data[this.name] = this.value;
 			});
 
-			if (!data.hostname || !data.username || !data.password) {
+			if (!data.host || !data.user || !data.password) {
 				return;
 			}
 		}
@@ -137,8 +190,8 @@ $(function() {
 
 			$$.SERVERSLIST.append($template('servers-list-item', {
 				key: key,
-				username: data.username,
-				hostname: data.hostname
+				user: data.user,
+				host: data.host
 			}));
 		}
 
@@ -147,13 +200,13 @@ $(function() {
 
 			$$.SERVERSLIST.find('li[data-key="' + key + '"]').replaceWith($template('servers-list-item', {
 				key: key,
-				username: data.username,
-				hostname: data.hostname
+				user: data.user,
+				host: data.host
 			}));
 		}
 
 		if (button.hasClass('go')) {
-
+			// TODO: Connect
 		}
 
 		// Clear field
@@ -187,8 +240,8 @@ $(function() {
 		for (var key in servers) {
 			html += $template('servers-list-item', {
 				key: key,
-				username: servers[key].username,
-				hostname: servers[key].hostname
+				user: servers[key].user,
+				host: servers[key].host
 			});
 		}
 
