@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500">
+    <link rel="stylesheet" type="text/css" href="assets/css/index.css">
+    <script>
+      require('./assets/js/handler-app.js');
+      
+    </script>
+    <script>
+      if (typeof module === 'object') {
+      	window.module = module;
+      	module = undefined;
+      }
+    </script>
+    <script type="text/javascript" src="assets/static/jquery-3.0.0.min.js"></script>
+    <script>
+      if (window.module) module = window.module;
+      
+    </script>
+    <script type="text/javascript" src="assets/js/library.js"></script>
+    <script type="text/javascript" src="assets/js/index.js"></script>
+    <title>Database Browser</title>
+  </head>
+  <body>
+    <div class="panels" id="content" data-tab="servers" data-content="new">
+      <div class="panel-sidebar">
+        <div id="sidebar-tab-nav">
+          <button data-name="servers"><i class="icon icon-server"></i></button>
+          <button data-name="tables"><i class="icon icon-columns"></i></button>
+          <button data-name="queries"><i class="icon icon-folder"></i></button>
+          <button data-name="history"><i class="icon icon-clock"></i></button>
+          <button data-name="settings"><i class="icon icon-cog"></i></button>
+        </div>
+        <div id="sidebar-tab-content">
+          <div class="tab" id="servers">
+            <button class="icon icon-plus" id="add-server">New Server</button>
+            <ul id="servers-list"></ul>
+          </div>
+          <div class="tab" id="tables">
+            <div id="databases"><i class="icon icon-layout"></i><i class="icon-fa icon-angle-down"></i>
+              <select id="databases-list"></select>
+            </div>
+            <ul id="tables-list"></ul>
+          </div>
+        </div>
+        <div id="connection" data-state=""><span class="status"></span>
+          <div class="name"></div>
+        </div>
+      </div>
+      <div class="panel-separator"></div>
+      <div class="panel-content">
+        <div class="content" id="new">
+          <form>
+            <h2 class="new-title">New Connection</h2>
+            <h2 class="edit-title">Edit Connection</h2>
+            <div class="group">
+              <label>Hostname</label>
+              <input type="text" name="hostname">
+            </div>
+            <div class="group">
+              <label>Username</label>
+              <input type="text" name="username">
+            </div>
+            <div class="group">
+              <label>Password</label>
+              <input type="password" name="password">
+            </div>
+            <div class="group">
+              <label>Port</label>
+              <input type="number" name="port">
+            </div>
+            <div class="actions">
+              <button class="red delete" type="button"><i class="icon icon-trash"></i></button>
+              <button class="orange clear" type="button"><i class="icon icon-cross"></i></button>
+              <button class="blue add" type="button"><i class="icon icon-plus"></i></button>
+              <button class="green go" type="button"><i class="icon icon-arrow-right"></i></button>
+              <button class="green save" type="button"><i class="icon icon-check"></i></button>
+            </div>
+          </form>
+        </div>
+        <div class="content" id="result">
+          <div class="command">select * from whatever;</div>
+          <div class="result-box">
+            <div class="meta">
+              <div class="total"></div>
+              <button class="export"><i class="icon icon-download"></i></button>
+            </div>
+            <div class="table">
+              <table>
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="query-panel">
+          <div class="editor" contenteditable="true"></div>
+          <div class="actions">
+            <button class="run"><i class="icon icon-play"></i></button>
+            <button class="save"><i class="icon icon-plus"></i></button>
+            <button class="clear"><i class="icon icon-cross"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="menu">
+      <div id="main-menu">
+        <button id="menu-connections"><i class="icon icon-folder"></i></button>
+        <button id="menu-database"><i class="icon icon-server"></i></button>
+        <button id="menu-query"><i class="icon icon-search"></i></button>
+      </div>
+      <div id="bottom-menu">
+        <button id="menu-settings"><i class="icon icon-cog"></i></button>
+      </div>
+    </div>
+    <script id="servers-list-item" type="text/html">
+      <li data-key="{{key}}"><span>{{username}}@{{hostname}}</span>
+        <button class="edit"><i class="icon icon-stack"></i></button>
+      </li>
+    </script>
+    <script id="databases-list-item" type="text/html">
+      <option>{{name}}</option>
+    </script>
+    <script id="tables-list-item" type="text/html">
+      <li>
+        <div class="table-name">{{name}}</div>
+        <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
+        <button class="edit"><i class="icon icon-stack"></i></button>
+        <ul class="table-columns">{{columns}}</ul>
+      </li>
+    </script>
+    <script id="table-columns-item" type="text/html">
+      <li>
+        <div>{{name}}</div><span>{{type}}</span>
+      </li>
+    </script>
+    <script id="result-table-row" type="text/html">
+      <tr>{{cells}}</tr>
+    </script>
+    <script id="result-table-head-cell" type="text/html">
+      <th class="{{type}}">{{name}}</th>
+    </script>
+    <script id="result-table-cell" type="text/html">
+      <tr class="{{type}}">{{value}}</tr>
+    </script>
+  </body>
+</html>

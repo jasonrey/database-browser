@@ -80,6 +80,18 @@ form
 		line-height: 48px
 		text-transform: uppercase
 
+		&.orange
+			color: $orange500
+
+			&:hover, &:focus
+				background-color: $orange50
+
+		&.red
+			color: $red500
+
+			&:hover, &:focus
+				background-color: $red50
+
 		&.blue
 			color: $blue500
 
@@ -137,59 +149,11 @@ form
 		flex-direction: column
 		flex-shrink: 0;
 
-		.tab-bar
-			height: 40px
-			line-height: 40px
-			text-align: center
-			border-bottom: 1px solid $grey300
-			box-sizing: border-box
-
-			&::after
-				content: ''
-				clear: both
-				display: table
-
-			button
-				width: 20%
-				height: inherit
-				line-height: inherit
-				color: $blue500
-				position: relative
-				font-size: 16px
-				float: left
-
-				&::after
-					content: ''
-					position: absolute
-					bottom: 0
-					left: 0
-					width: 100%
-					height: 2px
-					background-color: $blue500
-					transform: scaleX(0)
-					transition: transform .2s
-
-				&:hover
-					background-color: $blue50
-
-
-		.tab-content
-			flex-grow: 1
-			position: relative
-
-			.tab
-				display: none
-				position: absolute
-				top: 0
-				left: 0
-				width: 100%
-				height: 100%
-
-	&[data-tab="servers"] .tab-bar button:nth-child(1),
-	&[data-tab="tables"] .tab-bar button:nth-child(2),
-	&[data-tab="queries"] .tab-bar button:nth-child(3),
-	&[data-tab="history"] .tab-bar button:nth-child(4),
-	&[data-tab="settings"] .tab-bar button:nth-child(5)
+	&[data-tab="servers"] #sidebar-tab-nav button:nth-child(1),
+	&[data-tab="tables"] #sidebar-tab-nav button:nth-child(2),
+	&[data-tab="queries"] #sidebar-tab-nav button:nth-child(3),
+	&[data-tab="history"] #sidebar-tab-nav button:nth-child(4),
+	&[data-tab="settings"] #sidebar-tab-nav button:nth-child(5)
 		&::after
 			transform: scaleX(1)
 
@@ -214,6 +178,54 @@ form
 	&[data-content="new"] .panel-content #new,
 	&[data-content="result"] .panel-content #result
 		display: flex
+
+#sidebar-tab-nav
+	height: 40px
+	line-height: 40px
+	text-align: center
+	border-bottom: 1px solid $grey300
+	box-sizing: border-box
+
+	&::after
+		content: ''
+		clear: both
+		display: table
+
+	button
+		width: 20%
+		height: inherit
+		line-height: inherit
+		color: $blue500
+		position: relative
+		font-size: 16px
+		float: left
+
+		&::after
+			content: ''
+			position: absolute
+			bottom: 0
+			left: 0
+			width: 100%
+			height: 2px
+			background-color: $blue500
+			transform: scaleX(0)
+			transition: transform .2s
+
+		&:hover
+			background-color: $blue50
+
+
+#sidebar-tab-content
+	flex-grow: 1
+	position: relative
+
+	.tab
+		display: none
+		position: absolute
+		top: 0
+		left: 0
+		width: 100%
+		height: 100%
 
 #servers
 
@@ -245,8 +257,11 @@ form
 		height: 32px
 		line-height: 32px
 		padding: 0 32px 0 16px
-		cursor: pointer
 		position: relative
+
+		span
+			display: block
+			cursor: pointer
 
 		button
 			position: absolute
@@ -261,6 +276,12 @@ form
 
 		&:hover
 			background-color: $grey200
+
+			button
+				display: block
+
+		&.editing
+			background-color: $blue50
 
 			button
 				display: block
@@ -437,14 +458,43 @@ form
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1)
 		box-sizing: border-box
 
+	.edit-title
+		display: none
+		background-color: $blue50
+
 	.actions
 		display: flex
+		position: relative
 
 		button
-			width: 50%
+			flex-grow: 1
+			border-left: 1px solid $grey300
 
-			&:first-child
-				border-right: 1px solid $grey300
+		.clear
+			border-color: transparent
+
+		.save, .delete
+			display: none
+
+	&.editing
+		.new-title
+			display: none
+
+		.edit-title
+			display: block
+
+		.actions
+			.delete
+				border-color: transparent
+
+			.clear
+				border-color: $grey300
+
+			.save, .delete
+				display: block
+
+			.go, .add
+				display: none
 
 #result
 	flex-grow: 1

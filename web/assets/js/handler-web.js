@@ -8,12 +8,36 @@
 	window.$storage = {
 		data: {},
 
-		init: function() {
+		setup: function(storages) {
+			for (var storageKey in storages) {
+				var defaultValue = storages[storageKey],
+					defaultValueType = defaultValue === null ? 'null' : defaultValue.constructor.name;
+
+				var storageValue = $storage.get(storageKey),
+					storageValueType = storageValue === null ? 'null' : storageValue.constructor.name;
+
+				if (defaultValueType !== storageValueType) {
+					$storage.set(storageKey, defaultValue);
+				}
+			}
+
+			return this;
+		},
+
+		init: function(storages) {
 			if (typeof localStorage.dbbr !== 'string' ||
 				localStorage.dbbr.slice(0, 1) !== '{' || localStorage.dbbr.slice(-1) !== '}') {
 				localStorage.dbbr = '{}';
 			}
 
+			this.refresh();
+
+			this.setup(storages);
+
+			return this;
+		},
+
+		refresh: function() {
 			this.data = JSON.parse(localStorage.dbbr);
 
 			return this;
@@ -86,6 +110,4 @@
 			return JSON.parse(this.data);
 		}
 	};
-
-	$storage.init();
 })();

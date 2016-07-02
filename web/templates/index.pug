@@ -1,18 +1,18 @@
 extends html
 
-block append stylesheets
+block stylesheets
 	link(rel="stylesheet", type="text/css", href="assets/css/index.css")
 
-block append scripts
+block scripts
+	script(type="text/javascript", src="assets/js/handler-web.js")
+	script(type="text/javascript", src="assets/static/jquery-3.0.0.min.js")
+	script(type="text/javascript", src="assets/js/library.js")
 	script(type="text/javascript", src="assets/js/index.js")
-
-block append posthead
-	script(type="text/javascript", src="assets/js/handler.js")
 
 block body
 	#content.panels(data-tab="servers", data-content="new")
 		.panel-sidebar
-			.tab-bar
+			#sidebar-tab-nav
 				button(data-name="servers")
 					i.icon.icon-server
 				button(data-name="tables")
@@ -23,7 +23,7 @@ block body
 					i.icon.icon-clock
 				button(data-name="settings")
 					i.icon.icon-cog
-			.tab-content
+			#sidebar-tab-content
 				#servers.tab
 					button#add-server.icon.icon-plus New Server
 					ul#servers-list
@@ -44,7 +44,8 @@ block body
 		.panel-content
 			#new.content
 				form
-					h2 New Connection
+					h2.new-title New Connection
+					h2.edit-title Edit Connection
 					.group
 						label Hostname
 						input(type="text", name="hostname")
@@ -58,10 +59,16 @@ block body
 						label Port
 						input(type="number", name="port")
 					.actions
-						button.blue(type="button")
+						button.red.delete(type="button")
+							i.icon.icon-trash
+						button.orange.clear(type="button")
+							i.icon.icon-cross
+						button.blue.add(type="button")
 							i.icon.icon-plus
-						button.green(type="button")
+						button.green.go(type="button")
 							i.icon.icon-arrow-right
+						button.green.save(type="button")
+							i.icon.icon-check
 			#result.content
 				//- effective sql
 				.command select * from whatever;

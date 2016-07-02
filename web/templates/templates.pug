@@ -1,8 +1,8 @@
 //- name - user@server
 script#servers-list-item(type="text/html")
-	li
-		span {{name}}
-		button
+	li(data-key="{{key}}")
+		span {{username}}@{{hostname}}
+		button.edit
 			i.icon.icon-stack
 
 //- name - database name
