@@ -25,17 +25,20 @@ block body
 					i.icon.icon-cog
 			#sidebar-tab-content
 				#servers.tab
-					ul#servers-list
-						//- template#servers-list-item
+					ul#server-list
+						//- template#server-list-item
 				#tables.tab
 					#databases
 						i.icon.icon-layout
 						i.icon-fa.icon-angle-down
-						select#databases-list
-							//- template#databases-list-item
-					ul#tables-list
-						//- template#tables-list-item
-			#connection(data-state="")
+						select#database-list
+							//- template#database-list-item
+					ul#table-list
+						//- template#table-list-item
+				#history.tab
+					ul#history-list
+						//- template#history-list-item
+			#connection
 				span.status
 				.name
 					//- current connection user@host
@@ -70,41 +73,39 @@ block body
 							i.icon.icon-check
 			#result.content
 				//- effective sql
-				.command select * from whatever;
-				.result-box
-					.meta
+				#command
+				#result-box
+					#meta
 						//- total rows
-						.total
-						button.export
+						#total
+						button#export
 							i.icon.icon-download
-					.table
+					#table
 						table
 							thead
 								//- template#result-table-row
 							tbody
 								//- template#result-table-row
-
+					#error-message
 			#query-panel
-				.editor(contenteditable="true")
+				#editor(contenteditable="true")
 				.actions
-					button.run
+					button#query-run
 						i.icon.icon-play
-					button.save
+					button#query-save
 						i.icon.icon-plus
-					button.clear
+					button#query-clear
 						i.icon.icon-cross
 
-	#menu
-		#main-menu
-			button#menu-connections
-				i.icon.icon-folder
-			button#menu-database
-				i.icon.icon-server
-			button#menu-query
-				i.icon.icon-search
-
-		#bottom-menu
-			button#menu-settings
-				i.icon.icon-cog
+	#popup
+		#popup-overlay
+		#popup-query-save.popup-body
+			.popup-title Save Query
+			input(type="text", placeholder="Query Name (Optional)")
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
 
 	include templates.pug

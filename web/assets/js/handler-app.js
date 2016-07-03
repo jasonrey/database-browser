@@ -1,6 +1,9 @@
 (() => {
 	'use strict';
 
+	const {remote} = require('electron');
+	const BASEPATH = remote.getGlobal('__basepath');
+
 	const Config = require('electron-config');
 	const config = new Config({
 		name: 'dbbr'
@@ -52,67 +55,5 @@
 		}
 	};
 
-	const mysql = require('mysql');
-
-	class DB {
-		constructor(data) {
-			this.connection = mysql.createPool(data);
-		}
-
-		static getInstance(data) {
-			let db = new DB(data);
-
-			return db;
-		}
-
-		connect() {
-			return new Promise((resolve, reject) => {
-				this.connection.connect((err) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			});
-		}
-
-		close() {
-			return new Promise((resolve, reject) => {
-				this.connection.end((err) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			});
-		}
-
-		query(sql, values) {
-			if (values === undefined || values === null || values.constructor.name !== 'Array') {
-				values = [];
-			}
-
-			return new Promise((resolve, reject) => {
-				this.connection.query(sql, values, (err, result, fields) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve({
-							result,
-							fields
-						});
-					}
-				});
-			});
-		}
-
-		// alias to query
-		q(sql, values) {
-			return this.query(sql, values);
-		}
-	}
-
-	window.DB = DB;
+	window.DB = require(BASEPATH + '/libraries/db.js');
 })();

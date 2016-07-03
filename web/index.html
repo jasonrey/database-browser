@@ -36,16 +36,19 @@
         </div>
         <div id="sidebar-tab-content">
           <div class="tab" id="servers">
-            <ul id="servers-list"></ul>
+            <ul id="server-list"></ul>
           </div>
           <div class="tab" id="tables">
             <div id="databases"><i class="icon icon-layout"></i><i class="icon-fa icon-angle-down"></i>
-              <select id="databases-list"></select>
+              <select id="database-list"></select>
             </div>
-            <ul id="tables-list"></ul>
+            <ul id="table-list"></ul>
+          </div>
+          <div class="tab" id="history">
+            <ul id="history-list"></ul>
           </div>
         </div>
-        <div id="connection" data-state=""><span class="status"></span>
+        <div id="connection"><span class="status"></span>
           <div class="name"></div>
         </div>
       </div>
@@ -81,49 +84,58 @@
           </form>
         </div>
         <div class="content" id="result">
-          <div class="command">select * from whatever;</div>
-          <div class="result-box">
-            <div class="meta">
-              <div class="total"></div>
-              <button class="export"><i class="icon icon-download"></i></button>
+          <div id="command"></div>
+          <div id="result-box">
+            <div id="meta">
+              <div id="total"></div>
+              <button id="export"><i class="icon icon-download"></i></button>
             </div>
-            <div class="table">
+            <div id="table">
               <table>
                 <thead></thead>
                 <tbody></tbody>
               </table>
             </div>
+            <div id="error-message"></div>
           </div>
         </div>
         <div id="query-panel">
-          <div class="editor" contenteditable="true"></div>
+          <div id="editor" contenteditable="true"></div>
           <div class="actions">
-            <button class="run"><i class="icon icon-play"></i></button>
-            <button class="save"><i class="icon icon-plus"></i></button>
-            <button class="clear"><i class="icon icon-cross"></i></button>
+            <button id="query-run"><i class="icon icon-play"></i></button>
+            <button id="query-save"><i class="icon icon-plus"></i></button>
+            <button id="query-clear"><i class="icon icon-cross"></i></button>
           </div>
         </div>
       </div>
     </div>
-    <div id="menu">
-      <div id="main-menu">
-        <button id="menu-connections"><i class="icon icon-folder"></i></button>
-        <button id="menu-database"><i class="icon icon-server"></i></button>
-        <button id="menu-query"><i class="icon icon-search"></i></button>
-      </div>
-      <div id="bottom-menu">
-        <button id="menu-settings"><i class="icon icon-cog"></i></button>
+    <div id="popup">
+      <div id="popup-overlay"></div>
+      <div class="popup-body" id="popup-query-save">
+        <div class="popup-title">Save Query</div>
+        <input type="text" placeholder="Query Name (Optional)">
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
       </div>
     </div>
-    <script id="servers-list-item" type="text/html">
+    <script id="server-list-item" type="text/html">
       <li data-key="{{key}}"><span>{{user}}@{{host}}</span>
         <button class="edit"><i class="icon icon-stack"></i></button>
       </li>
     </script>
-    <script id="databases-list-item" type="text/html">
+    <script id="history-list-item" type="text/html">
+      <li class="{{state}}">
+        <div class="query">{{query}}</div>
+        <div class="total">{{total}}</div>
+        <div class="date">{{date}}</div>
+      </li>
+    </script>
+    <script id="database-list-item" type="text/html">
       <option>{{name}}</option>
     </script>
-    <script id="tables-list-item" type="text/html">
+    <script id="table-list-item" type="text/html">
       <li data-name="{{name}}" title="{{name}}">
         <div class="table-name">{{name}}</div>
         <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
@@ -143,7 +155,7 @@
       <th class="{{type}}">{{name}}</th>
     </script>
     <script id="result-table-cell" type="text/html">
-      <tr class="{{type}}">{{value}}</tr>
+      <td class="{{type}}">{{value}}</td>
     </script>
   </body>
 </html>

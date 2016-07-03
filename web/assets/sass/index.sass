@@ -149,14 +149,6 @@ form
 		flex-direction: column
 		flex-shrink: 0;
 
-	&[data-tab="servers"] #sidebar-tab-nav button:nth-child(1),
-	&[data-tab="tables"] #sidebar-tab-nav button:nth-child(2),
-	&[data-tab="queries"] #sidebar-tab-nav button:nth-child(3),
-	&[data-tab="history"] #sidebar-tab-nav button:nth-child(4),
-	&[data-tab="settings"] #sidebar-tab-nav button:nth-child(5)
-		&::after
-			transform: scaleX(1)
-
 	&[data-tab="servers"] #servers,
 	&[data-tab="tables"] #tables,
 	&[data-tab="queries"] #queries,
@@ -219,9 +211,36 @@ form
 			transform: scaleX(0)
 			transition: transform .2s
 
+		&:nth-child(2),
+		&:nth-child(3),
+		&:nth-child(4)
+			color: $grey500
+			cursor: not-allowed
+
+			#content[data-connection="connecting"] &,
+			#content[data-connection="connected"] &
+				color: $blue500
+				cursor: pointer
+
 		&:hover
 			background-color: $blue50
 
+			&:nth-child(2),
+			&:nth-child(3),
+			&:nth-child(4)
+				background-color: transparent
+
+				#content[data-connection="connecting"] &,
+				#content[data-connection="connected"] &
+					background-color: $blue50
+
+		#content[data-tab="servers"] &:nth-child(1),
+		#content[data-tab="tables"] &:nth-child(2),
+		#content[data-tab="queries"] &:nth-child(3),
+		#content[data-tab="history"] &:nth-child(4),
+		#content[data-tab="settings"] &:nth-child(5)
+			&::after
+				transform: scaleX(1)
 
 #sidebar-tab-content
 	flex-grow: 1
@@ -237,7 +256,7 @@ form
 
 #servers
 
-#servers-list
+#server-list
 	position: absolute
 	top: 0
 	left: 0
@@ -278,7 +297,54 @@ form
 			button
 				display: block
 
-#tables
+#history-list
+	position: absolute
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	overflow: auto
+
+	li
+		margin: 16px 8px
+		background-color: white
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
+		padding: 8px
+		cursor: pointer
+		border-top: 3px solid transparent
+
+		&::after
+			content: ''
+			display: table
+			clear: both
+
+		&:hover
+			background-color: $blue50
+
+		&.success
+			border-color: $green500
+
+		&.error
+			border-color: $red500
+
+	.query
+		margin: 8px 0 24px 0
+		font-size: 12px
+
+	.total
+		float: left
+		font-size: 10px
+		color: $grey500
+
+		&::before
+			content: 'Total:'
+
+	.date
+		float: right
+		font-size: 10px
+		color: $grey500
+
+
 
 #databases
 	position: absolute
@@ -311,14 +377,13 @@ form
 	&:hover
 		background-color: $blue50
 
-#databases-list
-	width: 100%
+#database-list
 	height: 32px
 	line-height: 32px;
 	box-sizing: border-box
 	padding: 0 32px 0 32px
 
-#tables-list
+#table-list
 	position: absolute
 	top: 32px
 	bottom: 0
@@ -434,11 +499,11 @@ form
 		vertical-align: middle
 		margin: 12px 8px
 
-	&[data-state="connecting"]
+	#content[data-connection="connecting"] &
 		.status
 			background-color: $orange500
 
-	&[data-state="connected"]
+	#content[data-connection="connected"] &
 		.status
 			background-color: $green500
 
@@ -494,62 +559,86 @@ form
 	position: relative
 	flex-direction: column
 
-	.command
-		padding: 8px 16px
-		flex-shrink: 0
+#command
+	padding: 8px 16px
+	flex-shrink: 0
+	display: none
 
-		&::before
-			content: 'SQL'
-			font-size: 10px
-			font-weight: 300
-			color: $grey700
-			margin: 0 8px 0 0
+	&::before
+		content: 'SQL'
+		font-size: 10px
+		font-weight: 300
+		color: $grey700
+		margin: 0 8px 0 0
 
-	.result-box
-		flex-grow: 1
-		margin: 8px 16px 16px 16px
-		background-color: $grey50
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
-		position: relative
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
 
-	.meta
-		position: relative
-		flex-shrink: 0
-		height: 24px
-		line-height: 24px
-		padding: 0 24px 0 8px
+#result-box
+	flex-grow: 1
+	margin: 8px 16px 16px 16px
+	background-color: $grey50
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
+	position: relative
+	border-top: 3px solid transparent
 
-	.total
-		&::before
-			content: 'Total Rows:'
-			font-size: 10px
-			font-weight: 300
-			color: $grey700
-			margin: 0 8px 0 0
+	#result[data-state="error"] &
+		border-color: $red500
 
-	.export
-		position: absolute
-		top: 0
-		right: 0
-		width: 24px
-		height: 24px
-		line-height: 24px
-		color: $blue500
+	#result[data-state="loading"] &
+		border-color: $orange500
 
-		&:hover
-			background-color: $blue50
+	#result[data-state="success"] &
+		border-color: $green500
 
-	.table
-		position: absolute
-		top: 24px
-		left: 0
-		bottom: 0
-		width: 100%
-		overflow: auto
+#meta
+	position: relative
+	flex-shrink: 0
+	height: 24px
+	line-height: 24px
+	padding: 0 24px 0 8px
+	display: none
+
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
+
+#total
+	&::before
+		content: 'Total Rows:'
+		font-size: 10px
+		font-weight: 300
+		color: $grey700
+		margin: 0 8px 0 0
+
+#export
+	position: absolute
+	top: 0
+	right: 0
+	width: 24px
+	height: 24px
+	line-height: 24px
+	color: $blue500
+
+	&:hover
+		background-color: $blue50
+
+#table
+	position: absolute
+	top: 24px
+	left: 0
+	bottom: 0
+	width: 100%
+	overflow: auto
+	display: none
+
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
 
 	table
-		thead
-			background-color: $bluegrey100
+		min-width: 100%;
 
 		th
 			font-weight: 500
@@ -557,8 +646,14 @@ form
 			&.text
 				min-width: 150px
 
+			&.hover
+				background-color: $bluegrey200
+
 		td
 			vertical-align: top
+
+			&.hover
+				background-color: $bluegrey50
 
 		th, td
 			padding: 8px 16px
@@ -572,6 +667,52 @@ form
 
 			&:last-child
 				border-bottom: 0
+
+		thead
+			background-color: $bluegrey100
+
+			tr
+				&:hover
+					background-color: $bluegrey200
+
+		tbody
+			tr
+				&:hover
+					background-color: $bluegrey50
+
+		.datetime
+			white-space: nowrap;
+
+		.tiny,
+		.null,
+		.timestamp,
+		.date,
+		.time,
+		.datetime,
+		.year,
+		.newdate,
+		.bit,
+		.timestamp2,
+		.datetime2,
+		.time2,
+		.newdecimal
+			text-align: center
+
+		.short,
+		.long,
+		.float,
+		.double,
+			text-align: right
+
+		.null
+			color: $grey500
+
+#error-message
+	display: none
+	padding: 16px;
+
+	#result[data-state="error"] &
+		display: block
 
 #query-panel
 	position: absolute
@@ -600,18 +741,6 @@ form
 		background-color: white
 		font-weight: 300
 
-	.editor
-		padding: 0 8px
-		position: absolute
-		top: 24px
-		bottom: 32px
-		left: 0
-		width: 100%
-		box-sizing: border-box
-		outline: 0
-		overflow: auto
-		font-size: 12px
-
 	.actions
 		position: absolute
 		bottom: 0
@@ -635,3 +764,86 @@ form
 
 			&:hover
 				background-color: $blue50
+
+#editor
+	padding: 0 8px
+	position: absolute
+	top: 24px
+	bottom: 32px
+	left: 0
+	width: 100%
+	box-sizing: border-box
+	outline: 0
+	overflow: auto
+	font-size: 12px
+
+#popup
+	position: fixed
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	z-index: 1
+	display: none
+
+	&[data-popup]
+		display: flex
+
+#popup-overlay
+	background-color: rgba(0, 0, 0, 0.6)
+	position: fixed
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+
+.popup-body
+	position: relative
+	width: 100%
+	max-width: 300px
+	margin: auto
+	background-color: white
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
+
+	.popup-title
+		text-transform: uppercase
+		height: 32px
+		line-height: 32px
+		font-weight: 500
+		background-color: $bluegrey50
+		text-align: center
+		border-bottom: 1px solid $grey300
+
+	.actions
+		display: flex
+		border-top: 1px solid $grey300
+
+		button
+			width: 50%
+			height: 48px
+			flex-shrink: 0
+			box-sizing: border-box
+	.no
+		color: $red500
+		border-right: 1px solid $grey300
+
+		&:hover
+			background-color: $red50
+
+	.yes
+		color: $green500
+
+		&:hover
+			background-color: $green50
+
+
+#popup-query-save
+	display: none
+
+	#popup[data-popup="query-save"] &
+		display: block
+
+	input
+		display: block
+		height: 48px
+		padding: 0 8px

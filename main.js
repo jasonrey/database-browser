@@ -7,6 +7,8 @@ const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
+global.__basepath = __dirname;
+
 let mainWindow;
 
 let createWindow = function() {
@@ -54,7 +56,7 @@ let createWindow = function() {
 
 	Promise.all(processes).then(() => {
 		mainWindow = new BrowserWindow({
-			width: 1000,
+			width: 1200,
 			height: 800,
 			title: 'Database Browser'
 		});
