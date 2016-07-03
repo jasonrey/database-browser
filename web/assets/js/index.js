@@ -54,17 +54,50 @@ $(function() {
 
 	$$.TABLESLIST.on('click', '.table-name', function() {
 		var item = $(this).parents('li'),
-			siblings = item.siblings();
+			siblings = item.siblings(),
+			tablename = this.innerHTML.trim();
 
 		siblings.removeClass('active');
 
 		item.addClass('active');
+
+		$db.q('select * from ??', [tablename], function(response) {
+
+		});
 	});
 
 	$$.TABLESLIST.on('click', '.expand', function() {
 		var item = $(this).parents('li');
 
 		item.toggleClass('expanded');
+
+		if (item.hasClass('expanded')) {
+			var tablename = item.find('.table-name').text().trim();
+
+			$db.q('show columns from ??', [tablename]).then(function(response) {
+
+				var html = '';
+
+				for (var i = 0; i < response.result.length; i++) {
+					var row = response.result[i],
+						type = row.Type;
+
+					type = type.replace('unsigned', '').trim();
+
+					if (row.Key === 'PRI') {
+						type = 'pk ' + type;
+					}
+
+					html += $template('table-columns-item', {
+						name: row.Field,
+						type: type
+					});
+				}
+
+				item.find('.table-columns').html(html);
+			});
+		}
+
 	});
 
 	$$.TABLESLIST.on('click', '.edit', function() {
@@ -125,6 +158,11 @@ $(function() {
 				var html = '';
 
 				for (var i = 0; i < response.result.length; i++) {
+					if (response.result[i].Database === 'information_schema' ||
+						response.result[i].Database === 'performance_schema' ||
+						response.result[i].Database === 'mysql') {
+						continue;
+					}
 					html += $template('databases-list-item', {
 						name: response.result[i].Database
 					});
