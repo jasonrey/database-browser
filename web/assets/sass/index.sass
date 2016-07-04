@@ -151,7 +151,7 @@ form
 
 	&[data-tab="servers"] #servers,
 	&[data-tab="tables"] #tables,
-	&[data-tab="queries"] #queries,
+	&[data-tab="folder"] #folder,
 	&[data-tab="history"] #history,
 	&[data-tab="settings"] #settings
 		display: block
@@ -175,7 +175,7 @@ form
 
 	&[data-tab="servers"] .panel-content #new,
 	&[data-tab="tables"] .panel-content #result,
-	&[data-tab="queries"] .panel-content #result,
+	&[data-tab="folder"] .panel-content #result,
 	&[data-tab="history"] .panel-content #result
 		display: flex
 
@@ -236,7 +236,7 @@ form
 
 		#content[data-tab="servers"] &:nth-child(1),
 		#content[data-tab="tables"] &:nth-child(2),
-		#content[data-tab="queries"] &:nth-child(3),
+		#content[data-tab="folder"] &:nth-child(3),
 		#content[data-tab="history"] &:nth-child(4),
 		#content[data-tab="settings"] &:nth-child(5)
 			&::after
@@ -344,7 +344,65 @@ form
 		font-size: 10px
 		color: $grey500
 
+#folder-list
+	position: absolute
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	overflow: auto
 
+	li
+		margin: 16px 8px
+		background-color: white
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
+		padding: 8px
+		cursor: pointer
+		position: relative
+
+		&::after
+			content: ''
+			display: table
+			clear: both
+
+		&:hover
+			background-color: $blue50
+
+			.delete
+				display: block
+
+		&.noname
+			.query
+				font-size: 12px
+				color: $grey800
+
+	.name
+		font-weight: 500
+
+	.query
+		margin: 8px 0 24px 0
+		font-size: 10px
+		color: $grey500
+
+	.date
+		text-align: right
+		font-size: 10px
+		color: $grey500
+
+	.delete
+		color: $red500
+		font-size: 12px
+		position: absolute
+		top: 0
+		right: 0
+		width: 16px
+		height: 16px
+		line-height: 16px
+		display: none
+		text-align: center
+
+		&:hover
+			background-color: $red50
 
 #databases
 	position: absolute
@@ -847,3 +905,4 @@ form
 		display: block
 		height: 48px
 		padding: 0 8px
+		box-sizing: border-box

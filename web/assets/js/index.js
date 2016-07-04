@@ -42,7 +42,7 @@ $(function() {
 		var key = $$.CONTENT.attr('data-key');
 
 		// TODO: Log based on settings
-		var history = $history.newItem(key);
+		var history = $history(key).new();
 
 		history.set('query', sql);
 		history.set('date', Date.now());
@@ -201,7 +201,7 @@ $(function() {
 		var group = $(this),
 			input = group.find('input');
 
-		input.focus();
+		input.trigger('focus');
 	});
 
 	$$.BODY.on('focus', 'form .group input', function() {
@@ -227,7 +227,7 @@ $(function() {
 			name = button.attr('data-name'),
 			status = $$.CONTENT.attr('data-connection');
 
-		if ((name === 'tables' || name === 'queries' || name === 'history') && status !== 'connecting' && status !=='connected') {
+		if ((name === 'tables' || name === 'folder' || name === 'history') && status !== 'connecting' && status !=='connected') {
 			return;
 		}
 
@@ -365,14 +365,14 @@ $(function() {
 			});
 
 		// Init history
-		var history = $history.init(key);
+		var history = $history(key);
 
-		var html = '';
+		var historyHTML = '';
 
 		for (var i = history.items.length - 1; i >= 0; i--) {
 			var date = new Date(history.items[i].date);
 
-			html += $template('history-list-item', {
+			historyHTML += $template('history-list-item', {
 				state: history.items[i].state ? 'success' : 'error',
 				query: history.items[i].query,
 				total: history.items[i].total || 0,
@@ -380,7 +380,28 @@ $(function() {
 			});
 		}
 
-		$$.HISTORYLIST.html(html);
+		$$.HISTORYLIST.html(historyHTML);
+
+		// Init folder
+		var folder = $storage.get('folder.' + key);
+
+		var folderHTML = '';
+
+		for (var itemkey in folder) {
+			var folderItem = folder[itemkey];
+
+			var itemDate = new Date(folderItem.date);
+
+			folderHTML += $template('folder-list-item', {
+				type: folderItem.name.length === 0 ? 'noname' : '',
+				key: itemkey,
+				name: folderItem.name,
+				query: folderItem.query,
+				date: itemDate.getFullYear() + '-' + ('00' + (itemDate.getMonth() + 1)).slice(-2) + '-' + ('00' + itemDate.getDate()).slice(-2) + ' ' + ('00' + itemDate.getHours()).slice(-2) + ':' + ('00' + itemDate.getMinutes()).slice(-2) + ':' + ('00' + itemDate.getSeconds()).slice(-2)
+			});
+		}
+
+		$$.FOLDERLIST.html(folderHTML);
 	});
 
 	$$.HISTORYLIST.on('click', 'li', function() {
@@ -390,6 +411,27 @@ $(function() {
 		$dbquery(query, [], {
 			noHistory: true
 		});
+	});
+
+	$$.FOLDERLIST.on('click', 'li', function(event) {
+		if ($(event.target).hasClass('delete')) {
+			return;
+		}
+
+		var item = $(this),
+			query = item.find('.query').text();
+
+		$dbquery(query);
+	});
+
+	$$.FOLDERLIST.on('click', '.delete', function() {
+		var item = $(this).parents('li'),
+			itemkey = item.attr('data-key'),
+			key = $$.CONTENT.attr('data-key');
+
+		$folder(key).delete(itemkey);
+
+		item.remove();
 	});
 
 	$$.DATABASELIST.on('change', function() {
@@ -507,6 +549,8 @@ $(function() {
 		}
 
 		$$.POPUP.attr('data-popup', 'query-save');
+
+		$$.POPUPQUERYSAVE.find('input').trigger('focus');
 	});
 
 	$$.QUERYCLEAR.on('click', function() {
@@ -522,7 +566,23 @@ $(function() {
 	});
 
 	$$.POPUPQUERYSAVE.on('click', '.yes', function() {
+		var input = $(this).parents('.popup-body').find('input'),
+			name = input.val(),
+			query = $$.EDITOR.text(),
+			key = $$.CONTENT.attr('data-key');
 
+		$folder(key).add({
+			name: name,
+			query: query,
+			date: Date.now()
+		});
+	});
+
+	$$.POPUPQUERYSAVE.on('keydown', 'input', function(event) {
+		if (event.keyCode === 13) {
+			$$.POPUPQUERYSAVE.find('.yes').trigger('click');
+			return false;
+		}
 	});
 
 	// Storage init

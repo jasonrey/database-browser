@@ -14,6 +14,19 @@ script#history-list-item(type="text/html")
 		.total {{total}}
 		.date {{date}}
 
+//- key - saved key
+//- type - noname | ''
+//- name - name of the query
+//- query - sql
+//- date - saved date
+script#folder-list-item(type="text/html")
+	li(class="{{type}}", data-key="{{key}}")
+		.name {{name}}
+		.query {{query}}
+		.date {{date}}
+		button.delete
+			i.icon.icon-cross
+
 //- name - database name
 script#database-list-item(type="text/html")
 	option {{name}}

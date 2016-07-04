@@ -17,7 +17,7 @@ block body
 					i.icon.icon-server
 				button(data-name="tables")
 					i.icon.icon-columns
-				button(data-name="queries")
+				button(data-name="folder")
 					i.icon.icon-folder
 				button(data-name="history")
 					i.icon.icon-clock
@@ -35,6 +35,9 @@ block body
 							//- template#database-list-item
 					ul#table-list
 						//- template#table-list-item
+				#folder.tab
+					ul#folder-list
+						//- template#folder-list-item
 				#history.tab
 					ul#history-list
 						//- template#history-list-item

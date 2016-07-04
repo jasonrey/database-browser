@@ -11,73 +11,104 @@
 		return html;
 	};
 
-	class HistoryItem {
-		constructor(history) {
-			this.history = history;
-
-			this.data = {};
+	var HistoryItem = function(history) {
+		if (this.constructor.name !== 'HistoryItem') {
+			return new HistoryItem(history);
 		}
 
-		set(key, value) {
-			this.data[key] = value;
+		this.history = history;
+		this.data = {};
+	};
+
+	HistoryItem.prototype.set = function(key, value) {
+		this.data[key] = value;
+	};
+
+	HistoryItem.prototype.update = function() {
+		this.history.push(this.data);
+
+		var date = new Date(this.data.date);
+
+		$$.HISTORYLIST.prepend($template('history-list-item', {
+			state: this.data.state ? 'success' : 'error',
+			query: this.data.query,
+			total: this.data.total || 0,
+			date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2) + ' ' + ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2) + ':' + ('00' + date.getSeconds()).slice(-2)
+		}));
+
+		// TODO: Based on settings
+		if (this.history.items.length > 50) {
+			$$HISTORYLIST.find('li').slice(50 - this.history.items.length).remove();
+		}
+	};
+
+	var History = function(key) {
+		if (!(this instanceof History)) {
+			return new History(key);
 		}
 
-		update() {
-			this.history.push(this.data);
+		this.items = $storage.get('history.' + key);
 
-			var date = new Date(this.data.date);
-
-			$$.HISTORYLIST.prepend($template('history-list-item', {
-				state: this.data.state ? 'success' : 'error',
-				query: this.data.query,
-				total: this.data.total || 0,
-				date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2) + ' ' + ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2) + ':' + ('00' + date.getSeconds()).slice(-2)
-			}));
-
-			// TODO: Based on settings
-			if (this.history.items.length > 50) {
-				$$HISTORYLIST.find('li').slice(50 - this.history.items.length).remove();
-			}
-		}
-	}
-
-	class History {
-		static newItem(key) {
-			var history = this.init(key),
-				item = new HistoryItem(history);
-
-			return item;
+		if (this.items === undefined || this.items === null || this.items.constructor.name !== 'Array') {
+			this.items = [];
+			$storage.set('history.' + key, this.items);
 		}
 
-		static init(key) {
-			return new this(key);
+		this.key = key;
+	};
+
+	History.prototype.new = function() {
+		var item = new HistoryItem(this);
+
+		return item;
+	};
+
+	History.prototype.push = function(item) {
+		this.items.push(item);
+
+		this.update();
+	};
+
+	History.prototype.update = function() {
+		// TODO: Shift based on settings
+		if (this.items.length > 50) {
+			this.items.splice(0, this.items.length - 50);
 		}
 
-		constructor(key) {
-			this.key = key;
-			this.items = $storage.get('history.' + key);
-
-			if (this.items === undefined || this.items === null || this.items.constructor.name !== 'Array') {
-				this.items = [];
-				$storage.set('history.' + key, this.items);
-			}
-		}
-
-		push(item) {
-			this.items.push(item);
-
-			this.update();
-		}
-
-		update(item) {
-			// TODO: Shift based on settings
-			if (this.items.length > 50) {
-				this.items.splice(0, this.items.length - 50);
-			}
-
-			$storage.set('history.' + this.key, this.items);
-		}
-	}
+		$storage.set('history.' + this.key, this.items);
+	};
 
 	window.$history = History;
+
+	var Folder = function(key) {
+		if (!(this instanceof Folder)) {
+			return new Folder(key);
+		}
+
+		this.key = key;
+	};
+
+	Folder.prototype.add = function(item) {
+		var itemkey = Date.now().toString() + Math.random().toString().slice(2);
+
+		$storage.set('folder.' + this.key + '.' + itemkey, item);
+
+		var date = new Date(item.date);
+
+		$$.FOLDERLIST.append($template('folder-list-item', {
+			type: item.name.length === 0 ? 'noname' : '',
+			key: itemkey,
+			name: item.name,
+			query: item.query,
+			date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2) + ' ' + ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2) + ':' + ('00' + date.getSeconds()).slice(-2)
+		}));
+
+		return this;
+	};
+
+	Folder.prototype.delete = function(itemkey) {
+		$storage.delete('folder.' + this.key + '.' + itemkey);
+	};
+
+	window.$folder = Folder;
 })();

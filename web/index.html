@@ -30,7 +30,7 @@
         <div id="sidebar-tab-nav">
           <button data-name="servers"><i class="icon icon-server"></i></button>
           <button data-name="tables"><i class="icon icon-columns"></i></button>
-          <button data-name="queries"><i class="icon icon-folder"></i></button>
+          <button data-name="folder"><i class="icon icon-folder"></i></button>
           <button data-name="history"><i class="icon icon-clock"></i></button>
           <button data-name="settings"><i class="icon icon-cog"></i></button>
         </div>
@@ -43,6 +43,9 @@
               <select id="database-list"></select>
             </div>
             <ul id="table-list"></ul>
+          </div>
+          <div class="tab" id="folder">
+            <ul id="folder-list"></ul>
           </div>
           <div class="tab" id="history">
             <ul id="history-list"></ul>
@@ -130,6 +133,14 @@
         <div class="query">{{query}}</div>
         <div class="total">{{total}}</div>
         <div class="date">{{date}}</div>
+      </li>
+    </script>
+    <script id="folder-list-item" type="text/html">
+      <li class="{{type}}" data-key="{{key}}">
+        <div class="name">{{name}}</div>
+        <div class="query">{{query}}</div>
+        <div class="date">{{date}}</div>
+        <button class="delete"><i class="icon icon-cross"></i></button>
       </li>
     </script>
     <script id="database-list-item" type="text/html">
