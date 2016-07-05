@@ -217,7 +217,6 @@ form
 			color: $grey500
 			cursor: not-allowed
 
-			#content[data-connection="connecting"] &,
 			#content[data-connection="connected"] &
 				color: $blue500
 				cursor: pointer
@@ -230,7 +229,6 @@ form
 			&:nth-child(4)
 				background-color: transparent
 
-				#content[data-connection="connecting"] &,
 				#content[data-connection="connected"] &
 					background-color: $blue50
 
@@ -265,22 +263,20 @@ form
 	overflow: auto
 
 	li
-		height: 32px
-		line-height: 32px
-		padding: 0 32px 0 16px
 		position: relative
 
 		span
 			display: block
 			cursor: pointer
+			padding: 8px 32px 8px 16px
 
 		button
 			position: absolute
 			top: 0
 			right: 0
-			width: 32px
-			height: inherit
-			line-height: inherit
+			width: 24px
+			height: 24px
+			line-height: 24px
 			text-align: center
 			display: none
 			color: $blue500
@@ -545,6 +541,9 @@ form
 
 	.name
 		padding: 0 8px 0 24px
+		font-size: 12px
+		overflow: hidden
+		text-overflow: ellipsis
 
 	.status
 		position: absolute
@@ -877,9 +876,9 @@ form
 		border-top: 1px solid $grey300
 
 		button
-			width: 50%
 			height: 48px
 			flex-shrink: 0
+			flex-grow: 1
 			box-sizing: border-box
 	.no
 		color: $red500
@@ -906,3 +905,67 @@ form
 		height: 48px
 		padding: 0 8px
 		box-sizing: border-box
+
+#popup-error
+	display: none
+
+	#popup[data-popup="error"] &
+		display: block
+
+	p
+		padding: 16px
+
+	.yes
+		color: $grey500
+
+		&:hover
+			background-color: $grey50
+
+@keyframes loadingblob
+	0%
+		transform: scale3d(0, 0, 0)
+		opacity: 0
+
+	50%
+		opacity: 0.8
+
+	100%
+		transform: scale3d(1, 1, 1)
+		opacity: 0
+
+#popup-loading
+	display: none
+	padding: 24px 0
+	text-align: center
+	overflow: hidden
+
+	#popup[data-popup="loading"] &
+		display: block
+
+		.loading-blob
+			&::before
+				animation-name: loadingblob
+
+	p
+		position: relative
+
+	.loading-blob
+		position: absolute
+		top: 50%
+		left: 50%
+		width: 300px
+		height: 300px
+		transform: translate(-50%, -50%) rotate(45deg)
+
+		&::before
+			content: ''
+			position: absolute
+			top: 0
+			left: 0
+			width: 100%
+			height: 100%
+			background-color: $bluegrey100
+			opacity: 0
+			transform: scale3d(0, 0, 0)
+			animation-duration: 2s
+			animation-iteration-count: infinite

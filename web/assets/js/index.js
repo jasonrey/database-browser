@@ -75,6 +75,8 @@ $(function() {
 					history.set('total', response.result.length);
 				}
 
+				console.log(response);
+
 				return Promise.resolve();
 			}, function(err) {
 				history.set('state', false);
@@ -227,7 +229,7 @@ $(function() {
 			name = button.attr('data-name'),
 			status = $$.CONTENT.attr('data-connection');
 
-		if ((name === 'tables' || name === 'folder' || name === 'history') && status !== 'connecting' && status !=='connected') {
+		if ((name === 'tables' || name === 'folder' || name === 'history') && status !=='connected') {
 			return;
 		}
 
@@ -321,25 +323,41 @@ $(function() {
 			key = item.attr('data-key'),
 			data = $storage.get('servers.' + key);
 
-		if ($db && $db.constructor.name === 'DB') {
-			$db.close();
-		}
-
 		$connectionState = false;
+
+		$$.POPUP.attr('data-popup', 'loading');
 
 		$$.CONTENT
 			.attr('data-key', key)
-			.attr('data-connection', 'connecting')
-			.attr('data-tab', 'tables');
+			.attr('data-connection', 'connecting');
 
 		$$.CONNECTIONNAME.text(data.user + '@' + data.host);
+
+		if ($db && $db.constructor.name === 'DB') {
+			$db.close()
+				.catch(function(err) {
+				});
+			$$.DATABASELIST.html('');
+			$$.TABLELIST.html('');
+			$$.HISTORYLIST.html('');
+			$$.FOLDERLIST.html('');
+			$$.TOTAL.text('');
+			$$.TABLEHEAD.html('');
+			$$.TABLEBODY.html('');
+			$$.RESULT.removeAttr('data-state');
+		}
 
 		$db = DB.getInstance(data);
 
 		$db.q('show databases')
 			.then(function(response) {
 				$connectionState = true;
-				$$.CONTENT.attr('data-connection', 'connected');
+
+				$$.POPUP.removeAttr('data-popup');
+
+				$$.CONTENT
+					.attr('data-connection', 'connected')
+					.attr('data-tab', 'tables');
 
 				var html = '';
 
@@ -361,7 +379,8 @@ $(function() {
 			}).catch(function(err) {
 				$$.CONTENT.attr('data-connection', '');
 
-				// TODO: Show error in result
+				$$.POPUPERROR.find('p').html(err);
+				$$.POPUP.attr('data-popup', 'error');
 			});
 
 		// Init history
@@ -518,29 +537,35 @@ $(function() {
 		$$.SERVERLIST.find('li.editing').removeClass('editing');
 	});
 
-	$$.TABLE.on('mouseenter', 'td, th', function() {
-		var index = $(this).index();
-
-		$$.TABLE.find('tr').find('td:eq(' + (index) + ')').addClass('hover');
-		$$.TABLEHEAD.find('th').eq(index).addClass('hover');
-	});
-
-	$$.TABLE.on('mouseleave', 'td, th', function() {
-		var index = $(this).index();
-
-		$$.TABLE.find('tr').find('td:eq(' + (index) + ')').removeClass('hover');
-		$$.TABLEHEAD.find('th').eq(index).removeClass('hover');
-	});
-
 	$$.EDITOR.on('keydown', function(event) {
-		if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
-			$$.QUERYRUN.trigger('click');
-			return false;
+		if ((event.ctrlKey || event.metaKey)) {
+			// ENTER || r || e
+			if (event.keyCode === 13 || event.keyCode === 82 || event.keyCode === 69) {
+				$$.QUERYRUN.trigger('click');
+				return false;
+			}
+
+			// s
+			if (event.keyCode === 83) {
+				$$.QUERYSAVE.trigger('click');
+				return false;
+			}
+
+			// k
+			if (event.keyCode === 75) {
+				$$.QUERYCLEAR.trigger('click');
+			}
 		}
 	});
 
 	$$.QUERYRUN.on('click', function() {
-		$dbquery($$.EDITOR.text());
+		var sql = $$.EDITOR.text();
+
+		if (sql === '') {
+			return;
+		}
+
+		$dbquery(sql);
 	});
 
 	$$.QUERYSAVE.on('click', function() {
@@ -581,6 +606,11 @@ $(function() {
 	$$.POPUPQUERYSAVE.on('keydown', 'input', function(event) {
 		if (event.keyCode === 13) {
 			$$.POPUPQUERYSAVE.find('.yes').trigger('click');
+			return false;
+		}
+
+		if (event.keyCode === 27) {
+			$$.POPUPQUERYSAVE.find('.no').trigger('click');
 			return false;
 		}
 	});
