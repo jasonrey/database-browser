@@ -58,9 +58,11 @@ $(function() {
 					$$.TOTAL.text(response.result.affectedRows);
 
 					history.set('total', response.result.affectedRows);
-					history.set('insertId', response.result.insertId);
+
 
 					if (response.result.insertId) {
+						history.set('insertId', response.result.insertId);
+
 						insertId = response.result.insertId;
 
 						var insertTablename = sql.match(/insert into (.*?) .*/i)[1].replace(/`/g, '');
@@ -74,8 +76,6 @@ $(function() {
 
 					history.set('total', response.result.length);
 				}
-
-				console.log(response);
 
 				return Promise.resolve();
 			}, function(err) {

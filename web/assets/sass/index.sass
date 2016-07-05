@@ -689,6 +689,7 @@ form
 	width: 100%
 	overflow: auto
 	display: none
+	font-size: 12px
 
 	#result[data-state="success"] &,
 	#result[data-state="loading"] &
@@ -713,7 +714,7 @@ form
 				background-color: $bluegrey50
 
 		th, td
-			padding: 8px 16px
+			padding: 4px 8px
 			border-left: 1px solid $grey200
 
 			&:first-child
@@ -734,6 +735,9 @@ form
 
 		tbody
 			tr
+				&:nth-child(odd)
+					background-color: white
+
 				&:hover
 					background-color: $bluegrey50
 

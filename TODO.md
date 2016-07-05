@@ -11,3 +11,5 @@
 - Save result set
 - Revamp to side panel
 - Clear history
+- Context menu for history item
+- Delete server deletes data
