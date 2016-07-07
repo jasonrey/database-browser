@@ -12,8 +12,7 @@
 - Result Set Tab
 - Report Tab
 - User Tab
-- History to include database name
-- Remember window size and position
+- Keyboard shortcut
 
 # Completed
 - Auto calculate table counts
@@ -22,3 +21,5 @@
 - Revamp to side panel
 - SSH
 - SSH key upload
+- History to include database name
+- Remember window size and position

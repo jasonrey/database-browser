@@ -51,6 +51,7 @@ $(function() {
 		history.set('query', sql);
 		history.set('date', Date.now());
 		history.set('total', 0);
+		history.set('db', $$.DATABASELIST.val());
 
 		(new Promise((resolve, reject) => {
 			// TODO: Delete pre query
@@ -374,7 +375,13 @@ $(function() {
 			.attr('data-key', key)
 			.attr('data-connection', 'connecting');
 
-		$$.CONNECTIONNAME.text(data.user + '@' + data.host);
+		var connectionName = data.user + '@' + data.host;
+
+		if (data.ssh && data.sshhost.length) {
+			connectionName += '@' + data.sshhost;
+		}
+
+		$$.CONNECTIONNAME.text(connectionName);
 
 		if ($db && $db.constructor.name === 'DB') {
 			$db.close()
@@ -437,6 +444,7 @@ $(function() {
 			historyHTML += $template('history-list-item', {
 				state: history.items[i].state ? 'success' : 'error',
 				query: history.items[i].query,
+				db: history.items[i].db,
 				total: history.items[i].total || 0,
 				date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2) + ' ' + ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2) + ':' + ('00' + date.getSeconds()).slice(-2)
 			});
@@ -468,10 +476,15 @@ $(function() {
 
 	$$.HISTORYLIST.on('click', 'li', function() {
 		var item = $(this),
-			query = item.find('.query').text();
+			query = item.find('.query').text(),
+			db = item.find('.db').text();
 
-		$dbquery(query, [], {
-			noHistory: true
+		$$.DATABASELIST.val(db).trigger('change');
+
+		$db.q('use ??', [db]).then(function() {
+			$dbquery(query, [], {
+				noHistory: true
+			});
 		});
 	});
 

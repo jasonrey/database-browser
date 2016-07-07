@@ -4,8 +4,12 @@ const postcss = require('postcss');
 const autoprefixer = require('autoprefixer');
 const fs = require('fs');
 const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const {app, BrowserWindow, Menu} = electron;
+
+const Config = require('electron-config');
+const config = new Config({
+	name: 'dbbr'
+});
 
 global.__basepath = __dirname;
 
@@ -55,15 +59,39 @@ let createWindow = function() {
 	}));
 
 	Promise.all(processes).then(() => {
-		mainWindow = new BrowserWindow({
-			width: 1200,
-			height: 800,
+		let option = {
+			width: config.get('size.w') || 1200,
+			height: config.get('size.h') || 800,
 			title: 'Database Browser'
-		});
+		};
+
+		if (config.get('position.x')) {
+			option.x = config.get('position.x');
+		}
+
+		if (config.get('position.y')) {
+			option.y = config.get('position.y');
+		}
+
+		mainWindow = new BrowserWindow(option);
+
+		const menuTemplate = require(__dirname + '/menu.js');
+
+		Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 
 		mainWindow.loadURL(`file://${target}`);
 
 		mainWindow.webContents.openDevTools();
+
+		mainWindow.on('close', () => {
+			let position = mainWindow.getPosition(),
+				size = mainWindow.getSize();
+
+			config.set('position.x', position[0]);
+			config.set('position.y', position[1]);
+			config.set('size.w', size[0]);
+			config.set('size.h', size[1]);
+		});
 
 		mainWindow.on('closed', () => {
 			mainWindow = null;

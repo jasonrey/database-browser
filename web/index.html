@@ -139,7 +139,7 @@
           <div id="editor" contenteditable="true"></div>
           <div class="actions">
             <button id="query-run"><i class="icon icon-play"></i></button>
-            <button id="query-save"><i class="icon icon-plus"></i></button>
+            <button id="query-save"><i class="icon icon-heart"></i></button>
             <button id="query-clear"><i class="icon icon-cross"></i></button>
           </div>
         </div>
@@ -177,6 +177,7 @@
     <script id="history-list-item" type="text/html">
       <li class="{{state}}">
         <div class="query">{{query}}</div>
+        <div class="db">{{db}}</div>
         <div class="total">{{total}}</div>
         <div class="date">{{date}}</div>
       </li>
