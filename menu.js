@@ -1,32 +1,59 @@
-const template = [
-	{
-		label: 'View',
-		submenu: [
-			{
-				role: 'togglefullscreen'
-			}
-		]
+const template = [{
+	label: 'Edit',
+	submenu: [{
+		label: 'Undo',
+		accelerator: 'CmdOrCtrl+Z',
+		role: 'undo'
 	}, {
-		role: 'window',
-		submenu: [
-			{
-				role: 'minimize'
-			}, {
-				role: 'close'
-			}
-		]
+		label: 'Redo',
+		accelerator: 'Shift+CmdOrCtrl+Z',
+		role: 'redo'
 	}, {
-		role: 'help',
-		submenu: [
-			{
-				label: 'Learn More',
-				click() {
-					require('electron').shell.openExternal('http://electron.atom.io');
-				}
+		type: 'separator'
+	}, {
+		label: 'Cut',
+		accelerator: 'CmdOrCtrl+X',
+		role: 'cut'
+	}, {
+		label: 'Copy',
+		accelerator: 'CmdOrCtrl+C',
+		role: 'copy'
+	}, {
+		label: 'Paste',
+		accelerator: 'CmdOrCtrl+V',
+		role: 'paste'
+	}, {
+		label: 'Select All',
+		accelerator: 'CmdOrCtrl+A',
+		role: 'selectall'
+	}]
+}, {
+	label: 'View',
+	submenu: [
+		{
+			role: 'togglefullscreen'
+		}
+	]
+}, {
+	role: 'window',
+	submenu: [
+		{
+			role: 'minimize'
+		}, {
+			role: 'close'
+		}
+	]
+}, {
+	role: 'help',
+	submenu: [
+		{
+			label: 'Learn More',
+			click() {
+				require('electron').shell.openExternal('http://electron.atom.io');
 			}
-		]
-	}
-];
+		}
+	]
+}];
 
 if (process.platform === 'darwin') {
 	template.unshift({

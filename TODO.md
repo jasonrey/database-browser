@@ -8,7 +8,6 @@
 - Export to SQL
 - Clear history
 - Context menu for history item
-- Delete server deletes data
 - Result Set Tab
 - Report Tab
 - User Tab
@@ -23,3 +22,4 @@
 - SSH key upload
 - History to include database name
 - Remember window size and position
+- Delete server deletes data

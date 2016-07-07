@@ -31,15 +31,15 @@ block body
 
 		.panel-sidebar
 			#sidebar-tab-content
+				#databases
+					i.icon.icon-layout
+					i.icon-fa.icon-angle-down
+					select#database-list
+						//- template#database-list-item
 				#servers.tab
 					ul#server-list
 						//- template#server-list-item
 				#tables.tab
-					#databases
-						i.icon.icon-layout
-						i.icon-fa.icon-angle-down
-						select#database-list
-							//- template#database-list-item
 					ul#table-list
 						//- template#table-list-item
 				#folder.tab
@@ -109,6 +109,9 @@ block body
 			#result.content
 				//- effective sql
 				#command
+				button#command-save
+					i.icon.icon-heart
+				//- result table
 				#result-box
 					#meta
 						//- total rows

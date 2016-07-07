@@ -15,7 +15,7 @@ form
 		padding: 8px
 		text-align: center
 		border-bottom: 1px solid $grey300
-		background-color: $bluegrey50
+		background-color: $grey200
 		font-weight: 500
 
 	.group
@@ -232,10 +232,14 @@ form
 	.tab
 		display: none
 		position: absolute
-		top: 0
+		top: 32px
 		left: 0
+		bottom: 0
 		width: 100%
-		height: 100%
+
+		&#servers,
+		&#settings
+			top: 0
 
 #servers
 
@@ -273,7 +277,8 @@ form
 			line-height: 24px
 			text-align: center
 			display: none
-			color: $blue500
+			color: $grey600
+			font-size: 12px
 
 		&:hover
 			background-color: $grey200
@@ -306,6 +311,7 @@ form
 		padding: 8px
 		cursor: pointer
 		border-top: 3px solid transparent
+		position: relative
 
 		&::after
 			content: ''
@@ -314,6 +320,9 @@ form
 
 		&:hover
 			background-color: $grey100
+
+			.history-context
+				display: block
 
 		&.success
 			border-color: $green500
@@ -346,6 +355,17 @@ form
 		float: right
 		font-size: 10px
 		color: $grey500
+
+	.history-context
+		width: 24px
+		height: 24px
+		line-height: 24px
+		color: $grey600
+		position: absolute
+		top: 0
+		right: 0
+		font-size: 12px
+		display: none
 
 #folder-list
 	position: absolute
@@ -417,6 +437,15 @@ form
 	border-bottom: 1px solid $grey300
 	cursor: pointer
 	box-sizing: border-box
+	display: none
+
+	#content[data-tab="tables"] &,
+	#content[data-tab="folder"] &,
+	#content[data-tab="history"] &,
+	#content[data-tab="result"] &,
+	#content[data-tab="report"] &,
+	#content[data-tab="user"] &
+		display: block
 
 	i
 		position: absolute
@@ -436,17 +465,18 @@ form
 		color: $grey500
 
 	&:hover
-		background-color: $blue50
+		background-color: $grey200
 
 #database-list
 	height: 32px
 	line-height: 32px;
 	box-sizing: border-box
 	padding: 0 32px 0 32px
+	position: relative
 
 #table-list
 	position: absolute
-	top: 32px
+	top: 0
 	bottom: 0
 	left: 0
 	width: 100%
@@ -488,11 +518,12 @@ form
 			position: absolute
 			top: 0
 			right: 0
-			width: 32px
-			height: 32px
-			line-height: 32px
-			color: $blue500
+			width: 24px
+			height: 24px
+			line-height: 24px
+			color: $grey600
 			display: none
+			font-size: 12px
 
 		&:hover
 			.table-name
@@ -553,6 +584,7 @@ form
 	line-height: 24px
 	border-top: 1px solid $grey300
 	box-sizing: border-box
+	background-color: $grey100
 
 	.name
 		padding: 0 8px 0 24px
@@ -715,6 +747,17 @@ form
 	#result[data-state="success"] &,
 	#result[data-state="loading"] &
 		display: block
+
+#command-save
+	position: absolute
+	top: 0
+	right: 16px
+	width: 32px
+	height: 32px
+	line-height: 32px
+
+	&:hover
+		background-color: $grey300
 
 #result-box
 	flex-grow: 1
@@ -891,7 +934,7 @@ form
 		bottom: 0
 		width: 100%
 		height: 24px
-		background-color: $grey50
+		background-color: $grey100
 		border-top: 1px solid $grey300
 		box-sizing: border-box
 

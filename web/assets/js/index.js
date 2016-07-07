@@ -162,6 +162,41 @@ $(function() {
 	};
 
 	var $populate = {
+		changeDB: function(db) {
+			return new Promise(function(resolve, reject) {
+				$db.q('use ??', [db])
+					.then(function(response) {
+						return $db.q('show tables');
+					})
+					.then(function(response) {
+						var html = '';
+
+						var names = [];
+
+						for (var i = 0; i < response.result.length; i++) {
+							names.push(response.result[i][response.fields[0].name]);
+
+							html += $template('table-list-item', {
+								name: response.result[i][response.fields[0].name]
+							});
+						}
+
+						$$.TABLELIST.html(html);
+
+						for (var j = 0; j < names.length; j++) {
+							$populate.tableCount(names[j]);
+						}
+
+						resolve();
+					})
+					.catch(function(err) {
+						$populate.resultError(err);
+
+						reject(err);
+					});
+			});
+		},
+
 		resultTable: function(fields, rows) {
 			$$.TOTAL.text(rows.length);
 
@@ -474,14 +509,26 @@ $(function() {
 		$$.FOLDERLIST.html(folderHTML);
 	});
 
-	$$.HISTORYLIST.on('click', 'li', function() {
+	$$.HISTORYLIST.on('click', 'li', function(event) {
+		if ($(event.target).hasClass('history-context')) {
+
+			return;
+		}
+
 		var item = $(this),
 			query = item.find('.query').text(),
-			db = item.find('.db').text();
+			db = item.find('.db').text(),
+			currentdb = $$.DATABASELIST.val();
 
-		$$.DATABASELIST.val(db).trigger('change');
+		var useDB = Promise.resolve();
 
-		$db.q('use ??', [db]).then(function() {
+		if (db !== currentdb) {
+			$$.DATABASELIST.val(db);
+
+			useDB = $populate.changeDB(db);
+		}
+
+		useDB.then(function() {
 			$dbquery(query, [], {
 				noHistory: true
 			});
@@ -512,32 +559,7 @@ $(function() {
 	$$.DATABASELIST.on('change', function() {
 		var db = this.value;
 
-		$db.q('use ??', [db])
-			.then(function(response) {
-				return $db.q('show tables');
-			})
-			.then(function(response) {
-				var html = '';
-
-				var names = [];
-
-				for (var i = 0; i < response.result.length; i++) {
-					names.push(response.result[i][response.fields[0].name]);
-
-					html += $template('table-list-item', {
-						name: response.result[i][response.fields[0].name]
-					});
-				}
-
-				$$.TABLELIST.html(html);
-
-				for (var j = 0; j < names.length; j++) {
-					$populate.tableCount(names[j]);
-				}
-			})
-			.catch(function(err) {
-				$populate.resultError(err);
-			});
+		$populate.changeDB(db);
 	});
 
 	$$.NEW.on('change', 'input[name="ssh"]', function() {
@@ -559,7 +581,6 @@ $(function() {
 	});
 
 	$$.NEW.on('change', 'input[name="sshkeyfile-input"]', function() {
-		console.log(this.files);
 		$$.GROUPSSHPASSWORD.toggleClass('hasfile', this.files.length);
 		$$.LABELSSHPASSWORD.attr('data-file', this.files.length ? this.files[0].path : '');
 		$$.NEWCONNECTIONFORMINPUTS.filter('[name="sshkeyfile"]').val(this.files.length ? this.files[0].path : '');
@@ -574,6 +595,9 @@ $(function() {
 			$$.SERVERLIST.find('li[data-key="' + key + '"]').remove();
 
 			$storage.delete('servers.' + key);
+
+			$storage.delete('history.' + key);
+			$storage.delete('folder.' + key);
 		}
 
 		var data = {};
@@ -653,6 +677,14 @@ $(function() {
 		$$.SERVERLIST.find('li.editing').removeClass('editing');
 	});
 
+	$$.COMMANDSAVE.on('click', function() {
+		$$.POPUP.attr('data-popup', 'query-save');
+
+		$$.POPUP.attr('data-source', 'command');
+
+		$$.POPUPQUERYSAVE.find('input').trigger('focus');
+	});
+
 	$$.EDITOR.on('keydown', function(event) {
 		if ((event.ctrlKey || event.metaKey)) {
 			// ENTER || r || e
@@ -712,6 +744,12 @@ $(function() {
 			query = $$.EDITOR.text(),
 			key = $$.CONTENT.attr('data-key');
 
+		if ($$.POPUP.attr('data-source') === 'command') {
+			$$.POPUP.attr('data-source', '');
+
+			query = $$.COMMAND.text();
+		}
+
 		$folder(key).add({
 			name: name,
 			query: query,
@@ -729,6 +767,8 @@ $(function() {
 			$$.POPUPQUERYSAVE.find('.no').trigger('click');
 			return false;
 		}
+
+		return true;
 	});
 
 	// Storage init

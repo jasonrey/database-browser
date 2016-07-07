@@ -38,13 +38,13 @@
       </div>
       <div class="panel-sidebar">
         <div id="sidebar-tab-content">
+          <div id="databases"><i class="icon icon-layout"></i><i class="icon-fa icon-angle-down"></i>
+            <select id="database-list"></select>
+          </div>
           <div class="tab" id="servers">
             <ul id="server-list"></ul>
           </div>
           <div class="tab" id="tables">
-            <div id="databases"><i class="icon icon-layout"></i><i class="icon-fa icon-angle-down"></i>
-              <select id="database-list"></select>
-            </div>
             <ul id="table-list"></ul>
           </div>
           <div class="tab" id="folder">
@@ -121,6 +121,7 @@
         </div>
         <div class="content" id="result">
           <div id="command"></div>
+          <button id="command-save"><i class="icon icon-heart"></i></button>
           <div id="result-box">
             <div id="meta">
               <div id="total"></div>
@@ -180,6 +181,7 @@
         <div class="db">{{db}}</div>
         <div class="total">{{total}}</div>
         <div class="date">{{date}}</div>
+        <button class="history-context"><i class="icon icon-stack"></i></button>
       </li>
     </script>
     <script id="folder-list-item" type="text/html">
