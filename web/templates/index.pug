@@ -11,18 +11,25 @@ block scripts
 
 block body
 	#content.panels(data-tab="servers", data-content="new")
+		#sidebar-tab-nav
+			button(data-name="servers")
+				i.icon.icon-server
+			button(data-name="tables")
+				i.icon.icon-columns
+			button(data-name="folder")
+				i.icon.icon-heart
+			button(data-name="history")
+				i.icon.icon-clock
+			button(data-name="result")
+				i.icon.icon-folder
+			button(data-name="report")
+				i.icon.icon-paper
+			button(data-name="user")
+				i.icon.icon-head
+			button(data-name="settings")
+				i.icon.icon-cog
+
 		.panel-sidebar
-			#sidebar-tab-nav
-				button(data-name="servers")
-					i.icon.icon-server
-				button(data-name="tables")
-					i.icon.icon-columns
-				button(data-name="folder")
-					i.icon.icon-folder
-				button(data-name="history")
-					i.icon.icon-clock
-				button(data-name="settings")
-					i.icon.icon-cog
 			#sidebar-tab-content
 				#servers.tab
 					ul#server-list
@@ -52,17 +59,42 @@ block body
 					h2.new-title New Connection
 					h2.edit-title Edit Connection
 					.group
-						label Host
+						label.input-label Host
 						input(type="text", name="host")
 					.group
-						label User
+						label.input-label User
 						input(type="text", name="user")
 					.group
-						label Password
+						label.input-label Password
 						input(type="password", name="password")
 					.group
-						label Port
+						label.input-label Port
 						input(type="number", name="port")
+					.group#ssh-toggle
+						label
+							input(type="checkbox", name="ssh")
+							=" SSH"
+					#ssh-settings
+						.group
+							label.input-label SSH Host
+							input(type="text", name="sshhost")
+						.group
+							label.input-label SSH User
+							input(type="text", name="sshuser")
+						#group-sshpassword.group
+							label#label-sshpassword.input-label
+							input(type="password", name="sshpassword")
+							button#upload-sshkeyfile(type="button")
+								i.icon.icon-upload
+								i.icon.icon-cross
+							input(type="file", name="sshkeyfile-input")
+							input(type="hidden", name="sshkeyfile")
+						.group
+							label.input-label SSH Port
+							input(type="number", name="sshport")
+						.group
+							label.input-label Local Binding Port (Random by default)
+							input(type="number", name="sshport")
 					.actions
 						button.red.delete(type="button")
 							i.icon.icon-trash

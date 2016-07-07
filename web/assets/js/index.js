@@ -29,6 +29,10 @@ $(function() {
 			return;
 		}
 
+		if (typeof options !== 'object') {
+			options = {};
+		}
+
 		var sql = $db.format(query, value);
 
 		$$.COMMAND.text(sql);
@@ -48,8 +52,8 @@ $(function() {
 		history.set('date', Date.now());
 		history.set('total', 0);
 
-		return new Promise((resolve, reject) => {
-			var insertId;
+		(new Promise((resolve, reject) => {
+			// TODO: Delete pre query
 
 			$db.q(sql).then(function(response) {
 				history.set('state', true);
@@ -59,142 +63,187 @@ $(function() {
 
 					history.set('total', response.result.affectedRows);
 
-
+					// INSERT INTO
 					if (response.result.insertId) {
 						history.set('insertId', response.result.insertId);
 
-						insertId = response.result.insertId;
-
 						var insertTablename = sql.match(/insert into (.*?) .*/i)[1].replace(/`/g, '');
 
-						return $db.q('show keys from ?? where ?? = ?', [insertTablename, 'Key_name', 'PRIMARY']);
+						$populate.tableCount(insertTablename);
+
+						$db.q('show keys from ?? where ?? = ?', [insertTablename, 'Key_name', 'PRIMARY'])
+							.then(function(subResponse) {
+								if (subResponse.result.length === 0) {
+									return Promise.reject('No primary key found.');
+								}
+
+								return $db.q('select * from ?? where ?? = ?', [subResponse.result[0].Table, subResponse.result[0].Column_name, response.result.insertId]);
+							})
+							.then(function(subResponse) {
+								resolve(subResponse);
+							})
+							.catch(function(err) {
+								resolve({
+									err: err
+								});
+							});
+
+						return;
 					}
+
+					var alterTable = sql.match(/alter table (.*?) .*/i);
+
+					// ALTER TABLE
+					if (alterTable !== null) {
+						var alterTablename = alterTable[1].replace(/`/g, '');
+
+						$db.q('show columns from ??', [alterTablename])
+							.then(function(subResponse) {
+								$populate.updateTableColumns(alterTablename, subResponse);
+
+								resolve(subResponse);
+							})
+							.catch(function(err) {
+								resolve({
+									err: err
+								});
+							});
+
+						return;
+					}
+
+					// TODO: Delete
+
+					// TODO: Update, use WHERE to pull result
+
+					console.log(response);
 				}
 
 				if (response.result.constructor.name === 'Array') {
-					populateResultTable(response.fields, response.result);
-
 					history.set('total', response.result.length);
-				}
-
-				return Promise.resolve();
-			}, function(err) {
-				history.set('state', false);
-				history.set('error', err);
-
-				// TODO: Based on settings
-				if (!options || !options.noHistory) {
-					history.update();
-				}
-
-				populateResultError(err);
-
-				reject(err);
-
-				return Promise.reject();
-			}).then(function(response) {
-				if (!response) {
-					return Promise.resolve();
-				}
-
-				if (response.result.length === 0) {
-					return Promise.reject('No primary key found.');
-				}
-
-				return $db.q('select * from ?? where ?? = ?', [response.result[0].Table, response.result[0].Column_name, insertId]);
-			}, function(err) {
-				if (!err) {
-					return Promise.reject();
-				}
-
-				history.set('state', false);
-				history.set('error', err);
-
-				// TODO: Based on settings
-				if (!options || !options.noHistory) {
-					history.update();
-				}
-
-				populateResultError(err);
-
-				reject(err);
-
-				return Promise.reject();
-			}).then(function(response) {
-				if (!options || !options.noHistory) {
-					history.update();
-				}
-
-				if (response) {
-					populateResultTable(response.fields, response.result);
 
 					resolve(response);
+
+					return;
 				}
+
+				resolve({
+					err: null
+				});
 			}, function(err) {
-				if (err) {
-					history.set('state', false);
-					history.set('error', err);
+				history.set('state', false);
+				history.set('error', err);
 
-					// TODO: Based on settings
-					if (!options || !options.noHistory) {
-						history.update();
-					}
-
-					populateResultError(err);
-
-					reject(err);
-				}
+				reject(err);
 			});
-		});
+		}))
+			.then(function(response) {
+				$$.RESULT.attr('data-state', 'success');
+
+				if (!options.noHistory) {
+					history.update();
+				}
+
+				if (!response.err) {
+					if (response.fields && response.result) {
+						$populate.resultTable(response.fields, response.result);
+					}
+				}
+			})
+			.catch(function(err) {
+				// TODO: Based on settings to log error query
+				if (!options.noHistory) {
+					history.update();
+				}
+
+				$populate.resultError(err);
+			});
 	};
 
-	var populateResultTable = function(fields, rows) {
-		$$.RESULT.attr('data-state', 'success');
-		$$.TOTAL.text(rows.length);
+	var $populate = {
+		resultTable: function(fields, rows) {
+			$$.TOTAL.text(rows.length);
 
-		var head = '';
+			var head = '';
 
-		for (var i = 0; i < fields.length; i++) {
-			head += $template('result-table-head-cell', {
-				type: DB.TYPES[fields[i].type],
-				name: fields[i].name
-			});
-		}
-
-		$$.TABLEHEAD.html(head);
-
-		var body = '';
-
-		for (var j = 0; j < rows.length; j++) {
-			var row = '';
-
-			for (var k = 0; k < fields.length; k++) {
-				var type = DB.TYPES[fields[k].type],
-					value = rows[j][fields[k].name];
-
-				if (rows[j][fields[k].name] === null ||
-					value === '0000-00-00 00:00:00') {
-					type += ' null';
-				}
-
-				row += $template('result-table-cell', {
-					type: type,
-					value: value
+			for (var i = 0; i < fields.length; i++) {
+				head += $template('result-table-head-cell', {
+					type: DB.TYPES[fields[i].type],
+					name: fields[i].name
 				});
 			}
 
-			body += $template('result-table-row', {
-				cells: row
+			$$.TABLEHEAD.html(head);
+
+			var body = '';
+
+			for (var j = 0; j < rows.length; j++) {
+				var html = '';
+
+				for (var k = 0; k < fields.length; k++) {
+					var type = DB.TYPES[fields[k].type],
+						value = rows[j][fields[k].name];
+
+					if (rows[j][fields[k].name] === null ||
+						value === '0000-00-00 00:00:00') {
+						type += ' null';
+					}
+
+					html += $template('result-table-cell', {
+						type: type,
+						value: value
+					});
+				}
+
+				body += $template('result-table-row', {
+					cells: html
+				});
+			}
+
+			$$.TABLEBODY.html(body);
+		},
+
+		resultError: function(err) {
+			$$.RESULT.attr('data-state', 'error');
+
+			$$.ERRORMESSAGE.html(err);
+		},
+
+		tableColumns: function(tablename) {
+			$db.q('show columns from ??', [tablename]).then(function(response) {
+				$populate.updateTableColumns(tablename, response);
+			});
+		},
+
+		updateTableColumns: function(tablename, response) {
+			var item = $$.TABLELIST.find('li[data-name="' + tablename + '"]');
+
+			var html = '';
+
+			for (var i = 0; i < response.result.length; i++) {
+				var row = response.result[i],
+					type = row.Type;
+
+				type = type.replace('unsigned', '').trim();
+
+				if (row.Key === 'PRI') {
+					type = 'pk ' + type;
+				}
+
+				html += $template('table-columns-item', {
+					name: row.Field,
+					type: type
+				});
+			}
+
+			item.find('.table-columns').html(html);
+		},
+
+		tableCount: function(name) {
+			$db.q('select count(1) as ?? from ??', ['total', name]).then(function(response) {
+				$$.TABLELIST.find('li[data-name="' + name + '"] .table-name').attr('data-count', response.result[0].total);
 			});
 		}
-
-		$$.TABLEBODY.html(body);
-	};
-
-	var populateResultError = function(err) {
-		$$.RESULT.attr('data-state', 'error');
-
-		$$.ERRORMESSAGE.html(err);
 	};
 
 	// Bindings
@@ -256,28 +305,7 @@ $(function() {
 		if (item.hasClass('expanded')) {
 			var tablename = item.find('.table-name').text().trim();
 
-			$db.q('show columns from ??', [tablename]).then(function(response) {
-
-				var html = '';
-
-				for (var i = 0; i < response.result.length; i++) {
-					var row = response.result[i],
-						type = row.Type;
-
-					type = type.replace('unsigned', '').trim();
-
-					if (row.Key === 'PRI') {
-						type = 'pk ' + type;
-					}
-
-					html += $template('table-columns-item', {
-						name: row.Field,
-						type: type
-					});
-				}
-
-				item.find('.table-columns').html(html);
-			});
+			$populate.tableColumns(tablename);
 		}
 
 	});
@@ -305,8 +333,23 @@ $(function() {
 			.addClass('editing')
 			.attr('data-key', name);
 
+		$$.NEWCONNECTIONFORMINPUTS.val('');
+
+		$$.NEWCONNECTIONFORMINPUTS.filter('[name="ssh"]')
+			.prop('checked', !!server.ssh)
+			.trigger('change');
+
+		$$.GROUPSSHPASSWORD.toggleClass('hasfile', !!server.sshkeyfile.length);
+		$$.LABELSSHPASSWORD.attr('data-file', server.sshkeyfile.length ? server.sshkeyfile : '');
+
+		$$.NEWCONNECTIONFORMINPUTS.filter('[name="sshkeyfile"]').val(server.sshkeyfile);
+
 		for (var key in server) {
 			var value = server[key];
+
+			if (key === 'ssh' || key === 'sshkeyfile') {
+				continue;
+			}
 
 			if (value) {
 				$$.NEWCONNECTIONFORMINPUTS.filter('[name="' + key + '"]')
@@ -454,26 +497,62 @@ $(function() {
 	});
 
 	$$.DATABASELIST.on('change', function() {
-		$db.q('use ??', [this.value])
+		var db = this.value;
+
+		$db.q('use ??', [db])
 			.then(function(response) {
 				return $db.q('show tables');
-			}, function(err) {
-				// TODO: Show error in result
 			})
 			.then(function(response) {
 				var html = '';
 
+				var names = [];
+
 				for (var i = 0; i < response.result.length; i++) {
+					names.push(response.result[i][response.fields[0].name]);
+
 					html += $template('table-list-item', {
 						name: response.result[i][response.fields[0].name]
 					});
 				}
 
 				$$.TABLELIST.html(html);
+
+				for (var j = 0; j < names.length; j++) {
+					$populate.tableCount(names[j]);
+				}
+			})
+			.catch(function(err) {
+				$populate.resultError(err);
 			});
 	});
 
-	$$.NEW.on('click', 'button', function() {
+	$$.NEW.on('change', 'input[name="ssh"]', function() {
+		$$.SSHSETTINGS.toggleClass('active', this.checked);
+	});
+
+	$$.NEW.on('click', '#upload-sshkeyfile', function(event) {
+		event.preventDefault();
+
+		if ($$.GROUPSSHPASSWORD.hasClass('hasfile')) {
+			$$.GROUPSSHPASSWORD.removeClass('hasfile');
+			$$.LABELSSHPASSWORD.attr('data-file', '');
+			$$.NEWCONNECTIONFORMINPUTS.filter('[name="sshkeyfile"]').val('');
+			$$.NEWCONNECTIONFORMINPUTS.filter('[name="sshkeyfile-input"]').val('');
+			$$.NEWCONNECTIONFORMINPUTS.filter('[name="sshpassword"]').val('');
+		} else {
+			$$.NEW.find('input[name="sshkeyfile-input"]').trigger('click');
+		}
+	});
+
+	$$.NEW.on('change', 'input[name="sshkeyfile-input"]', function() {
+		console.log(this.files);
+		$$.GROUPSSHPASSWORD.toggleClass('hasfile', this.files.length);
+		$$.LABELSSHPASSWORD.attr('data-file', this.files.length ? this.files[0].path : '');
+		$$.NEWCONNECTIONFORMINPUTS.filter('[name="sshkeyfile"]').val(this.files.length ? this.files[0].path : '');
+	});
+
+	$$.NEW.on('click', '.actions button', function() {
 		var button = $(this);
 
 		var key = $$.NEW.attr('data-key');
@@ -485,10 +564,16 @@ $(function() {
 		}
 
 		var data = {};
+		var ssh = '';
 
 		if (button.hasClass('add') || button.hasClass('go') || button.hasClass('save')) {
 			$$.NEWCONNECTIONFORMINPUTS.each(function() {
-				data[this.name] = this.value;
+				if (this.name === 'ssh') {
+					data[this.name] = this.checked ? 1 : 0;
+				} else if (this.name === 'sshkeyfile-input') {
+				} else {
+					data[this.name] = this.value;
+				}
 			});
 
 			if (!data.host || !data.user || !data.password) {
@@ -501,20 +586,34 @@ $(function() {
 
 			$storage.set('servers.' + key, data);
 
+			if (data.ssh && data.sshhost && data.sshuser) {
+				ssh = data.sshuser + '@' + data.sshhost;
+			}
+
 			$$.SERVERLIST.append($template('server-list-item', {
 				key: key,
 				user: data.user,
-				host: data.host
+				host: data.host,
+				ssh: ssh,
+				withssh: ssh.length > 0 ? 'withssh' : ''
 			}));
 		}
 
 		if (button.hasClass('save')) {
 			$storage.set('servers.' + key, data);
 
+			ssh = '';
+
+			if (data.ssh && data.sshhost && data.sshuser) {
+				ssh = data.sshuser + '@' + data.sshhost;
+			}
+
 			$$.SERVERLIST.find('li[data-key="' + key + '"]').replaceWith($template('server-list-item', {
 				key: key,
 				user: data.user,
-				host: data.host
+				host: data.host,
+				ssh: ssh,
+				withssh: ssh.length > 0 ? 'withssh' : ''
 			}));
 		}
 
@@ -532,7 +631,11 @@ $(function() {
 			this.value = '';
 		});
 
-		$$.NEWCONNECTIONFORMINPUTS.parents('.group').removeClass('active');
+		$$.NEWCONNECTIONFORMINPUTS.filter('[name="ssh"]').prop('checked', false).trigger('change');
+
+		$$.NEWCONNECTIONFORMINPUTS.parents('.group').removeClass('active hasfile');
+
+		$$.GROUPSSHPASSWORD.removeClass('hasfile');
 
 		$$.SERVERLIST.find('li.editing').removeClass('editing');
 	});
@@ -631,10 +734,18 @@ $(function() {
 		var html = '';
 
 		for (var key in servers) {
+			var ssh = '';
+
+			if (servers[key].ssh && servers[key].sshuser && servers[key].sshhost) {
+				ssh = servers[key].sshuser + '@' + servers[key].sshhost;
+			}
+
 			html += $template('server-list-item', {
 				key: key,
 				user: servers[key].user,
-				host: servers[key].host
+				host: servers[key].host,
+				ssh: ssh,
+				withssh: ssh.length > 0 ? 'withssh' : ''
 			});
 		}
 

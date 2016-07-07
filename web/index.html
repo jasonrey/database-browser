@@ -26,14 +26,17 @@
   </head>
   <body>
     <div class="panels" id="content" data-tab="servers" data-content="new">
+      <div id="sidebar-tab-nav">
+        <button data-name="servers"><i class="icon icon-server"></i></button>
+        <button data-name="tables"><i class="icon icon-columns"></i></button>
+        <button data-name="folder"><i class="icon icon-heart"></i></button>
+        <button data-name="history"><i class="icon icon-clock"></i></button>
+        <button data-name="result"><i class="icon icon-folder"></i></button>
+        <button data-name="report"><i class="icon icon-paper"></i></button>
+        <button data-name="user"><i class="icon icon-head"></i></button>
+        <button data-name="settings"><i class="icon icon-cog"></i></button>
+      </div>
       <div class="panel-sidebar">
-        <div id="sidebar-tab-nav">
-          <button data-name="servers"><i class="icon icon-server"></i></button>
-          <button data-name="tables"><i class="icon icon-columns"></i></button>
-          <button data-name="folder"><i class="icon icon-folder"></i></button>
-          <button data-name="history"><i class="icon icon-clock"></i></button>
-          <button data-name="settings"><i class="icon icon-cog"></i></button>
-        </div>
         <div id="sidebar-tab-content">
           <div class="tab" id="servers">
             <ul id="server-list"></ul>
@@ -62,20 +65,50 @@
             <h2 class="new-title">New Connection</h2>
             <h2 class="edit-title">Edit Connection</h2>
             <div class="group">
-              <label>Host</label>
+              <label class="input-label">Host</label>
               <input type="text" name="host">
             </div>
             <div class="group">
-              <label>User</label>
+              <label class="input-label">User</label>
               <input type="text" name="user">
             </div>
             <div class="group">
-              <label>Password</label>
+              <label class="input-label">Password</label>
               <input type="password" name="password">
             </div>
             <div class="group">
-              <label>Port</label>
+              <label class="input-label">Port</label>
               <input type="number" name="port">
+            </div>
+            <div class="group" id="ssh-toggle">
+              <label>
+                <input type="checkbox" name="ssh"> SSH
+              </label>
+            </div>
+            <div id="ssh-settings">
+              <div class="group">
+                <label class="input-label">SSH Host</label>
+                <input type="text" name="sshhost">
+              </div>
+              <div class="group">
+                <label class="input-label">SSH User</label>
+                <input type="text" name="sshuser">
+              </div>
+              <div class="group" id="group-sshpassword">
+                <label class="input-label" id="label-sshpassword"></label>
+                <input type="password" name="sshpassword">
+                <button id="upload-sshkeyfile" type="button"><i class="icon icon-upload"></i><i class="icon icon-cross"></i></button>
+                <input type="file" name="sshkeyfile-input">
+                <input type="hidden" name="sshkeyfile">
+              </div>
+              <div class="group">
+                <label class="input-label">SSH Port</label>
+                <input type="number" name="sshport">
+              </div>
+              <div class="group">
+                <label class="input-label">Local Binding Port (Random by default)</label>
+                <input type="number" name="sshport">
+              </div>
             </div>
             <div class="actions">
               <button class="red delete" type="button"><i class="icon icon-trash"></i></button>
@@ -135,7 +168,9 @@
       </div>
     </div>
     <script id="server-list-item" type="text/html">
-      <li data-key="{{key}}"><span>{{user}}@{{host}}</span>
+      <li class="{{withssh}}" data-key="{{key}}"><span>
+          <div class="host">{{user}}@{{host}}</div>
+          <div class="ssh">{{ssh}}</div></span>
         <button class="edit"><i class="icon icon-stack"></i></button>
       </li>
     </script>

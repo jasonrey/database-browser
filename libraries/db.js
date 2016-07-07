@@ -2,12 +2,55 @@
 	'use strict';
 
 	const mysql = require('mysql');
+	const tunnel = require('open-ssh-tunnel');
+	const fs = require('fs');
 
 	class DB {
 		constructor(data) {
 			data.dateStrings = true;
 
-			this.connection = mysql.createConnection(data);
+			this.open = new Promise((resolve, reject) => {
+				if (data.ssh) {
+					var option = {
+						host: data.sshhost,
+						username: data.sshuser,
+						password: data.sshpassword,
+						port: data.sshport || 22,
+						srcAddr: data.host,
+						srcPort: data.port || 3306,
+						dstAddr: data.host,
+						dstPort: data.port || 3306,
+						localAddr: '127.0.0.1',
+						localPort: 5000,
+						forwardTimeout: 3000
+					};
+
+					if (data.sshkeyfile.length) {
+						option.privateKey = fs.readFileSync(data.sshkeyfile);
+						option.passphrase = data.sshpassword;
+					} else {
+						data.password = data.sshpassword;
+					}
+
+					tunnel(option).then((server) => {
+						this.tunnel = server;
+
+						this.connection = mysql.createConnection({
+							user: data.user,
+							password: data.password,
+							host: '127.0.0.1',
+							port: '5000'
+						});
+
+						resolve();
+					}).catch((err) => {
+						reject(err);
+					});
+				} else {
+					this.connection = mysql.createConnection(data);
+					resolve();
+				}
+			});
 		}
 
 		static getInstance(data) {
@@ -30,6 +73,10 @@
 
 		close() {
 			return new Promise((resolve, reject) => {
+				if (this.tunnel) {
+					this.tunnel.close();
+				}
+
 				this.connection.end((err) => {
 					if (err) {
 						reject(err);
@@ -41,21 +88,29 @@
 		}
 
 		query(sql, values) {
-			if (values === undefined || values === null || values.constructor.name !== 'Array') {
-				values = [];
-			}
-
 			return new Promise((resolve, reject) => {
-				this.connection.query(sql, values, (err, result, fields) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve({
-							result,
-							fields
+				this.open
+					.then(() => {
+						if (values === undefined || values === null || values.constructor.name !== 'Array') {
+							values = [];
+						}
+
+						this.connection.query(sql, values, (err, result, fields) => {
+							if (err) {
+								reject(err);
+							} else {
+								resolve({
+									result,
+									fields
+								});
+							}
 						});
-					}
-				});
+					})
+					.catch((err) => {
+						reject(err);
+					});
+
+
 			});
 		}
 

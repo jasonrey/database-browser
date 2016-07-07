@@ -1,7 +1,12 @@
-//- name - user@server
+//- key - unique key of this item
+//- user
+//- host
+//- ssh - user@host for ssh
 script#server-list-item(type="text/html")
-	li(data-key="{{key}}")
-		span {{user}}@{{host}}
+	li(data-key="{{key}}", class="{{withssh}}")
+		span
+			.host {{user}}@{{host}}
+			.ssh {{ssh}}
 		button.edit
 			i.icon.icon-stack
 

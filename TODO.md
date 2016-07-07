@@ -1,15 +1,24 @@
 # TODO
 
-- Non select/insert statement to show result properly
 - JSON data handling
 - Record handling (add/delete/update)
 - Create table
 - Edit table
-- Auto calculate table counts
-- Decrease table font size
+- Allow edit table on `show columns`
 - Export to SQL
-- Save result set
-- Revamp to side panel
 - Clear history
 - Context menu for history item
 - Delete server deletes data
+- Result Set Tab
+- Report Tab
+- User Tab
+- History to include database name
+- Remember window size and position
+
+# Completed
+- Auto calculate table counts
+- Decrease table font size
+- Non select/insert statement to show result properly
+- Revamp to side panel
+- SSH
+- SSH key upload

@@ -12,7 +12,7 @@ form
 		text-transform: uppercase
 		color: $grey700
 		font-size: 14px
-		padding: 16px 0 16px 0
+		padding: 8px
 		text-align: center
 		border-bottom: 1px solid $grey300
 		background-color: $bluegrey50
@@ -20,60 +20,47 @@ form
 
 	.group
 		position: relative
-		padding: 12px 0
 		height: 48px
+		line-height: 48px
 		border-bottom: 1px solid $grey300
+		box-sizing: border-box
+		transition: background-color .2s
 
-		&::before
-			content: ''
-			position: absolute
-			top: 0
-			left: 0
-			width: 100%
-			height: 100%
-			background-color: $grey100
-			opacity: 0
-			transition: opacity .3s
-
-		label
+		.input-label
 			display: block
 			position: absolute
-			top: 16px
+			top: 4px
 			left: 0
 			width: 100%
-			height: 100%
-			line-height: 48px
+			line-height: 1
 			box-sizing: border-box
-			text-transform: uppercase
-			padding: 0 24px
+			padding: 4px 24px
 			transform-origin: top left
 			transition: transform .1s
 			color: $grey500
-			transform: scale(1) translateY(4px)
+			transform: scale(1) translateY(10px)
 			font-weight: 300
+			font-size: 12px
 
-		input
+		input[type="text"],
+		input[type="number"],
+		input[type="email"],
+		input[type="password"]
 			display: block
 			width: 100%
 			box-sizing: border-box
 			position: absolute
-			bottom: 6px
+			bottom: 0
 			left: 0
 			height: 36px
-			background-color: transparent
-			border: 0
-			outline: 0
 			padding: 0 16px
-			font-size: 16px
-			font-family: inherit
 
 		&.focus
-			&::before
-				opacity: 1
+			background-color: $grey100
 
 		&.active
-			label
-				transform: scale(0.7) translateY(-8px)
+			.input-label
+				transform: scale(0.7) translateY(0px)
 
 	button
 		height: 48px
@@ -113,6 +100,7 @@ form
 .panel-sidebar
 	width: 250px
 	position: relative
+	flex-shrink: 0;
 
 	h2
 		font-size: 14px
@@ -129,6 +117,7 @@ form
 	// cursor: ew-resize
 	position: relative
 	z-index: 1
+	flex-shrink: 0
 
 	&::after
 		content: ''
@@ -142,36 +131,31 @@ form
 .panel-content
 	flex-grow: 1
 	background-color: white
+	position: relative
 
 #content
-	.panel-sidebar
-		display: flex
-		flex-direction: column
-		flex-shrink: 0;
-
 	&[data-tab="servers"] #servers,
 	&[data-tab="tables"] #tables,
 	&[data-tab="folder"] #folder,
 	&[data-tab="history"] #history,
+	&[data-tab="result"] #result,
+	&[data-tab="report"] #report,
+	&[data-tab="user"] #user,
 	&[data-tab="settings"] #settings
 		display: block
 
-	.panel-content
-		position: relative
-
-		.content
-			position: absolute
-			top: 0
-			left: 0
-			bottom: 150px
-			width: 100%
-			display: none
+	.content
+		position: absolute
+		top: 0
+		left: 0
+		bottom: 150px
+		width: 100%
+		display: none
 
 	&[data-tab="servers"],
 	&[data-tab="settings"]
-		.panel-content
-			.content
-				bottom: 0
+		.content
+			bottom: 0
 
 	&[data-tab="servers"] .panel-content #new,
 	&[data-tab="tables"] .panel-content #result,
@@ -180,69 +164,70 @@ form
 		display: flex
 
 #sidebar-tab-nav
-	height: 40px
-	line-height: 40px
+	width: 40px
+	height: 100%
 	text-align: center
-	border-bottom: 1px solid $grey300
+	background-color: $grey200
+	border-right: 1px solid $grey300
 	box-sizing: border-box
 
-	&::after
-		content: ''
-		clear: both
-		display: table
-
 	button
-		width: 20%
-		height: inherit
-		line-height: inherit
-		color: $blue500
+		display: block
+		width: 40px
+		height: 40px
+		line-height: 40px
+		color: $grey600
 		position: relative
 		font-size: 16px
-		float: left
 
-		&::after
-			content: ''
+		&[data-name="settings"]
 			position: absolute
-			bottom: 0
 			left: 0
-			width: 100%
-			height: 2px
-			background-color: $blue500
-			transform: scaleX(0)
-			transition: transform .2s
+			bottom: 0
 
 		&:nth-child(2),
 		&:nth-child(3),
-		&:nth-child(4)
-			color: $grey500
+		&:nth-child(4),
+		&:nth-child(5),
+		&:nth-child(6),
+		&:nth-child(7),
+			color: $grey400
 			cursor: not-allowed
 
 			#content[data-connection="connected"] &
-				color: $blue500
+				color: $grey600
 				cursor: pointer
 
 		&:hover
-			background-color: $blue50
+			background-color: $grey300
 
 			&:nth-child(2),
 			&:nth-child(3),
-			&:nth-child(4)
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6),
+			&:nth-child(7),
 				background-color: transparent
 
 				#content[data-connection="connected"] &
-					background-color: $blue50
+					background-color: $grey300
 
 		#content[data-tab="servers"] &:nth-child(1),
 		#content[data-tab="tables"] &:nth-child(2),
 		#content[data-tab="folder"] &:nth-child(3),
 		#content[data-tab="history"] &:nth-child(4),
-		#content[data-tab="settings"] &:nth-child(5)
-			&::after
-				transform: scaleX(1)
+		#content[data-tab="result"] &:nth-child(5),
+		#content[data-tab="report"] &:nth-child(6),
+		#content[data-tab="user"] &:nth-child(7),
+		#content[data-tab="settings"] &:nth-child(8)
+			color: $blue500
 
 #sidebar-tab-content
-	flex-grow: 1
-	position: relative
+	position: absolute
+	top: 0
+	bottom: 24px
+	left: 0
+	width: 100%
 
 	.tab
 		display: none
@@ -270,9 +255,18 @@ form
 			cursor: pointer
 			padding: 8px 32px 8px 16px
 
+			.ssh
+				display: none
+				font-size: 10px
+				color: $grey500
+				margin: 8px 0 0 0
+
+				&::before
+					content: 'SSH: '
+
 		button
 			position: absolute
-			top: 0
+			top: 4px
 			right: 0
 			width: 24px
 			height: 24px
@@ -291,6 +285,10 @@ form
 			background-color: $blue50
 
 			button
+				display: block
+
+		&.withssh
+			.ssh
 				display: block
 
 #history-list
@@ -472,6 +470,11 @@ form
 			overflow: hidden
 			text-overflow: ellipsis
 
+			&::after
+				content: ' ('attr(data-count)')'
+				font-size: 12px
+				color: $grey500
+
 		.edit
 			position: absolute
 			top: 0
@@ -533,9 +536,12 @@ form
 				background-color: $grey200
 
 #connection
-	height: 32px
-	line-height: 32px
-	position: relative
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
+	height: 24px
+	line-height: 24px
 	border-top: 1px solid $grey300
 	box-sizing: border-box
 
@@ -554,7 +560,7 @@ form
 		border-radius: 50%
 		background-color: $red500
 		vertical-align: middle
-		margin: 12px 8px
+		margin: 8px
 
 	#content[data-connection="connecting"] &
 		.status
@@ -567,11 +573,80 @@ form
 #new
 	form
 		width: 90%
-		max-width: 500px
+		max-width: 400px
 		margin: auto
 		background-color: $grey50
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1)
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2)
 		box-sizing: border-box
+
+		#ssh-toggle
+			height: 32px
+			line-height: 32px
+			padding: 0 16px
+
+			label
+				width: 100%
+				display: block
+
+			input
+				display: inline-block
+				margin: 0 4px
+				outline: 0
+
+		#ssh-settings
+			display: none
+
+			&.active
+				display: block
+
+		#group-sshpassword
+			.input-label
+				padding: 4px 48px 4px 24px
+				text-overflow: ellipsis
+				overflow: hidden
+				white-space: pre
+				transition: transform .2s, width .2s
+
+			&.active
+				.input-label
+					width: 143%
+
+			&.hasfile
+				#label-sshpassword
+					&::before
+						content: 'Passphrase 'attr(data-file)
+
+				#upload-sshkeyfile
+					color: $blue500
+
+					.icon-upload
+						display: none
+
+					.icon-cross
+						display: block
+
+		#label-sshpassword
+			&::before
+				content: 'SSH Password'
+
+		#upload-sshkeyfile
+			position: absolute
+			top: 0
+			right: 0
+			width: 48px
+			height: 48px
+
+			.icon-cross
+				display: none
+
+			&:hover
+				background-color: $grey300
+
+		input[name="sshkeyfile-input"]
+			visibility: hidden
+			position: absolute
+			top: 100%
+			left: 100%
 
 	.edit-title
 		display: none
@@ -806,7 +881,7 @@ form
 		position: absolute
 		bottom: 0
 		width: 100%
-		height: 32px
+		height: 24px
 		background-color: $grey50
 		border-top: 1px solid $grey300
 		box-sizing: border-box
@@ -817,8 +892,8 @@ form
 			clear: both
 
 		button
-			width: 32px
-			height: 32px
+			width: 24px
+			height: 24px
 			cursor: pointer
 			color: $blue500
 			float: right
@@ -830,7 +905,7 @@ form
 	padding: 0 8px
 	position: absolute
 	top: 24px
-	bottom: 32px
+	bottom: 24px
 	left: 0
 	width: 100%
 	box-sizing: border-box
@@ -851,7 +926,7 @@ form
 		display: flex
 
 #popup-overlay
-	background-color: rgba(0, 0, 0, 0.6)
+	background-color: rgba(0, 0, 0, 0.2)
 	position: fixed
 	top: 0
 	left: 0
