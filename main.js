@@ -3,17 +3,29 @@ const sass = require('node-sass');
 const postcss = require('postcss');
 const autoprefixer = require('autoprefixer');
 const fs = require('fs');
+
+
 const electron = require('electron');
-const {app, BrowserWindow, Menu} = electron;
+const {app, BrowserWindow, Menu, MenuItem, ipcMain} = electron;
 
 const Config = require('electron-config');
 const config = new Config({
 	name: 'dbbr'
 });
 
+const menu = new Menu()
+menu.append(new MenuItem({ label: 'Hello' }))
+menu.append(new MenuItem({ type: 'separator' }))
+menu.append(new MenuItem({ label: 'Electron', type: 'checkbox', checked: true }))
+
+ipcMain.on('show-context-menu', function(event) {
+	const win = BrowserWindow.fromWebContents(event.sender)
+	menu.popup(win)
+});
+
 global.__basepath = __dirname;
 
-let mainWindow;
+let win;
 
 let createWindow = function() {
 	let processes = [];
@@ -73,19 +85,19 @@ let createWindow = function() {
 			option.y = config.get('position.y');
 		}
 
-		mainWindow = new BrowserWindow(option);
+		win = new BrowserWindow(option);
 
 		const menuTemplate = require(__dirname + '/menu.js');
 
 		Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 
-		mainWindow.loadURL(`file://${target}`);
+		win.loadURL(`file://${target}`);
 
-		mainWindow.webContents.openDevTools();
+		win.webContents.openDevTools();
 
-		mainWindow.on('close', () => {
-			let position = mainWindow.getPosition(),
-				size = mainWindow.getSize();
+		win.on('close', () => {
+			let position = win.getPosition(),
+				size = win.getSize();
 
 			config.set('position.x', position[0]);
 			config.set('position.y', position[1]);
@@ -93,8 +105,8 @@ let createWindow = function() {
 			config.set('size.h', size[1]);
 		});
 
-		mainWindow.on('closed', () => {
-			mainWindow = null;
+		win.on('closed', () => {
+			win = null;
 		});
 	});
 };
@@ -108,7 +120,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', function () {
-	if (mainWindow === null) {
+	if (win === null) {
 		createWindow();
 	}
 });

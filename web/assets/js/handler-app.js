@@ -1,7 +1,8 @@
 (() => {
 	'use strict';
 
-	const {remote} = require('electron');
+	const electron = require('electron');
+	const {remote, ipcRenderer} = electron;
 	const BASEPATH = remote.getGlobal('__basepath');
 
 	const Config = require('electron-config');
@@ -56,4 +57,8 @@
 	};
 
 	window.DB = require(BASEPATH + '/libraries/db.js');
+
+	window.$context = () => {
+		ipcRenderer.send('show-context-menu');
+	};
 })();

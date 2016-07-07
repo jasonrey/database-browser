@@ -511,7 +511,7 @@ $(function() {
 
 	$$.HISTORYLIST.on('click', 'li', function(event) {
 		if ($(event.target).hasClass('history-context')) {
-
+			$context();
 			return;
 		}
 
