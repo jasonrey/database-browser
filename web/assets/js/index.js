@@ -277,7 +277,9 @@ $(function() {
 
 		tableCount: function(name) {
 			$db.q('select count(1) as ?? from ??', ['total', name]).then(function(response) {
-				$$.TABLELIST.find('li[data-name="' + name + '"] .table-name').attr('data-count', response.result[0].total);
+				$$.TABLELIST.find('li[data-name="' + name + '"] .table-name')
+					.attr('data-count', response.result[0].total)
+					.attr('title', name + ' (' + response.result[0].total + ')');
 			});
 		}
 	};
@@ -375,8 +377,8 @@ $(function() {
 			.prop('checked', !!server.ssh)
 			.trigger('change');
 
-		$$.GROUPSSHPASSWORD.toggleClass('hasfile', !!server.sshkeyfile.length);
-		$$.LABELSSHPASSWORD.attr('data-file', server.sshkeyfile.length ? server.sshkeyfile : '');
+		$$.GROUPSSHPASSWORD.toggleClass('hasfile', server.sshkeyfile !== undefined && !!server.sshkeyfile.length);
+		$$.LABELSSHPASSWORD.attr('data-file', server.sshkeyfile !== undefined && server.sshkeyfile.length ? server.sshkeyfile : '');
 
 		$$.NEWCONNECTIONFORMINPUTS.filter('[name="sshkeyfile"]').val(server.sshkeyfile);
 

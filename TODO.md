@@ -14,6 +14,7 @@
 - Keyboard shortcut
 
 # Completed
+
 - Auto calculate table counts
 - Decrease table font size
 - Non select/insert statement to show result properly
