@@ -4,24 +4,15 @@ const postcss = require('postcss');
 const autoprefixer = require('autoprefixer');
 const fs = require('fs');
 
-
 const electron = require('electron');
-const {app, BrowserWindow, Menu, MenuItem, ipcMain} = electron;
+const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 const Config = require('electron-config');
 const config = new Config({
 	name: 'dbbr'
 });
 
-const menu = new Menu()
-menu.append(new MenuItem({ label: 'Hello' }))
-menu.append(new MenuItem({ type: 'separator' }))
-menu.append(new MenuItem({ label: 'Electron', type: 'checkbox', checked: true }))
-
-ipcMain.on('show-context-menu', function(event) {
-	const win = BrowserWindow.fromWebContents(event.sender)
-	menu.popup(win)
-});
+const appMenu = require(__dirname + '/menus/app.js');
 
 global.__basepath = __dirname;
 
@@ -71,6 +62,8 @@ let createWindow = function() {
 	}));
 
 	Promise.all(processes).then(() => {
+		Menu.setApplicationMenu(appMenu);
+
 		let option = {
 			width: config.get('size.w') || 1200,
 			height: config.get('size.h') || 800,
@@ -87,13 +80,14 @@ let createWindow = function() {
 
 		win = new BrowserWindow(option);
 
-		const menuTemplate = require(__dirname + '/menu.js');
-
-		Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
-
 		win.loadURL(`file://${target}`);
 
 		win.webContents.openDevTools();
+
+		// win.webContents.on('context-menu', function(event, params) {
+		// 	console.log(event, params);
+		// 	contextMenu.test.popup(win, params.x, params.y);
+		// });
 
 		win.on('close', () => {
 			let position = win.getPosition(),

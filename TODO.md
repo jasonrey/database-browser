@@ -1,17 +1,20 @@
 # TODO
 
 - JSON data handling
+- Escape result data due to html
 - Record handling (add/delete/update)
 - Create table
 - Edit table
 - Allow edit table on `show columns`
 - Export to SQL
 - Clear history
-- Context menu for history item
 - Result Set Tab
 - Report Tab
 - User Tab
 - Keyboard shortcut
+- SSH tunnel on close event
+- SSH to use home folder id_rsa by default
+- Context menu for folder item
 
 # Completed
 
@@ -24,3 +27,4 @@
 - History to include database name
 - Remember window size and position
 - Delete server deletes data
+- Context menu for history item

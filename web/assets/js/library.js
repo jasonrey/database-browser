@@ -65,7 +65,7 @@
 	};
 
 	History.prototype.push = function(item) {
-		this.items.push(item);
+		this.items.unshift(item);
 
 		this.update();
 	};
@@ -73,7 +73,7 @@
 	History.prototype.update = function() {
 		// TODO: Shift based on settings
 		if (this.items.length > 50) {
-			this.items.splice(0, this.items.length - 50);
+			this.items.splice(50 - this.items.length);
 		}
 
 		$storage.set('history.' + this.key, this.items);

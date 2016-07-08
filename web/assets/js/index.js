@@ -23,6 +23,9 @@ $(function() {
 	// Connection state
 	var $connectionState = false;
 
+	// Current connection key
+	var $KEY;
+
 	var $dbquery = function(query, value, options) {
 		if (!$connectionState) {
 			// TODO: Show not connected
@@ -43,10 +46,8 @@ $(function() {
 		$$.TABLEHEAD.html('');
 		$$.TABLEBODY.html('');
 
-		var key = $$.CONTENT.attr('data-key');
-
 		// TODO: Log based on settings
-		var history = $history(key).new();
+		var history = $history($KEY).new();
 
 		history.set('query', sql);
 		history.set('date', Date.now());
@@ -227,7 +228,7 @@ $(function() {
 
 					html += $template('result-table-cell', {
 						type: type,
-						value: value
+						value: _.escape(value)
 					});
 				}
 
@@ -400,16 +401,18 @@ $(function() {
 	});
 
 	$$.SERVERLIST.on('click', 'span', function(event) {
-		var item = $(this).parents('li'),
-			key = item.attr('data-key'),
-			data = $storage.get('servers.' + key);
+		var item = $(this).parents('li');
+
+		$KEY = item.attr('data-key');
+
+		var data = $storage.get('servers.' + $KEY);
 
 		$connectionState = false;
 
 		$$.POPUP.attr('data-popup', 'loading');
 
 		$$.CONTENT
-			.attr('data-key', key)
+			.attr('data-key', $KEY)
 			.attr('data-connection', 'connecting');
 
 		var connectionName = data.user + '@' + data.host;
@@ -471,11 +474,11 @@ $(function() {
 			});
 
 		// Init history
-		var history = $history(key);
+		var history = $history($KEY);
 
 		var historyHTML = '';
 
-		for (var i = history.items.length - 1; i >= 0; i--) {
+		for (var i = 0; i < history.items.length; i++) {
 			var date = new Date(history.items[i].date);
 
 			historyHTML += $template('history-list-item', {
@@ -490,7 +493,7 @@ $(function() {
 		$$.HISTORYLIST.html(historyHTML);
 
 		// Init folder
-		var folder = $storage.get('folder.' + key);
+		var folder = $storage.get('folder.' + $KEY);
 
 		var folderHTML = '';
 
@@ -512,29 +515,49 @@ $(function() {
 	});
 
 	$$.HISTORYLIST.on('click', 'li', function(event) {
+		var item = $(this),
+			index = item.index(),
+			data = $storage.get('history.' + $KEY + '.' + index);
+
 		if ($(event.target).hasClass('history-context')) {
-			$context();
+			$context('historyitem', function(type) {
+				switch (type) {
+					case 'copy':
+						$clipboard.copy(data.query);
+					break;
+
+					case 'delete':
+						var history = $storage.get('history.' + $KEY);
+						history.splice(index, 1);
+						$storage.set('history.' + $KEY, history);
+						item.remove();
+					break;
+				}
+			});
 			return;
 		}
 
-		var item = $(this),
-			query = item.find('.query').text(),
-			db = item.find('.db').text(),
-			currentdb = $$.DATABASELIST.val();
+		var currentdb = $$.DATABASELIST.val(),
+			useDB = Promise.resolve();
 
-		var useDB = Promise.resolve();
+		if (data.db !== currentdb) {
+			$$.DATABASELIST.val(data.db);
 
-		if (db !== currentdb) {
-			$$.DATABASELIST.val(db);
-
-			useDB = $populate.changeDB(db);
+			useDB = $populate.changeDB(data.db);
 		}
 
 		useDB.then(function() {
-			$dbquery(query, [], {
+			$dbquery(data.query, [], {
 				noHistory: true
 			});
 		});
+	});
+
+	$$.HISTORYLIST.on('contextmenu', 'li', function(event) {
+		var item = $(this),
+			button = item.find('.history-context');
+
+		button.trigger('click');
 	});
 
 	$$.FOLDERLIST.on('click', 'li', function(event) {
@@ -550,10 +573,9 @@ $(function() {
 
 	$$.FOLDERLIST.on('click', '.delete', function() {
 		var item = $(this).parents('li'),
-			itemkey = item.attr('data-key'),
-			key = $$.CONTENT.attr('data-key');
+			key = item.attr('data-key');
 
-		$folder(key).delete(itemkey);
+		$folder($KEY).delete(key);
 
 		item.remove();
 	});
@@ -743,8 +765,7 @@ $(function() {
 	$$.POPUPQUERYSAVE.on('click', '.yes', function() {
 		var input = $(this).parents('.popup-body').find('input'),
 			name = input.val(),
-			query = $$.EDITOR.text(),
-			key = $$.CONTENT.attr('data-key');
+			query = $$.EDITOR.text();
 
 		if ($$.POPUP.attr('data-source') === 'command') {
 			$$.POPUP.attr('data-source', '');
@@ -752,7 +773,7 @@ $(function() {
 			query = $$.COMMAND.text();
 		}
 
-		$folder(key).add({
+		$folder($KEY).add({
 			name: name,
 			query: query,
 			date: Date.now()
@@ -772,6 +793,12 @@ $(function() {
 
 		return true;
 	});
+
+	window.onbeforeunload = function(event) {
+		if ($db && $db.constructor.name === 'DB') {
+			$db.close();
+		}
+	};
 
 	// Storage init
 	var storages = {
