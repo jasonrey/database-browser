@@ -39,7 +39,8 @@
 							user: data.user,
 							password: data.password,
 							host: '127.0.0.1',
-							port: '5000'
+							port: '5000',
+							dateStrings: true
 						});
 
 						resolve();
