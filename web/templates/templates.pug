@@ -7,7 +7,7 @@ script#server-list-item(type="text/html")
 		span
 			.host {{user}}@{{host}}
 			.ssh {{ssh}}
-		button.edit
+		button.context.edit
 			i.icon.icon-stack
 
 //- state - success | error
@@ -19,7 +19,7 @@ script#history-list-item(type="text/html")
 		.db {{db}}
 		.total {{total}}
 		.date {{date}}
-		button.history-context
+		button.context.history-context
 			i.icon.icon-stack
 
 //- key - saved key
@@ -32,8 +32,8 @@ script#folder-list-item(type="text/html")
 		.name {{name}}
 		.query {{query}}
 		.date {{date}}
-		button.delete
-			i.icon.icon-cross
+		button.context.folder-context
+			i.icon.icon-stack
 
 //- name - database name
 script#database-list-item(type="text/html")
@@ -46,7 +46,7 @@ script#table-list-item(type="text/html")
 		.table-name {{name}}
 		.expand
 			i.icon-fa.icon-dir-right
-		button.edit
+		button.context.table-context
 			i.icon.icon-stack
 		ul.table-columns {{columns}}
 			//- template#table-column-item

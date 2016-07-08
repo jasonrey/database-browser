@@ -241,6 +241,25 @@ form
 		&#settings
 			top: 0
 
+
+.list
+	.context
+		width: 24px
+		height: 24px
+		line-height: 24px
+		text-align: center
+		color: $grey600
+		position: absolute
+		top: 0
+		right: 0
+		font-size: 12px
+		display: none
+
+	> li
+		&:hover
+			.context
+				display: block
+
 #servers
 
 #server-list
@@ -268,28 +287,17 @@ form
 				&::before
 					content: 'SSH: '
 
-		button
-			position: absolute
+		.context
 			top: 4px
 			right: 0
-			width: 24px
-			height: 24px
-			line-height: 24px
-			text-align: center
-			display: none
-			color: $grey600
-			font-size: 12px
 
 		&:hover
 			background-color: $grey200
 
-			button
-				display: block
-
 		&.editing
 			background-color: $blue50
 
-			button
+			.context
 				display: block
 
 		&.withssh
@@ -320,9 +328,6 @@ form
 
 		&:hover
 			background-color: $grey100
-
-			.history-context
-				display: block
 
 		&.success
 			border-color: $green500
@@ -357,17 +362,6 @@ form
 		float: right
 		font-size: 10px
 		color: $grey500
-
-	.history-context
-		width: 24px
-		height: 24px
-		line-height: 24px
-		color: $grey600
-		position: absolute
-		top: 0
-		right: 0
-		font-size: 12px
-		display: none
 
 #folder-list
 	position: absolute
@@ -517,23 +511,13 @@ form
 				font-size: 12px
 				color: $grey500
 
-		.edit
-			position: absolute
-			top: 0
-			right: 0
-			width: 24px
-			height: 24px
-			line-height: 24px
-			color: $grey600
-			display: none
-			font-size: 12px
+		.context
+			height: 32px
+			line-height: 32px
 
 		&:hover
 			.table-name
 				background-color: $grey200
-
-			.edit
-				display: block
 
 		&.active
 			.table-name

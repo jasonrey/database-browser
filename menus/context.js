@@ -19,6 +19,19 @@
 					clickHandler('delete');
 				}
 			}
+		]),
+		folderitem: Menu.buildFromTemplate([
+			{
+				label: 'Copy to Clipboard',
+				click() {
+					clickHandler('copy');
+				}
+			}, {
+				label: 'Delete',
+				click() {
+					clickHandler('delete');
+				}
+			}
 		])
 	};
 

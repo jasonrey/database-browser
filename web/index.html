@@ -43,16 +43,16 @@
             <select id="database-list"></select>
           </div>
           <div class="tab" id="servers">
-            <ul id="server-list"></ul>
+            <ul class="list" id="server-list"></ul>
           </div>
           <div class="tab" id="tables">
-            <ul id="table-list"></ul>
+            <ul class="list" id="table-list"></ul>
           </div>
           <div class="tab" id="folder">
-            <ul id="folder-list"></ul>
+            <ul class="list" id="folder-list"></ul>
           </div>
           <div class="tab" id="history">
-            <ul id="history-list"></ul>
+            <ul class="list" id="history-list"></ul>
           </div>
         </div>
         <div id="connection"><span class="status"></span>
@@ -173,7 +173,7 @@
       <li class="{{withssh}}" data-key="{{key}}"><span>
           <div class="host">{{user}}@{{host}}</div>
           <div class="ssh">{{ssh}}</div></span>
-        <button class="edit"><i class="icon icon-stack"></i></button>
+        <button class="context edit"><i class="icon icon-stack"></i></button>
       </li>
     </script>
     <script id="history-list-item" type="text/html">
@@ -182,7 +182,7 @@
         <div class="db">{{db}}</div>
         <div class="total">{{total}}</div>
         <div class="date">{{date}}</div>
-        <button class="history-context"><i class="icon icon-stack"></i></button>
+        <button class="context history-context"><i class="icon icon-stack"></i></button>
       </li>
     </script>
     <script id="folder-list-item" type="text/html">
@@ -190,7 +190,7 @@
         <div class="name">{{name}}</div>
         <div class="query">{{query}}</div>
         <div class="date">{{date}}</div>
-        <button class="delete"><i class="icon icon-cross"></i></button>
+        <button class="context folder-context"><i class="icon icon-stack"></i></button>
       </li>
     </script>
     <script id="database-list-item" type="text/html">
@@ -200,7 +200,7 @@
       <li data-name="{{name}}" title="{{name}}">
         <div class="table-name">{{name}}</div>
         <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
-        <button class="edit"><i class="icon icon-stack"></i></button>
+        <button class="context table-context"><i class="icon icon-stack"></i></button>
         <ul class="table-columns">{{columns}}</ul>
       </li>
     </script>

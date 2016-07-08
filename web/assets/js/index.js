@@ -349,7 +349,7 @@ $(function() {
 
 	});
 
-	$$.TABLELIST.on('click', '.edit', function() {
+	$$.TABLELIST.on('click', '.context', function() {
 		var item = $(this).parents('li'),
 			siblings = item.siblings();
 
@@ -519,7 +519,7 @@ $(function() {
 			index = item.index(),
 			data = $storage.get('history.' + $KEY + '.' + index);
 
-		if ($(event.target).hasClass('history-context')) {
+		if ($(event.target).hasClass('context')) {
 			$context('historyitem', function(type) {
 				switch (type) {
 					case 'copy':
@@ -555,29 +555,42 @@ $(function() {
 
 	$$.HISTORYLIST.on('contextmenu', 'li', function(event) {
 		var item = $(this),
-			button = item.find('.history-context');
+			button = item.find('.context');
 
 		button.trigger('click');
 	});
 
 	$$.FOLDERLIST.on('click', 'li', function(event) {
-		if ($(event.target).hasClass('delete')) {
+		var item = $(this),
+			key = item.attr('data-key'),
+			data = $storage.get('folder.' + $KEY + '.' + key);
+
+		if ($(event.target).hasClass('context')) {
+			$context('folderitem', function(type) {
+				switch (type) {
+					case 'copy':
+						$clipboard.copy(data.query);
+					break;
+
+					case 'delete':
+						$storage.delete('folder.' + $KEY + '.' + key);
+						item.remove();
+					break;
+				}
+			});
 			return;
 		}
 
-		var item = $(this),
-			query = item.find('.query').text();
+		var query = item.find('.query').text();
 
 		$dbquery(query);
 	});
 
-	$$.FOLDERLIST.on('click', '.delete', function() {
-		var item = $(this).parents('li'),
-			key = item.attr('data-key');
+	$$.FOLDERLIST.on('contextmenu', 'li', function(event) {
+		var item = $(this),
+			button = item.find('.context');
 
-		$folder($KEY).delete(key);
-
-		item.remove();
+		button.trigger('click');
 	});
 
 	$$.DATABASELIST.on('change', function() {

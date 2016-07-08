@@ -14,7 +14,8 @@
 - Keyboard shortcut
 - SSH tunnel on close event
 - SSH to use home folder id_rsa by default
-- Context menu for folder item
+- Context menu for server item
+- Add database button
 
 # Completed
 
@@ -28,3 +29,4 @@
 - Remember window size and position
 - Delete server deletes data
 - Context menu for history item
+- Context menu for folder item
