@@ -6,7 +6,6 @@
 - Edit table
 - Allow edit table on `show columns`
 - Export to SQL
-- Clear history
 - Result Set Tab
 - Report Tab
 - User Tab
@@ -14,7 +13,7 @@
 - SSH tunnel on close event
 - SSH to use home folder id_rsa by default
 - Context menu for server item
-- Add database button
+- SSH random tunnel port
 
 # Completed
 
@@ -30,3 +29,5 @@
 - Context menu for history item
 - Context menu for folder item
 - Escape result data due to html
+- Add database button
+- Clear history

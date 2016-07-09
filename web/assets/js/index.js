@@ -639,6 +639,17 @@ $(function() {
 		$(this).find('.context').trigger('click');
 	});
 
+	$$.HISTORYCLEAR.on('click', function() {
+		$$.POPUP.attr('data-popup', 'history-clear');
+	});
+
+	$$.POPUPHISTORYCLEAR.on('click', '.yes', function() {
+		$storage.delete('history.' + $KEY);
+		$$.HISTORYLIST.html('');
+
+		$$.POPUP.removeAttr('data-popup');
+	});
+
 	$$.FOLDERLIST.on('click', 'li', function(event) {
 		var item = $(this),
 			key = item.attr('data-key'),
@@ -968,6 +979,10 @@ $(function() {
 		}
 
 		return true;
+	});
+
+	$$.POPUPERROR.on('click', '.yes', function(event) {
+		$$.POPUP.removeAttr('data-popup');
 	});
 
 	window.onbeforeunload = function(event) {

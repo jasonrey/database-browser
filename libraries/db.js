@@ -76,7 +76,7 @@
 						dstPort: data.port || 3306,
 						localAddr: '127.0.0.1',
 						localPort: 5000,
-						forwardTimeout: 3000
+						forwardTimeout: 5000
 					};
 
 					if (data.sshkeyfile.length) {

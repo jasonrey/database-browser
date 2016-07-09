@@ -53,6 +53,7 @@ block body
 				#history.tab
 					ul#history-list.list
 						//- template#history-list-item
+					button#history-clear.icon.icon-trash Clear History
 			#connection
 				span.status
 				.name
@@ -175,5 +176,12 @@ block body
 					i.icon.icon-cross
 				button.yes
 					i.icon.icon-check
-
+		#popup-history-clear.popup-body
+			.popup-title Clear History
+			p This will clear all your history.
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
 	include templates.pug
