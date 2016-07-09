@@ -1,7 +1,6 @@
 # TODO
 
 - JSON data handling
-- Escape result data due to html
 - Record handling (add/delete/update)
 - Create table
 - Edit table
@@ -30,3 +29,4 @@
 - Delete server deletes data
 - Context menu for history item
 - Context menu for folder item
+- Escape result data due to html

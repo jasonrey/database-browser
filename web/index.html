@@ -198,9 +198,11 @@
     </script>
     <script id="table-list-item" type="text/html">
       <li data-name="{{name}}" title="{{name}}">
-        <div class="table-name">{{name}}</div>
+        <div class="table-name">
+          <div class="name">{{name}}</div>
+          <button class="context table-context"><i class="icon icon-stack"></i></button>
+        </div>
         <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
-        <button class="context table-context"><i class="icon icon-stack"></i></button>
         <ul class="table-columns">{{columns}}</ul>
       </li>
     </script>

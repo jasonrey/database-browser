@@ -43,11 +43,12 @@ script#database-list-item(type="text/html")
 //- columns - table columns from template#table-columns-item
 script#table-list-item(type="text/html")
 	li(data-name="{{name}}", title="{{name}}")
-		.table-name {{name}}
+		.table-name
+			.name {{name}}
+			button.context.table-context
+				i.icon.icon-stack
 		.expand
 			i.icon-fa.icon-dir-right
-		button.context.table-context
-			i.icon.icon-stack
 		ul.table-columns {{columns}}
 			//- template#table-column-item
 

@@ -278,9 +278,7 @@ $(function() {
 
 		tableCount: function(name) {
 			$db.q('select count(1) as ?? from ??', ['total', name]).then(function(response) {
-				$$.TABLELIST.find('li[data-name="' + name + '"] .table-name')
-					.attr('data-count', response.result[0].total)
-					.attr('title', name + ' (' + response.result[0].total + ')');
+				$$.TABLELIST.find('li[data-name="' + name + '"] .table-name').attr('data-count', response.result[0].total);
 			});
 		}
 	};
@@ -324,7 +322,7 @@ $(function() {
 		$$.CONTENT.attr('data-tab', name);
 	});
 
-	$$.TABLELIST.on('click', '.table-name', function() {
+	$$.TABLELIST.on('click', '.table-name .name', function() {
 		var item = $(this).parents('li'),
 			siblings = item.siblings(),
 			tablename = this.innerHTML.trim();
@@ -334,6 +332,29 @@ $(function() {
 		item.addClass('active');
 
 		$dbquery('select * from ??', [tablename]);
+	});
+
+	$$.TABLELIST.on('click', '.context', function() {
+		var item = $(this).parents('li');
+
+		$context('tableitem', function(type) {
+			switch (type) {
+				case 'edit':
+					$clipboard.copy(data.query);
+				break;
+
+				case 'delete':
+					var history = $storage.get('history.' + $KEY);
+					history.splice(index, 1);
+					$storage.set('history.' + $KEY, history);
+					item.remove();
+				break;
+			}
+		});
+	});
+
+	$$.TABLELIST.on('contextmenu', '.table-name', function(event) {
+		$(this).parents('li').find('.context').trigger('click');
 	});
 
 	$$.TABLELIST.on('click', '.expand', function() {
@@ -347,15 +368,6 @@ $(function() {
 			$populate.tableColumns(tablename);
 		}
 
-	});
-
-	$$.TABLELIST.on('click', '.context', function() {
-		var item = $(this).parents('li'),
-			siblings = item.siblings();
-
-		siblings.removeClass('active');
-
-		item.addClass('active');
 	});
 
 	$$.SERVERLIST.on('click', '.edit', function(event) {
@@ -554,10 +566,7 @@ $(function() {
 	});
 
 	$$.HISTORYLIST.on('contextmenu', 'li', function(event) {
-		var item = $(this),
-			button = item.find('.context');
-
-		button.trigger('click');
+		$(this).find('.context').trigger('click');
 	});
 
 	$$.FOLDERLIST.on('click', 'li', function(event) {
@@ -590,7 +599,7 @@ $(function() {
 		var item = $(this),
 			button = item.find('.context');
 
-		button.trigger('click');
+		$(this).find('.context').trigger('click');
 	});
 
 	$$.DATABASELIST.on('change', function() {
