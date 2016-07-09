@@ -29,7 +29,7 @@ $(function() {
 	var $dbquery = function(query, value, options) {
 		if (!$connectionState) {
 			// TODO: Show not connected
-			return;
+			return Promise.reject();
 		}
 
 		if (typeof options !== 'object') {
@@ -54,91 +54,131 @@ $(function() {
 		history.set('total', 0);
 		history.set('db', $$.DATABASELIST.val());
 
-		(new Promise((resolve, reject) => {
+		var process = new Promise((resolve, reject) => {
 			// TODO: Delete pre query
 
-			$db.q(sql).then(function(response) {
-				history.set('state', true);
+			$db.q(sql)
+				.then(function(response) {
+					history.set('state', true);
 
-				if (response.result.constructor.name === 'OkPacket') {
-					$$.TOTAL.text(response.result.affectedRows);
+					if (response.result.constructor.name === 'OkPacket') {
+						$$.TOTAL.text(response.result.affectedRows);
 
-					history.set('total', response.result.affectedRows);
+						history.set('total', response.result.affectedRows);
 
-					// INSERT INTO
-					if (response.result.insertId) {
-						history.set('insertId', response.result.insertId);
+						// INSERT INTO
+						if (response.result.insertId) {
+							history.set('insertId', response.result.insertId);
 
-						var insertTablename = sql.match(/insert into (.*?) .*/i)[1].replace(/`/g, '');
+							var insertTableName = sql.match(/^insert into (\S+)/i)[1].replace(/`/g, '');
 
-						$populate.tableCount(insertTablename);
+							$populate.tableCount(insertTableName);
 
-						$db.q('show keys from ?? where ?? = ?', [insertTablename, 'Key_name', 'PRIMARY'])
-							.then(function(subResponse) {
-								if (subResponse.result.length === 0) {
-									return Promise.reject('No primary key found.');
-								}
+							$db.q('show keys from ?? where ?? = ?', [insertTableName, 'Key_name', 'PRIMARY'])
+								.then(function(subResponse) {
+									if (subResponse.result.length === 0) {
+										return Promise.reject('No primary key found.');
+									}
 
-								return $db.q('select * from ?? where ?? = ?', [subResponse.result[0].Table, subResponse.result[0].Column_name, response.result.insertId]);
-							})
-							.then(function(subResponse) {
-								resolve(subResponse);
-							})
-							.catch(function(err) {
-								resolve({
-									err: err
+									return $db.q('select * from ?? where ?? = ?', [subResponse.result[0].Table, subResponse.result[0].Column_name, response.result.insertId]);
+								})
+								.then(function(subResponse) {
+									resolve(subResponse);
+								})
+								.catch(function(err) {
+									resolve({
+										err: err
+									});
 								});
-							});
+
+							return;
+						}
+
+						var alterTable = sql.match(/^alter table (\S+)/i);
+
+						// ALTER TABLE
+						if (alterTable) {
+							var alterTableName = alterTable[1].replace(/`/g, '');
+
+							$db.q('show columns from ??', [alterTableName])
+								.then(function(subResponse) {
+									$populate.updateTableColumns(alterTableName, subResponse);
+
+									resolve(subResponse);
+								})
+								.catch(function(err) {
+									resolve({
+										err: err
+									});
+								});
+
+							return;
+						}
+
+						var createDatabase = sql.match(/^create database (\S+)/i);
+
+						// CREATE DATABASE
+						if (createDatabase) {
+							var createDatabaseName = createDatabase[1].replace(/`/g, '');
+
+							$populate.databases()
+								.then(function() {
+									$$.DATABASELIST.val(createDatabaseName);
+
+									$$.DATABASELIST.trigger('change');
+								});
+
+							resolve(response);
+
+							return;
+						}
+
+						var dropDatabase = sql.match(/^drop database (\S+)/i);
+
+						// DROP DATABASE
+						if (dropDatabase) {
+							var dropDatabaseName = dropDatabase[1].replace(/`/g, '');
+
+							$$.DATABASELIST.find('option[value="' + dropDatabaseName + '"]').remove();
+
+							if ($$.DATABASELIST.val() === dropDatabaseName) {
+								$$.DATABASELIST.trigger('change');
+							}
+
+							resolve(response);
+
+							return;
+						}
+
+						// TODO: Delete
+
+						// TODO: Update, use WHERE to pull result
+					}
+
+					if (response.result.constructor.name === 'Array') {
+						history.set('total', response.result.length);
+
+						resolve(response);
 
 						return;
 					}
-
-					var alterTable = sql.match(/alter table (.*?) .*/i);
-
-					// ALTER TABLE
-					if (alterTable !== null) {
-						var alterTablename = alterTable[1].replace(/`/g, '');
-
-						$db.q('show columns from ??', [alterTablename])
-							.then(function(subResponse) {
-								$populate.updateTableColumns(alterTablename, subResponse);
-
-								resolve(subResponse);
-							})
-							.catch(function(err) {
-								resolve({
-									err: err
-								});
-							});
-
-						return;
-					}
-
-					// TODO: Delete
-
-					// TODO: Update, use WHERE to pull result
 
 					console.log(response);
-				}
 
-				if (response.result.constructor.name === 'Array') {
-					history.set('total', response.result.length);
+					resolve({
+						err: null
+					});
+				})
+				.catch(function(err) {
+					history.set('state', false);
+					history.set('error', err);
 
-					resolve(response);
-
-					return;
-				}
-
-				resolve({
-					err: null
+					reject(err);
 				});
-			}, function(err) {
-				history.set('state', false);
-				history.set('error', err);
+		});
 
-				reject(err);
-			});
-		}))
+
+		process
 			.then(function(response) {
 				$$.RESULT.attr('data-state', 'success');
 
@@ -160,6 +200,8 @@ $(function() {
 
 				$populate.resultError(err);
 			});
+
+		return process;
 	};
 
 	var $populate = {
@@ -196,6 +238,30 @@ $(function() {
 						reject(err);
 					});
 			});
+		},
+
+		databases: function() {
+			var process = $db.q('show databases');
+
+			process.then(function(response) {
+				var html = '';
+
+				for (var i = 0; i < response.result.length; i++) {
+					// TODO: Based on settings
+					if (response.result[i].Database === 'information_schema' ||
+						response.result[i].Database === 'performance_schema' ||
+						response.result[i].Database === 'mysql') {
+						continue;
+					}
+					html += $template('database-list-item', {
+						name: response.result[i].Database
+					});
+				}
+
+				$$.DATABASELISTGROUP.html(html);
+			});
+
+			return process;
 		},
 
 		resultTable: function(fields, rows) {
@@ -439,7 +505,7 @@ $(function() {
 			$db.close()
 				.catch(function(err) {
 				});
-			$$.DATABASELIST.html('');
+			$$.DATABASELISTGROUP.html('');
 			$$.TABLELIST.html('');
 			$$.HISTORYLIST.html('');
 			$$.FOLDERLIST.html('');
@@ -451,8 +517,8 @@ $(function() {
 
 		$db = DB.getInstance(data);
 
-		$db.q('show databases')
-			.then(function(response) {
+		$db.open
+			.then(function() {
 				$connectionState = true;
 
 				$$.POPUP.removeAttr('data-popup');
@@ -461,24 +527,28 @@ $(function() {
 					.attr('data-connection', 'connected')
 					.attr('data-tab', 'tables');
 
-				var html = '';
+				return $populate.databases();
+			})
+			.then(function() {
+				$$.DATABASELIST.val($$.DATABASELIST.find('option:first-child').attr('value'));
 
-				for (var i = 0; i < response.result.length; i++) {
-					// TODO: Based on settings
-					if (response.result[i].Database === 'information_schema' ||
-						response.result[i].Database === 'performance_schema' ||
-						response.result[i].Database === 'mysql') {
-						continue;
-					}
-					html += $template('database-list-item', {
-						name: response.result[i].Database
+				$$.DATABASELIST.trigger('change');
+
+				var encodingHTML = $template('newdatabase-select-default-item', {
+					name: $db.variables.character_set_server
+				});
+
+				encodingHTML += $template('newdatabase-select-disabled-item');
+
+				for (var key in $db.collations) {
+					encodingHTML += $template('newdatabase-select-item', {
+						name: key
 					});
 				}
 
-				$$.DATABASELIST.html(html);
-
-				$$.DATABASELIST.trigger('change');
-			}).catch(function(err) {
+				$$.NEWDATABASEENCODING.html(encodingHTML);
+			})
+			.catch(function(err) {
 				$$.CONTENT.attr('data-connection', '');
 
 				$$.POPUPERROR.find('p').html(err);
@@ -602,10 +672,49 @@ $(function() {
 		$(this).find('.context').trigger('click');
 	});
 
-	$$.DATABASELIST.on('change', function() {
-		var db = this.value;
+	var previousDatabase;
 
-		$populate.changeDB(db);
+	$$.DATABASELIST.on('change', function() {
+		if (this.value === '#newdatabase') {
+			$$.TABLELIST.html('');
+			$$.POPUP.attr('data-popup', 'newdatabase');
+			$$.POPUPNEWDATABASE.find('input').trigger('focus');
+
+			$$.NEWDATABASEENCODING.val($db.variables.character_set_server);
+
+			$$.NEWDATABASEENCODING.trigger('change');
+
+			return;
+		}
+
+		previousDatabase = this.value;
+
+		$populate.changeDB(this.value);
+	});
+
+	var encodingCollationsOptionsHTML = {};
+
+	$$.NEWDATABASEENCODING.on('change', function() {
+
+		if (encodingCollationsOptionsHTML[this.value] === undefined) {
+			var html = $template('newdatabase-select-default-item', {
+				name: $db.collationsDefault[this.value]
+			});
+
+			html += $template('newdatabase-select-disabled-item');
+
+			_.each($db.collations[this.value], function(value, key) {
+				html += $template('newdatabase-select-item', {
+					name: value.COLLATION_NAME
+				});
+			});
+
+			encodingCollationsOptionsHTML[this.value] = html;
+		}
+
+		$$.NEWDATABASECOLLATION.html(encodingCollationsOptionsHTML[this.value]);
+
+		$$.NEWDATABASECOLLATION.val($db.collationsDefault[this.value]);
 	});
 
 	$$.NEW.on('change', 'input[name="ssh"]', function() {
@@ -776,7 +885,7 @@ $(function() {
 		$$.EDITOR.text('');
 	});
 
-	$$.POPUP.on('click', '.actions button', function() {
+	$$.POPUP.on('click', '.actions .no', function() {
 		$$.POPUP.removeAttr('data-popup');
 	});
 
@@ -800,6 +909,8 @@ $(function() {
 			query: query,
 			date: Date.now()
 		});
+
+		$$.POPUP.removeAttr('data-popup');
 	});
 
 	$$.POPUPQUERYSAVE.on('keydown', 'input', function(event) {
@@ -810,6 +921,49 @@ $(function() {
 
 		if (event.keyCode === 27) {
 			$$.POPUPQUERYSAVE.find('.no').trigger('click');
+			return false;
+		}
+
+		return true;
+	});
+
+	$$.POPUPNEWDATABASE.on('click', '.yes', function(event) {
+		var input = $(this).parents('.popup-body').find('input'),
+			name = input.val(),
+			encoding = $$.NEWDATABASEENCODING.val(),
+			collation = $$.NEWDATABASECOLLATION.val();
+
+		input.removeClass('error');
+
+		if (name === '') {
+			input.addClass('error');
+			input.trigger('focus');
+			return;
+		}
+
+		$$.POPUP.attr('data-popup', 'loading');
+
+		$dbquery('create database ?? default character set ? default collate ?', [name, encoding, collation])
+			.then(function(response) {
+				console.log(response);
+				$$.POPUP.removeAttr('data-popup');
+			});
+	});
+
+	$$.POPUPNEWDATABASE.on('click', '.no', function() {
+		$$.DATABASELIST.val(previousDatabase);
+
+		$$.DATABASELIST.trigger('change');
+	});
+
+	$$.POPUPNEWDATABASE.on('keydown', 'input', function(event) {
+		if (event.keyCode === 13) {
+			$$.POPUPNEWDATABASE.find('.yes').trigger('click');
+			return false;
+		}
+
+		if (event.keyCode === 27) {
+			$$.POPUPNEWDATABASE.find('.no').trigger('click');
 			return false;
 		}
 

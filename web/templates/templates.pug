@@ -37,7 +37,7 @@ script#folder-list-item(type="text/html")
 
 //- name - database name
 script#database-list-item(type="text/html")
-	option {{name}}
+	option(value="{{name}}") {{name}}
 
 //- name - table name
 //- columns - table columns from template#table-columns-item
@@ -73,3 +73,12 @@ script#result-table-head-cell(type="text/html")
 //- type - cell type
 script#result-table-cell(type="text/html")
 	td(class="{{type}}") {{value}}
+
+script#newdatabase-select-default-item(type="text/html")
+	option(value="{{name}}") {{name}} (Default)
+
+script#newdatabase-select-item(type="text/html")
+	option(value="{{name}}") {{name}}
+
+script#newdatabase-select-disabled-item(type="text/html")
+	option(disabled="disabled") ────────────

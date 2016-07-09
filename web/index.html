@@ -40,7 +40,12 @@
       <div class="panel-sidebar">
         <div id="sidebar-tab-content">
           <div id="databases"><i class="icon icon-layout"></i><i class="icon-fa icon-angle-down"></i>
-            <select id="database-list"></select>
+            <select id="database-list">
+              <optgroup id="database-list-group" label="Databases"></optgroup>
+              <optgroup label="────────────">
+                <option value="#newdatabase">New Database</option>
+              </optgroup>
+            </select>
           </div>
           <div class="tab" id="servers">
             <ul class="list" id="server-list"></ul>
@@ -168,6 +173,22 @@
         <div class="loading-blob"></div>
         <p>Loading</p>
       </div>
+      <div class="popup-body" id="popup-newdatabase">
+        <div class="popup-title">New Database</div>
+        <input type="text" placeholder="Database Name">
+        <label>Encoding</label>
+        <div class="select">
+          <select id="newdatabase-encoding" name="encoding"></select><i class="icon-fa icon-angle-down"></i>
+        </div>
+        <label>Collation</label>
+        <div class="select">
+          <select id="newdatabase-collation" name="collation"></select><i class="icon-fa icon-angle-down"></i>
+        </div>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
     </div>
     <script id="server-list-item" type="text/html">
       <li class="{{withssh}}" data-key="{{key}}"><span>
@@ -194,7 +215,7 @@
       </li>
     </script>
     <script id="database-list-item" type="text/html">
-      <option>{{name}}</option>
+      <option value="{{name}}">{{name}}</option>
     </script>
     <script id="table-list-item" type="text/html">
       <li data-name="{{name}}" title="{{name}}">
@@ -219,6 +240,15 @@
     </script>
     <script id="result-table-cell" type="text/html">
       <td class="{{type}}">{{value}}</td>
+    </script>
+    <script id="newdatabase-select-default-item" type="text/html">
+      <option value="{{name}}">{{name}} (Default)</option>
+    </script>
+    <script id="newdatabase-select-item" type="text/html">
+      <option value="{{name}}">{{name}}</option>
+    </script>
+    <script id="newdatabase-select-disabled-item" type="text/html">
+      <option disabled="disabled">────────────</option>
     </script>
   </body>
 </html>

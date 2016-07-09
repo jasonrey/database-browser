@@ -36,7 +36,11 @@ block body
 					i.icon.icon-layout
 					i.icon-fa.icon-angle-down
 					select#database-list
-						//- template#database-list-item
+						optgroup#database-list-group(label="Databases")
+							//- template#database-list-item
+						optgroup(label="────────────")
+							option(value="#newdatabase") New Database
+
 				#servers.tab
 					ul#server-list.list
 						//- template#server-list-item
@@ -155,5 +159,21 @@ block body
 		#popup-loading.popup-body
 			.loading-blob
 			p Loading
+		#popup-newdatabase.popup-body
+			.popup-title New Database
+			input(type="text", placeholder="Database Name")
+			label Encoding
+			.select
+				select#newdatabase-encoding(name="encoding")
+				i.icon-fa.icon-angle-down
+			label Collation
+			.select
+				select#newdatabase-collation(name="collation")
+				i.icon-fa.icon-angle-down
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
 
 	include templates.pug

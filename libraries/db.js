@@ -10,6 +10,60 @@
 			data.dateStrings = true;
 
 			this.open = new Promise((resolve, reject) => {
+				this.connect(data)
+					.then(() => {
+						var processes = [];
+						processes.push(new Promise((res, rej) => {
+							this.connection.query('select * from ??.?? order by ??, ??', ['information_schema', 'COLLATIONS', 'CHARACTER_SET_NAME', 'COLLATION_NAME'], (err, result, fields) => {
+									this.collations = {};
+									this.collationsDefault = {};
+
+									result.forEach((row) => {
+										if (this.collations[row.CHARACTER_SET_NAME] === undefined) {
+											this.collations[row.CHARACTER_SET_NAME] = {};
+										}
+
+										this.collations[row.CHARACTER_SET_NAME][row.COLLATION_NAME] = row;
+
+										if (row.IS_DEFAULT === 'Yes') {
+											this.collationsDefault[row.CHARACTER_SET_NAME] = row.COLLATION_NAME;
+										}
+									});
+
+									res();
+								});
+						}));
+
+						processes.push(new Promise((res, rej) => {
+							this.connection.query('show variables where ?? in (?, ?, ?)', ['Variable_name', 'character_set_server', 'collation_server', 'default_storage_engine'], (err, result, fields) => {
+									this.variables = {};
+
+									result.forEach((row) => {
+										this.variables[row.Variable_name] = row.Value;
+									});
+
+									res();
+								});
+						}));
+
+						Promise.all(processes).then(() => {
+							resolve();
+						});
+					})
+					.catch((err) => {
+						reject(err);
+					});
+			});
+		}
+
+		static getInstance(data) {
+			let db = new DB(data);
+
+			return db;
+		}
+
+		connect(data) {
+			return new Promise((resolve, reject) => {
 				if (data.ssh) {
 					var option = {
 						host: data.sshhost,
@@ -43,32 +97,27 @@
 							dateStrings: true
 						});
 
-						resolve();
+						this.connection.connect((err) => {
+							if (err) {
+								reject(err);
+							} else {
+								resolve();
+							}
+						});
 					}).catch((err) => {
 						reject(err);
 					});
 				} else {
 					this.connection = mysql.createConnection(data);
-					resolve();
+
+					this.connection.connect((err) => {
+						if (err) {
+							reject(err);
+						} else {
+							resolve();
+						}
+					});
 				}
-			});
-		}
-
-		static getInstance(data) {
-			let db = new DB(data);
-
-			return db;
-		}
-
-		connect() {
-			return new Promise((resolve, reject) => {
-				this.connection.connect((err) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
 			});
 		}
 
