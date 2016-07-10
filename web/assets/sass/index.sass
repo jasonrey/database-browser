@@ -91,6 +91,61 @@ form
 			&:hover, &:focus
 				background-color: $green50
 
+table
+	min-width: 100%;
+
+	th
+		font-weight: 500
+
+	td
+		vertical-align: top
+
+	th, td
+		padding: 4px 8px
+		border-left: 1px solid $grey200
+
+		&:first-child
+			border-left: 0
+
+	tr
+		border-bottom: 1px solid $grey200
+
+		&:last-child
+			border-bottom: 0
+
+	thead
+		background-color: $grey300
+
+	tbody
+		tr
+			&:nth-child(odd)
+				background-color: white
+
+			&:hover
+				background-color: $grey200
+
+.select
+	height: 48px
+	padding: 0 8px
+	box-sizing: border-box
+	position: relative
+
+	select
+		display: block
+		height: 48px
+		position: relative
+		padding: 0 48px 0 0
+
+	i
+		width: 48px
+		height: 48px
+		line-height: 48px
+		display: block
+		position: absolute
+		top: 0
+		right: 0
+		text-align: center
+
 .panels
 	width: 100%
 	height: 100%
@@ -138,7 +193,7 @@ form
 	&[data-tab="tables"] #tables,
 	&[data-tab="folder"] #folder,
 	&[data-tab="history"] #history,
-	&[data-tab="result"] #result,
+	&[data-tab="resultset"] #resultset,
 	&[data-tab="report"] #report,
 	&[data-tab="user"] #user,
 	&[data-tab="settings"] #settings
@@ -216,7 +271,7 @@ form
 		#content[data-tab="tables"] &:nth-child(2),
 		#content[data-tab="folder"] &:nth-child(3),
 		#content[data-tab="history"] &:nth-child(4),
-		#content[data-tab="result"] &:nth-child(5),
+		#content[data-tab="resultset"] &:nth-child(5),
 		#content[data-tab="report"] &:nth-child(6),
 		#content[data-tab="user"] &:nth-child(7),
 		#content[data-tab="settings"] &:nth-child(8)
@@ -453,7 +508,7 @@ form
 	#content[data-tab="tables"] &,
 	#content[data-tab="folder"] &,
 	#content[data-tab="history"] &,
-	#content[data-tab="result"] &,
+	#content[data-tab="resultset"] &,
 	#content[data-tab="report"] &,
 	#content[data-tab="user"] &
 		display: block
@@ -488,7 +543,7 @@ form
 #table-list
 	position: absolute
 	top: 0
-	bottom: 0
+	bottom: 32px
 	left: 0
 	width: 100%
 	overflow: auto
@@ -594,6 +649,21 @@ form
 
 			&:hover
 				background-color: $grey200
+
+#new-table
+	position: absolute
+	left: 0
+	bottom: 0
+	width: 100%
+	height: 32px
+	line-height: 32px
+	display: block
+	border-top: 1px solid $grey300
+	box-sizing: border-box
+	color: $grey700
+
+	&:hover
+		background-color: $grey200
 
 #connection
 	position: absolute
@@ -752,6 +822,11 @@ form
 	position: relative
 	flex-direction: column
 
+	.box
+		background-color: $grey50;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+		position: relative
+
 #command
 	padding: 8px 16px
 	flex-shrink: 0
@@ -775,40 +850,66 @@ form
 	width: 32px
 	height: 32px
 	line-height: 32px
+	display: none
 
 	&:hover
 		background-color: $grey300
 
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
+
 #result-box
 	flex-grow: 1
 	margin: 8px 16px 16px 16px
-	background-color: $grey50
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
-	position: relative
 	border-top: 3px solid transparent
+	display: none
 
 	#result[data-state="error"] &
+		display: block
 		border-color: $red500
 
 	#result[data-state="loading"] &
+		display: block
 		border-color: $orange500
 
 	#result[data-state="success"] &
+		display: block
 		border-color: $green500
 
 #meta
-	position: relative
-	flex-shrink: 0
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
 	height: 24px
 	line-height: 24px
-	padding: 0 24px 0 8px
+	padding: 0 0 0 8px
+	box-sizing: border-box
 	display: none
+
+	button
+		float: right
+		width: 24px
+		height: 24px
+		line-height: 24px
+		color: $grey700
+
+		&:hover
+			background-color: $grey300
+
+	&::after
+		content: ''
+		clear: both
+		display: table
 
 	#result[data-state="success"] &,
 	#result[data-state="loading"] &
 		display: block
 
 #total
+	float: left
+
 	&::before
 		content: 'Total Rows:'
 		font-size: 10px
@@ -816,23 +917,11 @@ form
 		color: $grey700
 		margin: 0 8px 0 0
 
-#export
-	position: absolute
-	top: 0
-	right: 0
-	width: 24px
-	height: 24px
-	line-height: 24px
-	color: $blue500
-
-	&:hover
-		background-color: $blue50
-
 #table
 	position: absolute
-	top: 24px
+	top: 0
 	left: 0
-	bottom: 0
+	bottom: 24px
 	width: 100%
 	overflow: auto
 	display: none
@@ -843,50 +932,8 @@ form
 		display: block
 
 	table
-		min-width: 100%;
-
-		th
-			font-weight: 500
-
-			&.text
-				min-width: 150px
-
-			&.hover
-				background-color: $bluegrey200
-
-		td
-			vertical-align: top
-
-			&.hover
-				background-color: $bluegrey50
-
-		th, td
-			padding: 4px 8px
-			border-left: 1px solid $grey200
-
-			&:first-child
-				border-left: 0
-
-		tr
-			border-bottom: 1px solid $grey200
-
-			&:last-child
-				border-bottom: 0
-
-		thead
-			background-color: $bluegrey100
-
-			tr
-				&:hover
-					background-color: $bluegrey200
-
-		tbody
-			tr
-				&:nth-child(odd)
-					background-color: white
-
-				&:hover
-					background-color: $bluegrey50
+		.text
+			min-width: 150px
 
 		.datetime
 			white-space: nowrap;
@@ -918,9 +965,90 @@ form
 #error-message
 	display: none
 	padding: 16px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	overflow: auto;
+	box-sizing: border-box;
 
 	#result[data-state="error"] &
 		display: block
+
+#table-edit
+	display: none
+	font-size: 12px
+	flex-grow: 1
+	margin: 8px 16px
+	flex-direction: column
+
+	#result[data-state="table-edit"] &
+		display: flex
+
+	h2
+		font-weight: 500
+
+		&::before
+			content: 'Edit Table: '
+			color: $grey500
+
+	h3
+		font-weight: 500
+		color: $grey500
+
+	.box
+		margin: 8px 0
+
+#table-edit-info
+	display: flex
+	flex-wrap: wrap
+
+	.group
+		width: 100%
+
+		&.half
+			width: 50%
+			padding: 0 8px
+			box-sizing: border-box
+
+	label
+		display: block
+		box-sizing: border-box
+		width: 100%
+		margin: 8px 0 0 0
+		color: $grey500
+
+	.select,
+	select,
+	i,
+	input
+		height: 24px
+		line-height: 24px
+
+	input,
+	.select
+		border-bottom: 1px solid $grey300
+		margin: 8px 0
+		box-sizing: border-box
+
+	input
+		padding: 0 8px
+
+	.select
+		select
+			padding: 0 24px 0 0
+
+		i
+			width: 24px
+
+#table-edit-columns
+	overflow: auto
+	flex-grow: 1
+
+#table-edit-indexes
+	overflow: auto
+	flex-grow: 1
 
 #query-panel
 	position: absolute
@@ -1002,7 +1130,8 @@ form
 	&[data-popup="error"] #popup-error,
 	&[data-popup="loading"] #popup-loading,
 	&[data-popup="newdatabase"] #popup-newdatabase,
-	&[data-popup="history-clear"] #popup-history-clear
+	&[data-popup="history-clear"] #popup-history-clear,
+	&[data-popup="newtable"] #popup-newtable
 		display: block
 
 #popup-overlay
@@ -1060,9 +1189,7 @@ form
 		position: relative
 		padding: 16px
 
-	input,
-	select,
-	.select
+	input
 		display: block
 		height: 48px
 		padding: 0 8px
@@ -1076,17 +1203,6 @@ form
 		margin: 8px 0 0 0
 		color: $grey500
 		font-size: 12px
-
-	.select
-		i
-			width: 48px
-			height: 48px
-			line-height: 48px
-			display: block
-			position: absolute
-			top: 0
-			right: 0
-			text-align: center
 
 #popup-error
 	.yes
@@ -1148,4 +1264,16 @@ form
 
 	.select
 		&:nth-of-type(3)
+			border-bottom: 0
+
+#popup-newtable
+	input,
+	.select
+		border-bottom: 1px solid $grey300
+
+		&.error
+			border-color: $red500
+
+	.select
+		&:nth-of-type(4)
 			border-bottom: 0

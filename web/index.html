@@ -32,7 +32,7 @@
         <button data-name="tables"><i class="icon icon-columns"></i></button>
         <button data-name="folder"><i class="icon icon-heart"></i></button>
         <button data-name="history"><i class="icon icon-clock"></i></button>
-        <button data-name="result"><i class="icon icon-folder"></i></button>
+        <button data-name="resultset"><i class="icon icon-folder"></i></button>
         <button data-name="report"><i class="icon icon-paper"></i></button>
         <button data-name="user"><i class="icon icon-head"></i></button>
         <button data-name="settings"><i class="icon icon-cog"></i></button>
@@ -52,6 +52,7 @@
           </div>
           <div class="tab" id="tables">
             <ul class="list" id="table-list"></ul>
+            <button class="icon icon-plus" id="new-table">New Table</button>
           </div>
           <div class="tab" id="folder">
             <ul class="list" id="folder-list"></ul>
@@ -129,18 +130,77 @@
         <div class="content" id="result">
           <div id="command"></div>
           <button id="command-save"><i class="icon icon-heart"></i></button>
-          <div id="result-box">
-            <div id="meta">
-              <div id="total"></div>
-              <button id="export"><i class="icon icon-download"></i></button>
-            </div>
+          <div class="box" id="result-box">
             <div id="table">
               <table>
                 <thead></thead>
                 <tbody></tbody>
               </table>
             </div>
+            <div id="meta">
+              <div id="total"></div>
+              <button id="result-next"><i class="icon icon-fast-forward"></i></button>
+              <button id="result-prev"><i class="icon icon-rewind"></i></button>
+              <button id="export"><i class="icon icon-download"></i></button>
+            </div>
             <div id="error-message"></div>
+          </div>
+          <div id="table-edit">
+            <h2></h2>
+            <div class="box" id="table-edit-info">
+              <div class="group half">
+                <label>Name</label>
+                <input id="table-edit-name" type="text">
+              </div>
+              <div class="group half">
+                <label>Auto Increment</label>
+                <input id="table-edit-increment" type="number">
+              </div>
+              <div class="group half">
+                <label>Encoding</label>
+                <div class="select"><i class="icon-fa icon-angle-down"></i>
+                  <select id="table-edit-encoding"></select>
+                </div>
+              </div>
+              <div class="group half">
+                <label>Collation</label>
+                <div class="select"><i class="icon-fa icon-angle-down"></i>
+                  <select id="table-edit-collation"></select>
+                </div>
+              </div>
+            </div>
+            <h3>Columns</h3>
+            <div class="box" id="table-edit-columns">
+              <table>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Length</th>
+                    <th>Unsigned</th>
+                    <th>Allow Null</th>
+                    <th>Auto Increment</th>
+                    <th>Default</th>
+                    <th>Comment</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <h3>Indexes</h3>
+            <div class="box" id="table-edit-indexes">
+              <table>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
         </div>
         <div id="query-panel">
@@ -157,7 +217,7 @@
       <div id="popup-overlay"></div>
       <div class="popup-body" id="popup-query-save">
         <div class="popup-title">Save Query</div>
-        <input type="text" placeholder="Query Name (Optional)">
+        <input id="query-save-name" type="text" placeholder="Query Name (Optional)">
         <div class="actions">
           <button class="no"><i class="icon icon-cross"></i></button>
           <button class="yes"><i class="icon icon-check"></i></button>
@@ -176,14 +236,14 @@
       </div>
       <div class="popup-body" id="popup-newdatabase">
         <div class="popup-title">New Database</div>
-        <input type="text" placeholder="Database Name">
+        <input id="newdatabase-name" type="text" placeholder="Database Name">
         <label>Encoding</label>
-        <div class="select">
-          <select id="newdatabase-encoding" name="encoding"></select><i class="icon-fa icon-angle-down"></i>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newdatabase-encoding"></select>
         </div>
         <label>Collation</label>
-        <div class="select">
-          <select id="newdatabase-collation" name="collation"></select><i class="icon-fa icon-angle-down"></i>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newdatabase-collation"></select>
         </div>
         <div class="actions">
           <button class="no"><i class="icon icon-cross"></i></button>
@@ -193,6 +253,26 @@
       <div class="popup-body" id="popup-history-clear">
         <div class="popup-title">Clear History</div>
         <p>This will clear all your history.</p>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-newtable">
+        <div class="popup-title">New Table</div>
+        <input id="newtable-name" type="text" placeholder="Table Name">
+        <label>Storage Type</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newtable-engine" name="engine"></select>
+        </div>
+        <label>Encoding</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newtable-encoding" name="encoding"></select>
+        </div>
+        <label>Collation</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newtable-collation" name="collation"></select>
+        </div>
         <div class="actions">
           <button class="no"><i class="icon icon-cross"></i></button>
           <button class="yes"><i class="icon icon-check"></i></button>

@@ -59,9 +59,10 @@ script#table-columns-item(type="text/html")
 		div {{name}}
 		span {{type}}
 
+//- id - row id
 //- cells - table columns from template#result-table-head-cell/#result-table-cell
 script#result-table-row(type="text/html")
-	tr {{cells}}
+	tr(data-id="{{id}}") {{cells}}
 		//- template#result-table-head-cell/#result-table-cell
 
 //- name - column name
@@ -74,11 +75,62 @@ script#result-table-head-cell(type="text/html")
 script#result-table-cell(type="text/html")
 	td(class="{{type}}") {{value}}
 
+//- name
 script#newdatabase-select-default-item(type="text/html")
 	option(value="{{name}}") {{name}} (Default)
 
+//- name
 script#newdatabase-select-item(type="text/html")
 	option(value="{{name}}") {{name}}
 
 script#newdatabase-select-disabled-item(type="text/html")
 	option(disabled="disabled") ────────────
+
+//- cells - table edit columns from
+script#table-edit-columns-row(type="text/html")
+	tr
+		td
+			button
+				i.icon.icon-arrow-up
+			button
+				i.icon.icon-arrow-down
+			button
+				i.icon.icon-cross
+		td
+			input.column(type="text", value="{{column}}")
+		td
+			select.type
+				option INT
+				option BIGINT
+				option FLOAT
+				option DOUBLE
+				option VARCHAR
+				option TEXT
+				option DATE
+				option TIMESTAMP
+				option TIME
+				option YEAR
+				option DATETIME
+		td
+			input.length(type="text", value="{{length}}")
+		td
+			input.unsigned(type="checkbox", checked="{{unsigned}}")
+		td
+			input.allownull(type="checkbox", checked="{{allownull}}")
+		td
+			input.default(type="text", value="{{default}}")
+		td
+			input.comment(type="text", value="{{comment}}")
+
+script#table-edit-columns-cell(type="text/html")
+	td
+		div(contenteditable="true") {{value}}
+
+script#table-edit-columns-cell-action(type="text/html")
+	td
+		button
+			i.icon.icon-arrow-up
+		button
+			i.icon.icon-arrow-down
+		button
+			i.icon.icon-cross

@@ -100,10 +100,8 @@ $(function() {
 						if (alterTable) {
 							var alterTableName = alterTable[1].replace(/`/g, '');
 
-							$db.q('show columns from ??', [alterTableName])
+							$populate.tableColumns(alterTableName)
 								.then(function(subResponse) {
-									$populate.updateTableColumns(alterTableName, subResponse);
-
 									resolve(subResponse);
 								})
 								.catch(function(err) {
@@ -176,7 +174,6 @@ $(function() {
 					reject(err);
 				});
 		});
-
 
 		process
 			.then(function(response) {
@@ -313,9 +310,13 @@ $(function() {
 		},
 
 		tableColumns: function(tablename) {
-			$db.q('show columns from ??', [tablename]).then(function(response) {
+			var process = $db.q('describe ??', [tablename]);
+
+			process.then(function(response) {
 				$populate.updateTableColumns(tablename, response);
 			});
+
+			return process;
 		},
 
 		updateTableColumns: function(tablename, response) {
@@ -346,6 +347,33 @@ $(function() {
 			$db.q('select count(1) as ?? from ??', ['total', name]).then(function(response) {
 				$$.TABLELIST.find('li[data-name="' + name + '"] .table-name').attr('data-count', response.result[0].total);
 			});
+		},
+
+		editTable: function(name) {
+			$$.RESULT.attr('data-state', 'table-edit');
+			$$.TABLEEDIT.find('h2').text(name);
+
+			$$.TABLEEDITNAME.val(name);
+
+			$db.q('show table status like ?', [name])
+				.then(function(response) {
+					var data = response.result[0];
+
+					var encoding = data.Collation.split('_')[0];
+
+					$$.TABLEEDITENCODING
+						.val(encoding)
+						.trigger('change');
+
+					$$.TABLEEDITCOLLATION.val(data.Collation);
+
+					$$.TABLEEDITINCREMENT.val(data.Auto_increment);
+				});
+
+			$db.q('show full columns from ??', [name])
+				.then(function(response) {
+
+				});
 		}
 	};
 
@@ -389,31 +417,29 @@ $(function() {
 	});
 
 	$$.TABLELIST.on('click', '.table-name .name', function() {
-		var item = $(this).parents('li'),
-			siblings = item.siblings(),
-			tablename = this.innerHTML.trim();
-
-		siblings.removeClass('active');
-
-		item.addClass('active');
-
-		$dbquery('select * from ??', [tablename]);
+		$dbquery('select * from ??', [this.innerHTML.trim()]);
 	});
 
 	$$.TABLELIST.on('click', '.context', function() {
-		var item = $(this).parents('li');
+		var item = $(this).parents('li'),
+			tablename = item.attr('data-name');
 
 		$context('tableitem', function(type) {
 			switch (type) {
 				case 'edit':
-					$clipboard.copy(data.query);
+					$populate.editTable(tablename);
+				break;
+
+				case 'truncate':
+					// TODO: Popup confirmation
 				break;
 
 				case 'delete':
-					var history = $storage.get('history.' + $KEY);
-					history.splice(index, 1);
-					$storage.set('history.' + $KEY, history);
-					item.remove();
+					// TODO: Popup confirmation
+				break;
+
+				case 'syntax':
+					// TODO: Custom result
 				break;
 			}
 		});
@@ -433,6 +459,30 @@ $(function() {
 
 			$populate.tableColumns(tablename);
 		}
+
+	});
+
+	$$.NEWTABLE.on('click', function() {
+		$$.POPUP.attr('data-popup', 'newtable');
+
+		$$.NEWTABLEENCODING
+			.val($db.variables.character_set_server)
+			.trigger('change');
+	});
+
+	$$.TABLEEDITNAME.on('blur', function() {
+
+	});
+
+	$$.TABLEEDITINCREMENT.on('blur', function() {
+
+	});
+
+	$$.TABLEEDITENCODING.on('blur', function() {
+
+	});
+
+	$$.TABLEEDITCOLLATION.on('blur', function() {
 
 	});
 
@@ -540,13 +590,29 @@ $(function() {
 
 				encodingHTML += $template('newdatabase-select-disabled-item');
 
-				for (var key in $db.collations) {
+				for (var collationkey in $db.collations) {
 					encodingHTML += $template('newdatabase-select-item', {
-						name: key
+						name: collationkey
 					});
 				}
 
 				$$.NEWDATABASEENCODING.html(encodingHTML);
+				$$.NEWTABLEENCODING.html(encodingHTML);
+				$$.TABLEEDITENCODING.html(encodingHTML);
+
+				var enginesHTML = $template('newdatabase-select-default-item', {
+					name: $db.variables.default_storage_engine
+				});
+
+				enginesHTML += $template('newdatabase-select-disabled-item');
+
+				for (var enginekey in $db.engines) {
+					enginesHTML += $template('newdatabase-select-item', {
+						name: enginekey
+					});
+				}
+
+				$$.NEWTABLEENGINE.html(enginesHTML);
 			})
 			.catch(function(err) {
 				$$.CONTENT.attr('data-connection', '');
@@ -689,11 +755,13 @@ $(function() {
 		if (this.value === '#newdatabase') {
 			$$.TABLELIST.html('');
 			$$.POPUP.attr('data-popup', 'newdatabase');
-			$$.POPUPNEWDATABASE.find('input').trigger('focus');
+			$$.NEWDATABASENAME
+				.val('')
+				.trigger('focus');
 
-			$$.NEWDATABASEENCODING.val($db.variables.character_set_server);
-
-			$$.NEWDATABASEENCODING.trigger('change');
+			$$.NEWDATABASEENCODING
+				.val($db.variables.character_set_server)
+				.trigger('change');
 
 			return;
 		}
@@ -706,7 +774,6 @@ $(function() {
 	var encodingCollationsOptionsHTML = {};
 
 	$$.NEWDATABASEENCODING.on('change', function() {
-
 		if (encodingCollationsOptionsHTML[this.value] === undefined) {
 			var html = $template('newdatabase-select-default-item', {
 				name: $db.collationsDefault[this.value]
@@ -726,6 +793,50 @@ $(function() {
 		$$.NEWDATABASECOLLATION.html(encodingCollationsOptionsHTML[this.value]);
 
 		$$.NEWDATABASECOLLATION.val($db.collationsDefault[this.value]);
+	});
+
+	$$.NEWTABLEENCODING.on('change', function() {
+		if (encodingCollationsOptionsHTML[this.value] === undefined) {
+			var html = $template('newdatabase-select-default-item', {
+				name: $db.collationsDefault[this.value]
+			});
+
+			html += $template('newdatabase-select-disabled-item');
+
+			_.each($db.collations[this.value], function(value, key) {
+				html += $template('newdatabase-select-item', {
+					name: value.COLLATION_NAME
+				});
+			});
+
+			encodingCollationsOptionsHTML[this.value] = html;
+		}
+
+		$$.NEWTABLECOLLATION.html(encodingCollationsOptionsHTML[this.value]);
+
+		$$.NEWTABLECOLLATION.val($db.collationsDefault[this.value]);
+	});
+
+	$$.TABLEEDITENCODING.on('change', function() {
+		if (encodingCollationsOptionsHTML[this.value] === undefined) {
+			var html = $template('newdatabase-select-default-item', {
+				name: $db.collationsDefault[this.value]
+			});
+
+			html += $template('newdatabase-select-disabled-item');
+
+			_.each($db.collations[this.value], function(value, key) {
+				html += $template('newdatabase-select-item', {
+					name: value.COLLATION_NAME
+				});
+			});
+
+			encodingCollationsOptionsHTML[this.value] = html;
+		}
+
+		$$.TABLEEDITCOLLATION.html(encodingCollationsOptionsHTML[this.value]);
+
+		$$.TABLEEDITCOLLATION.val($db.collationsDefault[this.value]);
 	});
 
 	$$.NEW.on('change', 'input[name="ssh"]', function() {
@@ -848,7 +959,9 @@ $(function() {
 
 		$$.POPUP.attr('data-source', 'command');
 
-		$$.POPUPQUERYSAVE.find('input').trigger('focus');
+		$$.QUERYSAVENAME
+			.val('')
+			.trigger('focus');
 	});
 
 	$$.EDITOR.on('keydown', function(event) {
@@ -889,7 +1002,9 @@ $(function() {
 
 		$$.POPUP.attr('data-popup', 'query-save');
 
-		$$.POPUPQUERYSAVE.find('input').trigger('focus');
+		$$.QUERYSAVENAME
+			.val('')
+			.trigger('focus');
 	});
 
 	$$.QUERYCLEAR.on('click', function() {
@@ -905,8 +1020,7 @@ $(function() {
 	});
 
 	$$.POPUPQUERYSAVE.on('click', '.yes', function() {
-		var input = $(this).parents('.popup-body').find('input'),
-			name = input.val(),
+		var name = $$.QUERYSAVENAME.val(),
 			query = $$.EDITOR.text();
 
 		if ($$.POPUP.attr('data-source') === 'command') {
@@ -939,16 +1053,16 @@ $(function() {
 	});
 
 	$$.POPUPNEWDATABASE.on('click', '.yes', function(event) {
-		var input = $(this).parents('.popup-body').find('input'),
-			name = input.val(),
+		var name = $$.NEWDATABASENAME.val(),
 			encoding = $$.NEWDATABASEENCODING.val(),
 			collation = $$.NEWDATABASECOLLATION.val();
 
-		input.removeClass('error');
+		$$.NEWDATABASENAME.removeClass('error');
 
 		if (name === '') {
-			input.addClass('error');
-			input.trigger('focus');
+			$$.NEWDATABASENAME
+				.addClass('error')
+				.trigger('focus');
 			return;
 		}
 
@@ -975,6 +1089,43 @@ $(function() {
 
 		if (event.keyCode === 27) {
 			$$.POPUPNEWDATABASE.find('.no').trigger('click');
+			return false;
+		}
+
+		return true;
+	});
+
+	$$.POPUPNEWTABLE.on('click', '.yes', function(event) {
+		var name = $$.NEWTABLENAME.val(),
+			engine = $$.NEWTABLEENGINE.val(),
+			encoding = $$.NEWTABLEENCODING.val(),
+			collation = $$.NEWTABLECOLLATION.val();
+
+		$$.NEWTABLENAME.removeClass('error');
+
+		if (name === '') {
+			$$.NEWTABLENAME.addClass('error');
+			$$.NEWTABLENAME.trigger('focus');
+			return;
+		}
+
+		$$.POPUP.attr('data-popup', 'loading');
+
+		$dbquery('create table ?? (id int(11) unsigned not null primary key auto_increment) engine=' + engine + ' default charset=' + encoding + ' collate=' + collation, [name, encoding, collation])
+			.then(function(response) {
+				$$.POPUP.removeAttr('data-popup');
+				$populate.editTable(name);
+			});
+	});
+
+	$$.POPUPNEWTABLE.on('keydown', 'input', function(event) {
+		if (event.keyCode === 13) {
+			$$.POPUPNEWTABLE.find('.yes').trigger('click');
+			return false;
+		}
+
+		if (event.keyCode === 27) {
+			$$.POPUPNEWTABLE.find('.no').trigger('click');
 			return false;
 		}
 

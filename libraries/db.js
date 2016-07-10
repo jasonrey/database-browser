@@ -13,11 +13,14 @@
 				this.connect(data)
 					.then(() => {
 						var processes = [];
+
+						this.collations = {};
+						this.collationsDefault = {};
+						this.variables = {};
+						this.engines = {};
+
 						processes.push(new Promise((res, rej) => {
 							this.connection.query('select * from ??.?? order by ??, ??', ['information_schema', 'COLLATIONS', 'CHARACTER_SET_NAME', 'COLLATION_NAME'], (err, result, fields) => {
-									this.collations = {};
-									this.collationsDefault = {};
-
 									result.forEach((row) => {
 										if (this.collations[row.CHARACTER_SET_NAME] === undefined) {
 											this.collations[row.CHARACTER_SET_NAME] = {};
@@ -35,11 +38,21 @@
 						}));
 
 						processes.push(new Promise((res, rej) => {
-							this.connection.query('show variables where ?? in (?, ?, ?)', ['Variable_name', 'character_set_server', 'collation_server', 'default_storage_engine'], (err, result, fields) => {
-									this.variables = {};
-
+							this.connection.query('show variables where ?? in (?)', ['Variable_name', ['character_set_server', 'collation_server', 'default_storage_engine', 'default_storage_engine']], (err, result, fields) => {
 									result.forEach((row) => {
 										this.variables[row.Variable_name] = row.Value;
+									});
+
+									res();
+								});
+						}));
+
+						processes.push(new Promise((res, rej) => {
+							this.connection.query('select * from ??.?? order by ??', ['information_schema', 'engines', 'ENGINE'], (err, result, fields) => {
+									result.forEach((row) => {
+										if (row.SUPPORT !== 'NO') {
+											this.engines[row.ENGINE] = row;
+										}
 									});
 
 									res();

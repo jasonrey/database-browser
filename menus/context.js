@@ -59,7 +59,7 @@
 				type: 'separator'
 			},
 			{
-				label: 'Create Table Syntax',
+				label: 'Show Syntax',
 				click() {
 					clickHandler('syntax');
 				}
