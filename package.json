@@ -20,9 +20,16 @@
     "dev": "NODE_ENV=development electron .",
     "web": "NODE_ENV=production node web/index.js",
     "webdev": "NODE_ENV=production node web/index.js",
-    "build": "node-sass --output web/assets/css web/assets/sass/index.sass && pug web/templates/index.pug --out web/"
+    "compile": "node-sass --output web/assets/css web/assets/sass/index.sass && pug web/templates/index.pug --out web/",
+    "postinstall": "install-app-deps",
+    "pack": "build --dir",
+    "dist": "build",
+    "dist:linux": "build --linux",
+    "dist:mac": "build --mac",
+    "build": "electron-packager . --platform=win32,darwin,linux --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite",
+    "build:mac": "electron-packager . --platform=darwin --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite"
   },
-  "author": "JSON object",
+  "author": "JSON object <jsonobject@outlook.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -33,5 +40,9 @@
   },
   "homepage": "https://github.com/jasonrey/database-browser#readme",
   "description": "MySQL Database Browser",
-  "productName": "DBBR"
+  "productName": "DBBR",
+  "build": {
+    "appId": "com.electron.dbbr",
+    "asar": true
+  }
 }
