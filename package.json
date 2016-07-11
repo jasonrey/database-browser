@@ -3,19 +3,17 @@
   "version": "1.0.0",
   "main": "main.js",
   "dependencies": {
+    "mysql": "^2.11.1",
+    "open-ssh-tunnel": "^0.3.1",
+    "electron-config": "^0.2.0"
+  },
+  "devDependencies": {
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "express": "^4.14.0",
-    "lodash": "^4.13.1",
-    "mysql": "^2.11.1",
-    "open-ssh-tunnel": "^0.3.1",
-    "pug": "^2.0.0-beta3",
-    "tunnel-ssh": "^4.0.0"
-  },
-  "devDependencies": {
     "autoprefixer": "^6.3.6",
-    "electron-config": "^0.2.0",
     "electron-prebuilt": "^1.2.5",
+    "pug": "^2.0.0-beta3",
     "node-sass": "^3.8.0",
     "postcss": "^5.0.21"
   },
