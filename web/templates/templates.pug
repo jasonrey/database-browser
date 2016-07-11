@@ -1,97 +1,98 @@
-//- key - unique key of this item
-//- user
-//- host
-//- ssh - user@host for ssh
-script#server-list-item(type="text/html")
-	li(data-key="{{key}}", class="{{withssh}}")
-		span
-			.host {{user}}@{{host}}
-			.ssh {{ssh}}
-		button.context.edit
-			i.icon.icon-stack
-
-//- state - success | error
-//- total - affected rows
-//- date - executed date
-script#history-list-item(type="text/html")
-	li(class="{{state}}")
-		.query {{query}}
-		.db {{db}}
-		.total {{total}}
-		.date {{date}}
-		button.context.history-context
-			i.icon.icon-stack
-
-//- key - saved key
-//- type - noname | ''
-//- name - name of the query
-//- query - sql
-//- date - saved date
-script#folder-list-item(type="text/html")
-	li(class="{{type}}", data-key="{{key}}")
-		.name {{name}}
-		.query {{query}}
-		.date {{date}}
-		button.context.folder-context
-			i.icon.icon-stack
-
-//- name - database name
-script#database-list-item(type="text/html")
-	option(value="{{name}}") {{name}}
-
-//- name - table name
-//- columns - table columns from template#table-columns-item
-script#table-list-item(type="text/html")
-	li(data-name="{{name}}", title="{{name}}")
-		.table-name
-			.name {{name}}
-			button.context.table-context
+#templates
+	//- key - unique key of this item
+	//- user
+	//- host
+	//- ssh - user@host for ssh
+	script#server-list-item(type="text/html")
+		li(data-key="{{key}}", class="{{withssh}}")
+			span
+				.host {{user}}@{{host}}
+				.ssh {{ssh}}
+			button.context.edit
 				i.icon.icon-stack
-		.expand
-			i.icon-fa.icon-dir-right
-		ul.table-columns {{columns}}
-			//- template#table-column-item
 
-//- name - column name
-//- type - column type
-script#table-columns-item(type="text/html")
-	li
-		div {{name}}
-		span {{type}}
+	//- state - success | error
+	//- total - affected rows
+	//- date - executed date
+	script#history-list-item(type="text/html")
+		li(class="{{state}}")
+			.query {{query}}
+			.db {{db}}
+			.total {{total}}
+			.date {{date}}
+			button.context.history-context
+				i.icon.icon-stack
 
-//- id - row id
-//- cells - table columns from template#result-table-head-cell/#result-table-cell
-script#result-table-row(type="text/html")
-	tr(data-id="{{id}}") {{cells}}
-		//- template#result-table-head-cell/#result-table-cell
+	//- key - saved key
+	//- type - noname | ''
+	//- name - name of the query
+	//- query - sql
+	//- date - saved date
+	script#folder-list-item(type="text/html")
+		li(class="{{type}}", data-key="{{key}}")
+			.name {{name}}
+			.query {{query}}
+			.date {{date}}
+			button.context.folder-context
+				i.icon.icon-stack
 
-//- name - column name
-//- type - column type
-script#result-table-head-cell(type="text/html")
-	th(class="{{type}}") {{name}}
+	//- name - database name
+	script#database-list-item(type="text/html")
+		option(value="{{name}}") {{name}}
 
-//- value - cell value
-//- type - cell type
-script#result-table-cell(type="text/html")
-	td(class="{{type}}") {{value}}
+	//- name - table name
+	//- columns - table columns from template#table-columns-item
+	script#table-list-item(type="text/html")
+		li(data-name="{{name}}", title="{{name}}")
+			.table-name
+				.name {{name}}
+				button.context.table-context
+					i.icon.icon-stack
+			.expand
+				i.icon-fa.icon-dir-right
+			ul.table-columns {{columns}}
+				//- template#table-column-item
 
-//- name
-script#newdatabase-select-default-item(type="text/html")
-	option(value="{{name}}") {{name}} (Default)
+	//- name - column name
+	//- type - column type
+	script#table-columns-item(type="text/html")
+		li
+			div {{name}}
+			span {{type}}
 
-//- name
-script#newdatabase-select-item(type="text/html")
-	option(value="{{name}}") {{name}}
+	//- id - row id
+	//- cells - table columns from template#result-table-head-cell/#result-table-cell
+	script#result-table-row(type="text/html")
+		tr(data-id="{{id}}") {{cells}}
+			//- template#result-table-head-cell/#result-table-cell
 
-script#newdatabase-select-disabled-item(type="text/html")
-	option(disabled="disabled") ────────────
+	//- name - column name
+	//- type - column type
+	script#result-table-head-cell(type="text/html")
+		th(class="{{type}}") {{name}}
 
-//- cells - table edit columns from
-script#table-edit-columns-row(type="text/html")
-	tr
-		td
-			button
-				i.icon.icon-arrow-up
+	//- value - cell value
+	//- type - cell type
+	script#result-table-cell(type="text/html")
+		td(class="{{type}}") {{value}}
+
+	//- name
+	script#newdatabase-select-default-item(type="text/html")
+		option(value="{{name}}") {{name}} (Default)
+
+	//- name
+	script#newdatabase-select-item(type="text/html")
+		option(value="{{name}}") {{name}}
+
+	script#newdatabase-select-disabled-item(type="text/html")
+		option(disabled="disabled") ────────────
+
+	//- cells - table edit columns from
+	script#table-edit-columns-row(type="text/html")
+		tr
+			td
+				button
+					i.icon.icon-arrow-up
 			button
 				i.icon.icon-arrow-down
 			button

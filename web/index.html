@@ -179,8 +179,7 @@
                     <th>Type</th>
                     <th>Length</th>
                     <th>Unsigned</th>
-                    <th>Allow Null</th>
-                    <th>Auto Increment</th>
+                    <th>Null</th>
                     <th>Default</th>
                     <th>Comment</th>
                   </tr>
@@ -279,65 +278,121 @@
         </div>
       </div>
     </div>
-    <script id="server-list-item" type="text/html">
-      <li class="{{withssh}}" data-key="{{key}}"><span>
-          <div class="host">{{user}}@{{host}}</div>
-          <div class="ssh">{{ssh}}</div></span>
-        <button class="context edit"><i class="icon icon-stack"></i></button>
-      </li>
-    </script>
-    <script id="history-list-item" type="text/html">
-      <li class="{{state}}">
-        <div class="query">{{query}}</div>
-        <div class="db">{{db}}</div>
-        <div class="total">{{total}}</div>
-        <div class="date">{{date}}</div>
-        <button class="context history-context"><i class="icon icon-stack"></i></button>
-      </li>
-    </script>
-    <script id="folder-list-item" type="text/html">
-      <li class="{{type}}" data-key="{{key}}">
-        <div class="name">{{name}}</div>
-        <div class="query">{{query}}</div>
-        <div class="date">{{date}}</div>
-        <button class="context folder-context"><i class="icon icon-stack"></i></button>
-      </li>
-    </script>
-    <script id="database-list-item" type="text/html">
-      <option value="{{name}}">{{name}}</option>
-    </script>
-    <script id="table-list-item" type="text/html">
-      <li data-name="{{name}}" title="{{name}}">
-        <div class="table-name">
+    <div id="templates">
+      <script id="server-list-item" type="text/html">
+        <li class="{{withssh}}" data-key="{{key}}"><span>
+            <div class="host">{{user}}@{{host}}</div>
+            <div class="ssh">{{ssh}}</div></span>
+          <button class="context edit"><i class="icon icon-stack"></i></button>
+        </li>
+      </script>
+      <script id="history-list-item" type="text/html">
+        <li class="{{state}}">
+          <div class="query">{{query}}</div>
+          <div class="db">{{db}}</div>
+          <div class="total">{{total}}</div>
+          <div class="date">{{date}}</div>
+          <button class="context history-context"><i class="icon icon-stack"></i></button>
+        </li>
+      </script>
+      <script id="folder-list-item" type="text/html">
+        <li class="{{type}}" data-key="{{key}}">
           <div class="name">{{name}}</div>
-          <button class="context table-context"><i class="icon icon-stack"></i></button>
-        </div>
-        <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
-        <ul class="table-columns">{{columns}}</ul>
-      </li>
+          <div class="query">{{query}}</div>
+          <div class="date">{{date}}</div>
+          <button class="context folder-context"><i class="icon icon-stack"></i></button>
+        </li>
+      </script>
+      <script id="database-list-item" type="text/html">
+        <option value="{{name}}">{{name}}</option>
+      </script>
+      <script id="table-list-item" type="text/html">
+        <li data-name="{{name}}" title="{{name}}">
+          <div class="table-name">
+            <div class="name">{{name}}</div>
+            <button class="context table-context"><i class="icon icon-stack"></i></button>
+          </div>
+          <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
+          <ul class="table-columns">{{columns}}</ul>
+        </li>
+      </script>
+      <script id="table-columns-item" type="text/html">
+        <li>
+          <div>{{name}}</div><span>{{type}}</span>
+        </li>
+      </script>
+      <script id="result-table-row" type="text/html">
+        <tr data-id="{{id}}">{{cells}}</tr>
+      </script>
+      <script id="result-table-head-cell" type="text/html">
+        <th class="{{type}}">{{name}}</th>
+      </script>
+      <script id="result-table-cell" type="text/html">
+        <td class="{{type}}">{{value}}</td>
+      </script>
+      <script id="newdatabase-select-default-item" type="text/html">
+        <option value="{{name}}">{{name}} (Default)</option>
+      </script>
+      <script id="newdatabase-select-item" type="text/html">
+        <option value="{{name}}">{{name}}</option>
+      </script>
+      <script id="newdatabase-select-disabled-item" type="text/html">
+        <option disabled="disabled">────────────</option>
+      </script>
+      <script id="table-edit-columns-row" type="text/html">
+        <tr>
+          <td>
+            <button><i class="icon icon-arrow-up"></i></button>
+          </td>
+          <button><i class="icon icon-arrow-down"></i></button>
+          <button><i class="icon icon-cross"></i></button>
+        </tr>
+        <td>
+          <input class="column" type="text" value="{{column}}">
+        </td>
+        <td>
+          <select class="type">
+            <option>INT</option>
+            <option>BIGINT</option>
+            <option>FLOAT</option>
+            <option>DOUBLE</option>
+            <option>VARCHAR</option>
+            <option>TEXT</option>
+            <option>DATE</option>
+            <option>TIMESTAMP</option>
+            <option>TIME</option>
+            <option>YEAR</option>
+            <option>DATETIME</option>
+          </select>
+        </td>
+        <td>
+          <input class="length" type="text" value="{{length}}">
+        </td>
+        <td>
+          <input class="unsigned" type="checkbox" checked="{{unsigned}}">
+        </td>
+        <td>
+          <input class="allownull" type="checkbox" checked="{{allownull}}">
+        </td>
+        <td>
+          <input class="default" type="text" value="{{default}}">
+        </td>
+        <td>
+          <input class="comment" type="text" value="{{comment}}">
+        </td>
+      </script>
+    </div>
+    <script id="table-edit-columns-cell" type="text/html">
+      <td>
+        <div contenteditable="true">{{value}}</div>
+      </td>
     </script>
-    <script id="table-columns-item" type="text/html">
-      <li>
-        <div>{{name}}</div><span>{{type}}</span>
-      </li>
-    </script>
-    <script id="result-table-row" type="text/html">
-      <tr>{{cells}}</tr>
-    </script>
-    <script id="result-table-head-cell" type="text/html">
-      <th class="{{type}}">{{name}}</th>
-    </script>
-    <script id="result-table-cell" type="text/html">
-      <td class="{{type}}">{{value}}</td>
-    </script>
-    <script id="newdatabase-select-default-item" type="text/html">
-      <option value="{{name}}">{{name}} (Default)</option>
-    </script>
-    <script id="newdatabase-select-item" type="text/html">
-      <option value="{{name}}">{{name}}</option>
-    </script>
-    <script id="newdatabase-select-disabled-item" type="text/html">
-      <option disabled="disabled">────────────</option>
+    <script id="table-edit-columns-cell-action" type="text/html">
+      <td>
+        <button><i class="icon icon-arrow-up"></i></button>
+        <button><i class="icon icon-arrow-down"></i></button>
+        <button><i class="icon icon-cross"></i></button>
+      </td>
     </script>
   </body>
 </html>
