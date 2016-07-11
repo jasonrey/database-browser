@@ -1,7 +1,5 @@
 const pug = require('pug');
 const sass = require('node-sass');
-const postcss = require('postcss');
-const autoprefixer = require('autoprefixer');
 const fs = require('fs');
 
 const electron = require('electron');
