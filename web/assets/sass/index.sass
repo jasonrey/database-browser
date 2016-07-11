@@ -590,6 +590,8 @@ table
 				margin: 0 4px 0 0
 
 			&:hover
+				padding: 0 24px
+
 				.context
 					display: block
 
@@ -650,11 +652,10 @@ table
 			&:hover
 				background-color: $grey200
 
-#new-table
+#new-table, #new-database
 	position: absolute
-	left: 0
 	bottom: 0
-	width: 100%
+	width: 50%
 	height: 32px
 	line-height: 32px
 	display: block
@@ -664,6 +665,13 @@ table
 
 	&:hover
 		background-color: $grey200
+
+#new-table
+	left: 0
+	border-right: 1px solid $grey300
+
+#new-database
+	left: 50%
 
 #connection
 	position: absolute
@@ -1131,6 +1139,8 @@ table
 	&[data-popup="loading"] #popup-loading,
 	&[data-popup="newdatabase"] #popup-newdatabase,
 	&[data-popup="history-clear"] #popup-history-clear,
+	&[data-popup="truncate-table"] #popup-truncate-table,
+	&[data-popup="drop-table"] #popup-drop-table,
 	&[data-popup="newtable"] #popup-newtable
 		display: block
 

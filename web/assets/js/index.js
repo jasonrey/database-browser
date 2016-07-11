@@ -113,6 +113,32 @@ $(function() {
 							return;
 						}
 
+						// TRUNCATE TABLE
+						var truncateTable = sql.match(/^truncate table (\S+)/i);
+
+						if (truncateTable){
+							var truncateTableName = truncateTable[1].replace(/`/g, '');
+
+							$populate.tableCount(truncateTableName);
+
+							resolve(response);
+
+							return;
+						}
+
+						// DROP TABLE
+						var dropTable = sql.match(/^drop table (\S+)/i);
+
+						if (dropTable){
+							var dropTableName = dropTable[1].replace(/`/g, '');
+
+							$$.TABLELIST.find('li[data-name="' + dropTableName + '"]').remove();
+
+							resolve(response);
+
+							return;
+						}
+
 						var createDatabase = sql.match(/^create database (\S+)/i);
 
 						// CREATE DATABASE
@@ -137,9 +163,11 @@ $(function() {
 						if (dropDatabase) {
 							var dropDatabaseName = dropDatabase[1].replace(/`/g, '');
 
+							var currentDatabase = $$.DATABASELIST.val();
+
 							$$.DATABASELIST.find('option[value="' + dropDatabaseName + '"]').remove();
 
-							if ($$.DATABASELIST.val() === dropDatabaseName) {
+							if (currentDatabase === dropDatabaseName) {
 								$$.DATABASELIST.trigger('change');
 							}
 
@@ -206,8 +234,28 @@ $(function() {
 			return new Promise(function(resolve, reject) {
 				$db.q('use ??', [db])
 					.then(function(response) {
-						return $db.q('show tables');
+						return $populate.tables(db);
 					})
+					.then(function(response) {
+						resolve();
+					})
+					.catch(function(err) {
+						$populate.resultError(err);
+
+						reject(err);
+					});
+			});
+		},
+
+		tables: function(db) {
+			var query = 'show tables';
+
+			if (db) {
+				query += ' from ??';
+			}
+
+			return new Promise(function(resolve, reject) {
+				$db.q(query, [db])
 					.then(function(response) {
 						var html = '';
 
@@ -230,8 +278,6 @@ $(function() {
 						resolve();
 					})
 					.catch(function(err) {
-						$populate.resultError(err);
-
 						reject(err);
 					});
 			});
@@ -431,11 +477,15 @@ $(function() {
 				break;
 
 				case 'truncate':
-					// TODO: Popup confirmation
+					$$.POPUP
+						.attr('data-popup', 'truncate-table')
+						.attr('data-source', tablename);
 				break;
 
-				case 'delete':
-					// TODO: Popup confirmation
+				case 'drop':
+					$$.POPUP
+						.attr('data-popup', 'drop-table')
+						.attr('data-source', tablename);
 				break;
 
 				case 'syntax':
@@ -445,8 +495,35 @@ $(function() {
 		});
 	});
 
-	$$.TABLELIST.on('contextmenu', '.table-name', function(event) {
-		$(this).parents('li').find('.context').trigger('click');
+	$$.TABLELIST.on('contextmenu', function(event) {
+		var target = $(event.target);
+
+		if (target.closest('.table-name').length) {
+			target.parents('li').find('.context').trigger('click');
+			return;
+		}
+
+		if (target.closest('li[data-name]').length) {
+			// TODO: Add context menu for columns
+			// For now, just don't show context menu
+			return;
+		}
+
+		if (target.closest('#table-list').length) {
+			$context('tablelist', function(type) {
+				switch (type) {
+					case 'table':
+						$$.NEWTABLE.trigger('click');
+					break;
+
+					case 'database':
+						$$.NEWDATABASE.trigger('click');
+					break;
+				}
+			});
+
+			return;
+		}
 	});
 
 	$$.TABLELIST.on('click', '.expand', function() {
@@ -466,6 +543,25 @@ $(function() {
 		$$.POPUP.attr('data-popup', 'newtable');
 
 		$$.NEWTABLEENCODING
+			.val($db.variables.character_set_server)
+			.trigger('change');
+
+		$$.NEWTABLENAME
+			.val('')
+			.trigger('focus');
+	});
+
+	$$.NEWDATABASE.on('click', function() {
+		$$.TABLELIST.html('');
+		$$.POPUP.attr('data-popup', 'newdatabase');
+
+		$$.DATABASELIST.val('#newdatabase');
+
+		$$.NEWDATABASENAME
+			.val('')
+			.trigger('focus');
+
+		$$.NEWDATABASEENCODING
 			.val($db.variables.character_set_server)
 			.trigger('change');
 	});
@@ -709,13 +805,6 @@ $(function() {
 		$$.POPUP.attr('data-popup', 'history-clear');
 	});
 
-	$$.POPUPHISTORYCLEAR.on('click', '.yes', function() {
-		$storage.delete('history.' + $KEY);
-		$$.HISTORYLIST.html('');
-
-		$$.POPUP.removeAttr('data-popup');
-	});
-
 	$$.FOLDERLIST.on('click', 'li', function(event) {
 		var item = $(this),
 			key = item.attr('data-key'),
@@ -753,22 +842,23 @@ $(function() {
 
 	$$.DATABASELIST.on('change', function() {
 		if (this.value === '#newdatabase') {
-			$$.TABLELIST.html('');
-			$$.POPUP.attr('data-popup', 'newdatabase');
-			$$.NEWDATABASENAME
-				.val('')
-				.trigger('focus');
-
-			$$.NEWDATABASEENCODING
-				.val($db.variables.character_set_server)
-				.trigger('change');
-
+			$$.NEWDATABASE.trigger('click');
 			return;
 		}
 
 		previousDatabase = this.value;
 
 		$populate.changeDB(this.value);
+	});
+
+	$$.DATABASELIST.on('contextmenu', function() {
+		$context('databaselist', function(type) {
+			switch (type) {
+				case 'new':
+					$$.NEWDATABASE.trigger('click');
+				break;
+			}
+		});
 	});
 
 	var encodingCollationsOptionsHTML = {};
@@ -1013,10 +1103,12 @@ $(function() {
 
 	$$.POPUP.on('click', '.actions .no', function() {
 		$$.POPUP.removeAttr('data-popup');
+		$$.POPUP.removeAttr('data-source');
 	});
 
 	$$.POPUP.on('click', '#popup-overlay', function() {
 		$$.POPUP.removeAttr('data-popup');
+		$$.POPUP.removeAttr('data-source');
 	});
 
 	$$.POPUPQUERYSAVE.on('click', '.yes', function() {
@@ -1024,8 +1116,6 @@ $(function() {
 			query = $$.EDITOR.text();
 
 		if ($$.POPUP.attr('data-source') === 'command') {
-			$$.POPUP.attr('data-source', '');
-
 			query = $$.COMMAND.text();
 		}
 
@@ -1036,6 +1126,7 @@ $(function() {
 		});
 
 		$$.POPUP.removeAttr('data-popup');
+		$$.POPUP.removeAttr('data-source');
 	});
 
 	$$.POPUPQUERYSAVE.on('keydown', 'input', function(event) {
@@ -1050,6 +1141,31 @@ $(function() {
 		}
 
 		return true;
+	});
+
+	$$.POPUPHISTORYCLEAR.on('click', '.yes', function() {
+		$storage.delete('history.' + $KEY);
+		$$.HISTORYLIST.html('');
+
+		$$.POPUP.removeAttr('data-popup');
+	});
+
+	$$.POPUPTRUNCATETABLE.on('click', '.yes', function() {
+		var tablename = $$.POPUP.attr('data-source');
+
+		$dbquery('truncate table ??', [tablename]);
+
+		$$.POPUP.removeAttr('data-popup');
+		$$.POPUP.removeAttr('data-source');
+	});
+
+	$$.POPUPDROPTABLE.on('click', '.yes', function() {
+		var tablename = $$.POPUP.attr('data-source');
+
+		$dbquery('drop table ??', [tablename]);
+
+		$$.POPUP.removeAttr('data-popup');
+		$$.POPUP.removeAttr('data-source');
 	});
 
 	$$.POPUPNEWDATABASE.on('click', '.yes', function(event) {
@@ -1070,7 +1186,6 @@ $(function() {
 
 		$dbquery('create database ?? default character set ? default collate ?', [name, encoding, collation])
 			.then(function(response) {
-				console.log(response);
 				$$.POPUP.removeAttr('data-popup');
 			});
 	});
@@ -1111,10 +1226,27 @@ $(function() {
 
 		$$.POPUP.attr('data-popup', 'loading');
 
+		var expandedTables = [];
+
+		$$.TABLELIST.find('li.expanded').each(function() {
+			expandedTables.push($(this).attr('data-name'));
+		});
+
 		$dbquery('create table ?? (id int(11) unsigned not null primary key auto_increment) engine=' + engine + ' default charset=' + encoding + ' collate=' + collation, [name, encoding, collation])
 			.then(function(response) {
+				return $populate.tables();
+			})
+			.then(function() {
+				_.each(expandedTables, function(value) {
+					$$.TABLELIST.find('li[data-name="' + value + '"] .expand').trigger('click');
+				});
+
 				$$.POPUP.removeAttr('data-popup');
 				$populate.editTable(name);
+			})
+			.catch(function(err) {
+				$$.POPUP.removeAttr('data-popup');
+				$populate.resultError(err);
 			});
 	});
 

@@ -47,7 +47,8 @@ block body
 				#tables.tab
 					ul#table-list.list
 						//- template#table-list-item
-					button#new-table.icon.icon-plus New Table
+					button#new-table.icon.icon-plus Table
+					button#new-database.icon.icon-plus Database
 				#folder.tab
 					ul#folder-list.list
 						//- template#folder-list-item
@@ -170,15 +171,15 @@ block body
 									th Comment
 							tbody
 								//- template#table-edit-columns-row
-					h3 Indexes
-					#table-edit-indexes.box
-						table
-							thead
-								tr
-									th
-									th Name
-									th Type
-							tbody
+					//- h3 Indexes
+					//- #table-edit-indexes.box
+					//- 	table
+					//- 		thead
+					//- 			tr
+					//- 				th
+					//- 				th Name
+					//- 				th Type
+					//- 		tbody
 
 			#query-panel
 				#editor(contenteditable="true")
@@ -233,7 +234,23 @@ block body
 					i.icon.icon-check
 		#popup-history-clear.popup-body
 			.popup-title Clear History
-			p This will clear all your history.
+			p This will clear all SQL history for this connection.
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+		#popup-truncate-table.popup-body
+			.popup-title Truncate Table
+			p This will delete all entries of the table and reset the primary key.
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+		#popup-drop-table.popup-body
+			.popup-title Drop Table
+			p This will drop the table.
 			.actions
 				button.no
 					i.icon.icon-cross

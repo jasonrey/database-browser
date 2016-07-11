@@ -24,14 +24,14 @@
 				}
 			},
 			{
-				label: 'Delete',
+				label: 'Drop',
 				click() {
-					clickHandler('delete');
+					clickHandler('drop');
 				}
 			},
 			{
 				type: 'separator'
-			},
+			}/*,
 			{
 				label: 'Export',
 				submenu: [
@@ -62,6 +62,28 @@
 				label: 'Show Syntax',
 				click() {
 					clickHandler('syntax');
+				}
+			}*/
+		]),
+		tablelist: Menu.buildFromTemplate([
+			{
+				label: 'New Table',
+				click() {
+					clickHandler('table');
+				}
+			},
+			{
+				label: 'New Database',
+				click() {
+					clickHandler('database');
+				}
+			}
+		]),
+		databaselist: Menu.buildFromTemplate([
+			{
+				label: 'New Database',
+				click() {
+					clickHandler('new');
 				}
 			}
 		]),

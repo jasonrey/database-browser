@@ -52,7 +52,8 @@
           </div>
           <div class="tab" id="tables">
             <ul class="list" id="table-list"></ul>
-            <button class="icon icon-plus" id="new-table">New Table</button>
+            <button class="icon icon-plus" id="new-table">Table</button>
+            <button class="icon icon-plus" id="new-database">Database</button>
           </div>
           <div class="tab" id="folder">
             <ul class="list" id="folder-list"></ul>
@@ -187,19 +188,6 @@
                 <tbody></tbody>
               </table>
             </div>
-            <h3>Indexes</h3>
-            <div class="box" id="table-edit-indexes">
-              <table>
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>Name</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
           </div>
         </div>
         <div id="query-panel">
@@ -251,7 +239,23 @@
       </div>
       <div class="popup-body" id="popup-history-clear">
         <div class="popup-title">Clear History</div>
-        <p>This will clear all your history.</p>
+        <p>This will clear all SQL history for this connection.</p>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-truncate-table">
+        <div class="popup-title">Truncate Table</div>
+        <p>This will delete all entries of the table and reset the primary key.</p>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-drop-table">
+        <div class="popup-title">Drop Table</div>
+        <p>This will drop the table.</p>
         <div class="actions">
           <button class="no"><i class="icon icon-cross"></i></button>
           <button class="yes"><i class="icon icon-check"></i></button>
