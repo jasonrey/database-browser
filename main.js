@@ -1,5 +1,3 @@
-const pug = require('pug');
-const sass = require('node-sass');
 const fs = require('fs');
 
 const electron = require('electron');
@@ -25,6 +23,8 @@ let createWindow = function() {
 
 	if (environment === 'development') {
 		processes.push(new Promise((resolve, reject) => {
+			const pug = require('pug');
+
 			let html = pug.renderFile('web/templates/app.pug', {
 				pretty: true
 			});
@@ -39,6 +39,8 @@ let createWindow = function() {
 		}));
 
 		processes.push(new Promise((resolve, reject) => {
+			const sass = require('node-sass');
+
 			fs.mkdir(__dirname + '/web/assets/css', () => {
 				fs.readdir(__dirname + '/web/assets/sass', (err, items) => {
 					sass.render({
