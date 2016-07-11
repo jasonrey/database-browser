@@ -26,6 +26,138 @@ $(function() {
 	// Current connection key
 	var $KEY;
 
+	var $connect = function(data) {
+		$connectionState = false;
+
+		$$.POPUP.attr('data-popup', 'loading');
+
+		$$.CONTENT
+			.attr('data-key', $KEY)
+			.attr('data-connection', 'connecting');
+
+		var connectionName = data.user + '@' + data.host;
+
+		if (data.ssh && data.sshhost.length) {
+			connectionName += '@' + data.sshhost;
+		}
+
+		$$.CONNECTIONNAME.text(connectionName);
+
+		if ($db && $db.constructor.name === 'DB') {
+			$db.close()
+				.catch(function(err) {
+				});
+			$$.DATABASELISTGROUP.html('');
+			$$.TABLELIST.html('');
+			$$.HISTORYLIST.html('');
+			$$.FOLDERLIST.html('');
+			$$.TOTAL.text('');
+			$$.TABLEHEAD.html('');
+			$$.TABLEBODY.html('');
+			$$.RESULT.removeAttr('data-state');
+		}
+
+		$db = DB.getInstance(data);
+
+		$db.open
+			.then(function() {
+				$connectionState = true;
+
+				$$.POPUP.removeAttr('data-popup');
+
+				$$.CONTENT
+					.attr('data-connection', 'connected')
+					.attr('data-tab', 'tables');
+
+				$$.CONTENT.toggleClass('guest', $KEY === false);
+
+				return $populate.databases();
+			})
+			.then(function() {
+				$$.DATABASELIST.val($$.DATABASELIST.find('option:first-child').attr('value'));
+
+				$$.DATABASELIST.trigger('change');
+
+				var encodingHTML = $template('newdatabase-select-default-item', {
+					name: $db.variables.character_set_server
+				});
+
+				encodingHTML += $template('newdatabase-select-disabled-item');
+
+				for (var collationkey in $db.collations) {
+					encodingHTML += $template('newdatabase-select-item', {
+						name: collationkey
+					});
+				}
+
+				$$.NEWDATABASEENCODING.html(encodingHTML);
+				$$.NEWTABLEENCODING.html(encodingHTML);
+				$$.TABLEEDITENCODING.html(encodingHTML);
+
+				var enginesHTML = $template('newdatabase-select-default-item', {
+					name: $db.variables.default_storage_engine
+				});
+
+				enginesHTML += $template('newdatabase-select-disabled-item');
+
+				for (var enginekey in $db.engines) {
+					enginesHTML += $template('newdatabase-select-item', {
+						name: enginekey
+					});
+				}
+
+				$$.NEWTABLEENGINE.html(enginesHTML);
+			})
+			.catch(function(err) {
+				$$.CONTENT.attr('data-connection', '');
+
+				$$.POPUPERROR.find('p').html(err);
+				$$.POPUP.attr('data-popup', 'error');
+			});
+
+		// Init history
+		if ($KEY) {
+			var history = $history($KEY);
+
+			var historyHTML = '';
+
+			for (var i = 0; i < history.items.length; i++) {
+				var date = new Date(history.items[i].date);
+
+				historyHTML += $template('history-list-item', {
+					state: history.items[i].state ? 'success' : 'error',
+					query: history.items[i].query,
+					db: history.items[i].db,
+					total: history.items[i].total || 0,
+					date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2) + ' ' + ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2) + ':' + ('00' + date.getSeconds()).slice(-2)
+				});
+			}
+
+			$$.HISTORYLIST.html(historyHTML);
+
+			// Init folder
+			var folder = $storage.get('folder.' + $KEY);
+
+			var folderHTML = '';
+
+			for (var itemkey in folder) {
+				var folderItem = folder[itemkey];
+
+				var itemDate = new Date(folderItem.date);
+
+				folderHTML += $template('folder-list-item', {
+					type: folderItem.name.length === 0 ? 'noname' : '',
+					key: itemkey,
+					name: folderItem.name,
+					query: folderItem.query,
+					date: itemDate.getFullYear() + '-' + ('00' + (itemDate.getMonth() + 1)).slice(-2) + '-' + ('00' + itemDate.getDate()).slice(-2) + ' ' + ('00' + itemDate.getHours()).slice(-2) + ':' + ('00' + itemDate.getMinutes()).slice(-2) + ':' + ('00' + itemDate.getSeconds()).slice(-2)
+				});
+			}
+
+			$$.FOLDERLIST.html(folderHTML);
+		}
+	};
+
 	var $dbquery = function(query, value, options) {
 		if (!$connectionState) {
 			// TODO: Show not connected
@@ -631,131 +763,7 @@ $(function() {
 
 		var data = $storage.get('servers.' + $KEY);
 
-		$connectionState = false;
-
-		$$.POPUP.attr('data-popup', 'loading');
-
-		$$.CONTENT
-			.attr('data-key', $KEY)
-			.attr('data-connection', 'connecting');
-
-		var connectionName = data.user + '@' + data.host;
-
-		if (data.ssh && data.sshhost.length) {
-			connectionName += '@' + data.sshhost;
-		}
-
-		$$.CONNECTIONNAME.text(connectionName);
-
-		if ($db && $db.constructor.name === 'DB') {
-			$db.close()
-				.catch(function(err) {
-				});
-			$$.DATABASELISTGROUP.html('');
-			$$.TABLELIST.html('');
-			$$.HISTORYLIST.html('');
-			$$.FOLDERLIST.html('');
-			$$.TOTAL.text('');
-			$$.TABLEHEAD.html('');
-			$$.TABLEBODY.html('');
-			$$.RESULT.removeAttr('data-state');
-		}
-
-		$db = DB.getInstance(data);
-
-		$db.open
-			.then(function() {
-				$connectionState = true;
-
-				$$.POPUP.removeAttr('data-popup');
-
-				$$.CONTENT
-					.attr('data-connection', 'connected')
-					.attr('data-tab', 'tables');
-
-				return $populate.databases();
-			})
-			.then(function() {
-				$$.DATABASELIST.val($$.DATABASELIST.find('option:first-child').attr('value'));
-
-				$$.DATABASELIST.trigger('change');
-
-				var encodingHTML = $template('newdatabase-select-default-item', {
-					name: $db.variables.character_set_server
-				});
-
-				encodingHTML += $template('newdatabase-select-disabled-item');
-
-				for (var collationkey in $db.collations) {
-					encodingHTML += $template('newdatabase-select-item', {
-						name: collationkey
-					});
-				}
-
-				$$.NEWDATABASEENCODING.html(encodingHTML);
-				$$.NEWTABLEENCODING.html(encodingHTML);
-				$$.TABLEEDITENCODING.html(encodingHTML);
-
-				var enginesHTML = $template('newdatabase-select-default-item', {
-					name: $db.variables.default_storage_engine
-				});
-
-				enginesHTML += $template('newdatabase-select-disabled-item');
-
-				for (var enginekey in $db.engines) {
-					enginesHTML += $template('newdatabase-select-item', {
-						name: enginekey
-					});
-				}
-
-				$$.NEWTABLEENGINE.html(enginesHTML);
-			})
-			.catch(function(err) {
-				$$.CONTENT.attr('data-connection', '');
-
-				$$.POPUPERROR.find('p').html(err);
-				$$.POPUP.attr('data-popup', 'error');
-			});
-
-		// Init history
-		var history = $history($KEY);
-
-		var historyHTML = '';
-
-		for (var i = 0; i < history.items.length; i++) {
-			var date = new Date(history.items[i].date);
-
-			historyHTML += $template('history-list-item', {
-				state: history.items[i].state ? 'success' : 'error',
-				query: history.items[i].query,
-				db: history.items[i].db,
-				total: history.items[i].total || 0,
-				date: date.getFullYear() + '-' + ('00' + (date.getMonth() + 1)).slice(-2) + '-' + ('00' + date.getDate()).slice(-2) + ' ' + ('00' + date.getHours()).slice(-2) + ':' + ('00' + date.getMinutes()).slice(-2) + ':' + ('00' + date.getSeconds()).slice(-2)
-			});
-		}
-
-		$$.HISTORYLIST.html(historyHTML);
-
-		// Init folder
-		var folder = $storage.get('folder.' + $KEY);
-
-		var folderHTML = '';
-
-		for (var itemkey in folder) {
-			var folderItem = folder[itemkey];
-
-			var itemDate = new Date(folderItem.date);
-
-			folderHTML += $template('folder-list-item', {
-				type: folderItem.name.length === 0 ? 'noname' : '',
-				key: itemkey,
-				name: folderItem.name,
-				query: folderItem.query,
-				date: itemDate.getFullYear() + '-' + ('00' + (itemDate.getMonth() + 1)).slice(-2) + '-' + ('00' + itemDate.getDate()).slice(-2) + ' ' + ('00' + itemDate.getHours()).slice(-2) + ':' + ('00' + itemDate.getMinutes()).slice(-2) + ':' + ('00' + itemDate.getSeconds()).slice(-2)
-			});
-		}
-
-		$$.FOLDERLIST.html(folderHTML);
+		$connect(data);
 	});
 
 	$$.HISTORYLIST.on('click', 'li', function(event) {
@@ -1022,7 +1030,9 @@ $(function() {
 		}
 
 		if (button.hasClass('go')) {
-			// TODO: Connect
+			$KEY = false;
+
+			$connect(data);
 		}
 
 		// Clear field

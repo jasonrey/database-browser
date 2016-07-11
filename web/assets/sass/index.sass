@@ -277,6 +277,10 @@ table
 		#content[data-tab="settings"] &:nth-child(8)
 			color: $blue500
 
+		#content.guest &:nth-child(3),
+		#content.guest &:nth-child(4)
+			display: none
+
 #sidebar-tab-content
 	position: absolute
 	top: 0
@@ -1109,6 +1113,10 @@ table
 
 			&:hover
 				background-color: $grey300
+
+#query-save
+	#content.guest &
+		display: none
 
 #editor
 	padding: 0 8px

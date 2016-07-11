@@ -25,6 +25,10 @@
 	};
 
 	HistoryItem.prototype.update = function() {
+		if (this.history.key === false) {
+			return;
+		}
+
 		this.history.push(this.data);
 
 		var date = new Date(this.data.date);
@@ -48,11 +52,15 @@
 			return new History(key);
 		}
 
-		this.items = $storage.get('history.' + key);
+		if (key !== false) {
+			this.items = $storage.get('history.' + key);
 
-		if (this.items === undefined || this.items === null || this.items.constructor.name !== 'Array') {
+			if (this.items === undefined || this.items === null || this.items.constructor.name !== 'Array') {
+				this.items = [];
+				$storage.set('history.' + key, this.items);
+			}
+		} else {
 			this.items = [];
-			$storage.set('history.' + key, this.items);
 		}
 
 		this.key = key;
@@ -71,6 +79,10 @@
 	};
 
 	History.prototype.update = function() {
+		if (this.key === false) {
+			return;
+		}
+
 		// TODO: Shift based on settings
 		if (this.items.length > 50) {
 			this.items.splice(50 - this.items.length);
