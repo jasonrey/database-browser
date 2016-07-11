@@ -18,7 +18,8 @@
   "scripts": {
     "start": "NODE_ENV=development electron .",
     "web": "NODE_ENV=production node web/index.js",
-    "dev": "node web/index.js"
+    "dev": "node web/index.js",
+    "build": "node-sass --output web/assets/css web/assets/sass/index.sass && pug web/templates/index.pug --out web/"
   },
   "author": "JSON object",
   "license": "ISC",
@@ -30,5 +31,6 @@
     "url": "https://github.com/jasonrey/database-browser/issues"
   },
   "homepage": "https://github.com/jasonrey/database-browser#readme",
-  "description": ""
+  "description": "MySQL Database Browser",
+  "productName": "DBBR"
 }
