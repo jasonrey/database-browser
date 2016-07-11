@@ -11,14 +11,12 @@
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "express": "^4.14.0",
-    "autoprefixer": "^6.3.6",
     "electron-prebuilt": "^1.2.5",
     "pug": "^2.0.0-beta3",
-    "node-sass": "^3.8.0",
-    "postcss": "^5.0.21"
+    "node-sass": "^3.8.0"
   },
   "scripts": {
-    "start": "electron .",
+    "start": "NODE_ENV=development electron .",
     "web": "NODE_ENV=production node web/index.js",
     "dev": "node web/index.js"
   },

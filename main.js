@@ -14,6 +14,8 @@ const config = new Config({
 
 const appMenu = require(__dirname + '/menus/app.js');
 
+const environment = process.env.NODE_ENV || 'production';
+
 global.__basepath = __dirname;
 
 let win;
@@ -44,18 +46,9 @@ let createWindow = function() {
 					file: __dirname + '/web/assets/sass/index.sass',
 					includePaths: [__dirname + '/web/assets/sass']
 				}, (err, result) => {
-					if (err) {
-						console.log(err);
-						reject();
-					} else {
-						postcss([autoprefixer])
-							.process(result.css)
-							.then((result) => {
-								fs.writeFile(__dirname + '/web/assets/css/index.css', result.css, () => {
-									resolve();
-								});
-							});
-					}
+					fs.writeFile(__dirname + '/web/assets/css/index.css', result.css, () => {
+						resolve();
+					});
 				});
 			});
 		});
@@ -82,12 +75,9 @@ let createWindow = function() {
 
 		win.loadURL(`file://${target}`);
 
-		win.webContents.openDevTools();
-
-		// win.webContents.on('context-menu', function(event, params) {
-		// 	console.log(event, params);
-		// 	contextMenu.test.popup(win, params.x, params.y);
-		// });
+		if (environment === 'development') {
+			win.webContents.openDevTools();
+		}
 
 		win.on('close', () => {
 			let position = win.getPosition(),
