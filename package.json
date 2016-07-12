@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "main.js",
   "dependencies": {
+    "electron-builder": "^5.11.3",
     "electron-packager": "^7.3.0",
     "mysql": "^2.11.1",
     "open-ssh-tunnel": "^0.3.1"
@@ -14,8 +15,7 @@
     "electron-prebuilt": "^1.2.5",
     "pug": "^2.0.0-beta3",
     "node-sass": "^3.8.0",
-    "electron-builder": "^5.11.3",
-    "electron-config": "^0.2.0",
+    "electron-config": "^0.2.0"
   },
   "scripts": {
     "start": "electron .",
@@ -24,11 +24,11 @@
     "webdev": "NODE_ENV=production node web/index.js",
     "compile": "node-sass --output web/assets/css web/assets/sass/index.sass && pug web/templates/index.pug --out web/",
     "postinstall": "install-app-deps",
-    "pack": "npm run compile && build --dir",
-    "dist": "npm run compile && build",
-    "dist:linux": "npm run compile && build --linux",
-    "dist:mac": "npm run compile && build --mac",
-    "build": "npm run compile && electron-packager . --platform=win32,darwin,linux --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite",
+    "pack": "build --dir",
+    "dist": "build",
+    "dist:linux": "build --linux",
+    "dist:mac": "build --mac",
+    "build": "electron-packager . --platform=win32,darwin,linux --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite",
     "build:mac": "npm run compile && electron-packager . --platform=darwin --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite"
   },
   "author": "JSON object <jsonobject@outlook.com>",

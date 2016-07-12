@@ -14,6 +14,7 @@
 - SSH to use home folder id_rsa by default
 - Context menu for server item
 - SSH random tunnel port
+- SQL file drag drop
 
 # Completed
 
