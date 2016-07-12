@@ -2,3 +2,4 @@
 node_modules
 *.css
 web/index.html
+dist
