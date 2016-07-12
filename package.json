@@ -29,7 +29,8 @@
     "dist:linux": "build --linux",
     "dist:mac": "build --mac",
     "build": "electron-packager . --platform=win32,darwin,linux --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite",
-    "build:mac": "npm run compile && electron-packager . --platform=darwin --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite"
+    "build:mac": "electron-packager . --platform=darwin --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite",
+    "build:linux": "electron-packager . --platform=linux --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite"
   },
   "author": "JSON object <jsonobject@outlook.com>",
   "license": "ISC",
