@@ -1,10 +1,9 @@
 {
   "name": "database-browser",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "main.js",
   "dependencies": {
-    "electron-builder": "^5.11.3",
-    "electron-packager": "^7.3.0",
+    "electron-config": "^0.2.0",
     "mysql": "^2.11.1",
     "open-ssh-tunnel": "^0.3.1"
   },
@@ -15,7 +14,9 @@
     "electron-prebuilt": "^1.2.5",
     "pug": "^2.0.0-beta3",
     "node-sass": "^3.8.0",
-    "electron-config": "^0.2.0"
+    "electron-builder": "^5.11.3",
+    "electron-packager": "^7.3.0",
+    "pug-cli": "^1.0.0-alpha6"
   },
   "scripts": {
     "start": "electron .",
@@ -28,9 +29,9 @@
     "dist": "build",
     "dist:linux": "build --linux",
     "dist:mac": "build --mac",
-    "build": "electron-packager . --platform=win32,darwin,linux --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite",
-    "build:mac": "electron-packager . --platform=darwin --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite",
-    "build:linux": "electron-packager . --platform=linux --arch=x64 --prune --app-version=1.0.0 --icon=./build/icon.icns --overwrite"
+    "build": "electron-packager . --platform=win32,darwin,linux --arch=x64 --prune --app-version=$APPVERSION --icon=./build/icon.icns --overwrite --out=./dist",
+    "build:mac": "electron-packager . --platform=darwin --arch=x64 --prune --app-version=$APPVERSION --icon=./build/icon.icns --overwrite --out=./dist",
+    "build:linux": "electron-packager . --platform=linux --arch=x64 --prune --app-version=$APPVERSION --icon=./build/icon.icns --overwrite --out=./dist"
   },
   "author": "JSON object <jsonobject@outlook.com>",
   "license": "ISC",
