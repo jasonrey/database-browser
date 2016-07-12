@@ -47,6 +47,6 @@
   "productName": "DBBR",
   "build": {
     "appId": "com.electron.dbbr",
-    "asar": true
+    "asar": false
   }
 }
