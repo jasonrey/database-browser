@@ -1,0 +1,1300 @@
+@import 'base'
+
+$basecolor: $grey50
+
+body
+	height: 100%
+	overflow: hidden
+	background-color: $basecolor
+
+form
+	h2
+		text-transform: uppercase
+		color: $grey700
+		font-size: 14px
+		padding: 8px
+		text-align: center
+		border-bottom: 1px solid $grey300
+		background-color: $grey200
+		font-weight: 500
+
+	.group
+		position: relative
+		height: 48px
+		line-height: 48px
+		border-bottom: 1px solid $grey300
+		box-sizing: border-box
+		transition: background-color .2s
+
+		.input-label
+			display: block
+			position: absolute
+			top: 4px
+			left: 0
+			width: 100%
+			line-height: 1
+			box-sizing: border-box
+			padding: 4px 24px
+			transform-origin: top left
+			transition: transform .1s
+			color: $grey500
+			transform: scale(1) translateY(10px)
+			font-weight: 300
+			font-size: 12px
+
+		input[type="text"],
+		input[type="number"],
+		input[type="email"],
+		input[type="password"]
+			display: block
+			width: 100%
+			box-sizing: border-box
+			position: absolute
+			bottom: 0
+			left: 0
+			height: 36px
+			padding: 0 16px
+
+		&.focus
+			background-color: $grey100
+
+		&.active
+			.input-label
+				transform: scale(0.7) translateY(0px)
+
+	button
+		height: 48px
+		line-height: 48px
+		text-transform: uppercase
+
+		&.orange
+			color: $orange500
+
+			&:hover, &:focus
+				background-color: $orange50
+
+		&.red
+			color: $red500
+
+			&:hover, &:focus
+				background-color: $red50
+
+		&.blue
+			color: $blue500
+
+			&:hover, &:focus
+				background-color: $blue50
+
+		&.green
+			color: $green500
+
+			&:hover, &:focus
+				background-color: $green50
+
+table
+	min-width: 100%;
+
+	th
+		font-weight: 500
+
+	td
+		vertical-align: top
+
+	th, td
+		padding: 4px 8px
+		border-left: 1px solid $grey200
+
+		&:first-child
+			border-left: 0
+
+	tr
+		border-bottom: 1px solid $grey200
+
+		&:last-child
+			border-bottom: 0
+
+	thead
+		background-color: $grey300
+
+	tbody
+		tr
+			&:nth-child(odd)
+				background-color: white
+
+			&:hover
+				background-color: $grey200
+
+.select
+	height: 48px
+	padding: 0 8px
+	box-sizing: border-box
+	position: relative
+
+	select
+		display: block
+		height: 48px
+		position: relative
+		padding: 0 48px 0 0
+
+	i
+		width: 48px
+		height: 48px
+		line-height: 48px
+		display: block
+		position: absolute
+		top: 0
+		right: 0
+		text-align: center
+
+.panels
+	width: 100%
+	height: 100%
+	position: relative
+	display: flex
+
+.panel-sidebar
+	width: 250px
+	position: relative
+	flex-shrink: 0;
+
+	h2
+		font-size: 14px
+		font-weight: 500
+		height: 48px
+		line-height: 48px
+		padding: 0 8px
+		border-bottom: 1px solid $grey300
+		text-transform: uppercase
+
+// TODO: Allow resize panel
+.panel-separator
+	width: 3px
+	// cursor: ew-resize
+	position: relative
+	z-index: 1
+	flex-shrink: 0
+
+	&::after
+		content: ''
+		position: absolute
+		top: 0
+		left: 1px
+		width: 1px
+		height: 100%
+		background-color: $grey300
+
+.panel-content
+	flex-grow: 1
+	background-color: white
+	position: relative
+
+#content
+	&[data-tab="servers"] #servers,
+	&[data-tab="tables"] #tables,
+	&[data-tab="folder"] #folder,
+	&[data-tab="history"] #history,
+	&[data-tab="resultset"] #resultset,
+	&[data-tab="report"] #report,
+	&[data-tab="user"] #user,
+	&[data-tab="settings"] #settings
+		display: block
+
+	.content
+		position: absolute
+		top: 0
+		left: 0
+		bottom: 150px
+		width: 100%
+		display: none
+
+	&[data-tab="servers"],
+	&[data-tab="settings"]
+		.content
+			bottom: 0
+
+	&[data-tab="servers"] .panel-content #new,
+	&[data-tab="tables"] .panel-content #result,
+	&[data-tab="folder"] .panel-content #result,
+	&[data-tab="history"] .panel-content #result
+		display: flex
+
+#sidebar-tab-nav
+	width: 40px
+	height: 100%
+	text-align: center
+	background-color: $grey200
+	border-right: 1px solid $grey300
+	box-sizing: border-box
+
+	button
+		display: block
+		width: 40px
+		height: 40px
+		line-height: 40px
+		color: $grey600
+		position: relative
+		font-size: 16px
+
+		&[data-name="settings"]
+			position: absolute
+			left: 0
+			bottom: 0
+
+		&:nth-child(2),
+		&:nth-child(3),
+		&:nth-child(4),
+		&:nth-child(5),
+		&:nth-child(6),
+		&:nth-child(7),
+			color: $grey400
+			cursor: not-allowed
+
+			#content[data-connection="connected"] &
+				color: $grey600
+				cursor: pointer
+
+		&:hover
+			background-color: $grey300
+
+			&:nth-child(2),
+			&:nth-child(3),
+			&:nth-child(4),
+			&:nth-child(5),
+			&:nth-child(6),
+			&:nth-child(7),
+				background-color: transparent
+
+				#content[data-connection="connected"] &
+					background-color: $grey300
+
+		#content[data-tab="servers"] &:nth-child(1),
+		#content[data-tab="tables"] &:nth-child(2),
+		#content[data-tab="folder"] &:nth-child(3),
+		#content[data-tab="history"] &:nth-child(4),
+		#content[data-tab="resultset"] &:nth-child(5),
+		#content[data-tab="report"] &:nth-child(6),
+		#content[data-tab="user"] &:nth-child(7),
+		#content[data-tab="settings"] &:nth-child(8)
+			color: $blue500
+
+		#content.guest &:nth-child(3),
+		#content.guest &:nth-child(4)
+			display: none
+
+#sidebar-tab-content
+	position: absolute
+	top: 0
+	bottom: 24px
+	left: 0
+	width: 100%
+
+	.tab
+		display: none
+		position: absolute
+		top: 32px
+		left: 0
+		bottom: 0
+		width: 100%
+
+		&#servers,
+		&#settings
+			top: 0
+
+
+.list
+	.context
+		width: 24px
+		height: 24px
+		line-height: 24px
+		text-align: center
+		color: $grey600
+		position: absolute
+		top: 0
+		right: 0
+		font-size: 12px
+		display: none
+
+	> li
+		&:hover
+			.context
+				display: block
+
+#servers
+
+#server-list
+	position: absolute
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	overflow: auto
+
+	li
+		position: relative
+
+		span
+			display: block
+			cursor: pointer
+			padding: 8px 32px 8px 16px
+
+			.ssh
+				display: none
+				font-size: 10px
+				color: $grey500
+				margin: 8px 0 0 0
+
+				&::before
+					content: 'SSH: '
+
+		.context
+			top: 4px
+			right: 0
+
+		&:hover
+			background-color: $grey200
+
+		&.editing
+			background-color: $blue50
+
+			.context
+				display: block
+
+		&.withssh
+			.ssh
+				display: block
+
+#history-list
+	position: absolute
+	top: 0
+	bottom: 32px
+	left: 0
+	width: 100%
+	overflow: auto
+
+	li
+		margin: 16px 8px
+		background-color: white
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
+		padding: 8px
+		cursor: pointer
+		border-top: 3px solid transparent
+		position: relative
+
+		&::after
+			content: ''
+			display: table
+			clear: both
+
+		&:hover
+			background-color: $grey100
+
+		&.success
+			border-color: $green500
+
+		&.error
+			border-color: $red500
+
+	.query
+		margin: 8px 0 24px 0
+		font-size: 12px
+		overflow: hidden
+		text-overflow: ellipsis
+
+	.db
+		font-size: 10px
+		color: $grey600
+
+		&::before
+			color: $grey500
+			content: 'DB: '
+
+	.total
+		float: left
+		font-size: 10px
+		color: $grey600
+
+		&::before
+			color: $grey500
+			content: 'Total: '
+
+	.date
+		float: right
+		font-size: 10px
+		color: $grey500
+
+#history-clear
+	position: absolute
+	left: 0
+	bottom: 0
+	width: 100%
+	height: 32px
+	line-height: 32px
+	display: block
+	border-top: 1px solid $grey300
+	box-sizing: border-box
+	color: $grey700
+
+	&:hover
+		background-color: $grey200
+
+#folder-list
+	position: absolute
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	overflow: auto
+
+	li
+		margin: 16px 8px
+		background-color: white
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2)
+		padding: 8px
+		cursor: pointer
+		position: relative
+
+		&::after
+			content: ''
+			display: table
+			clear: both
+
+		&:hover
+			background-color: $grey100
+
+			.delete
+				display: block
+
+		&.noname
+			.query
+				font-size: 12px
+				color: $grey800
+
+	.name
+		font-weight: 500
+
+	.query
+		margin: 8px 0 24px 0
+		font-size: 10px
+		color: $grey500
+
+	.date
+		text-align: right
+		font-size: 10px
+		color: $grey500
+
+	.delete
+		color: $red500
+		font-size: 12px
+		position: absolute
+		top: 0
+		right: 0
+		width: 16px
+		height: 16px
+		line-height: 16px
+		display: none
+		text-align: center
+
+		&:hover
+			background-color: $red50
+
+#databases
+	position: absolute
+	top: 0
+	left: 0
+	width: 100%
+	height: 32px
+	line-height: 32px
+	border-bottom: 1px solid $grey300
+	cursor: pointer
+	box-sizing: border-box
+	display: none
+
+	#content[data-tab="tables"] &,
+	#content[data-tab="folder"] &,
+	#content[data-tab="history"] &,
+	#content[data-tab="resultset"] &,
+	#content[data-tab="report"] &,
+	#content[data-tab="user"] &
+		display: block
+
+	i
+		position: absolute
+		top: 0
+		width: 32px
+		height: 32px
+		line-height: 32px
+		display: block
+		text-align: center
+
+	i.icon-layout
+		left: 0
+		color: $blue500
+
+	i.icon-angle-down
+		right: 0
+		color: $grey500
+
+	&:hover
+		background-color: $grey200
+
+#database-list
+	height: 32px
+	line-height: 32px;
+	box-sizing: border-box
+	padding: 0 32px 0 32px
+	position: relative
+
+#table-list
+	position: absolute
+	top: 0
+	bottom: 32px
+	left: 0
+	width: 100%
+	overflow: auto
+
+	> li
+		position: relative
+		cursor: pointer
+
+		.expand
+			position: absolute
+			top: 0
+			left: 0
+			width: 24px
+			height: 32px
+			line-height: 32px
+			color: $grey500
+			text-align: center
+
+			i
+				display: block
+
+			&:hover
+				color: $grey700
+
+		.table-name
+			padding: 0 0 0 24px
+			height: 32px
+			line-height: 32px
+			display: flex
+
+			.name
+				overflow: hidden
+				text-overflow: ellipsis
+				white-space: pre
+				flex-grow: 1
+
+			&::after
+				content: ' ('attr(data-count)')'
+				font-size: 10px
+				color: $grey600
+				display: block
+				min-width: 24px
+				text-align: right
+				margin: 0 4px 0 0
+
+			&:hover
+				padding: 0 24px
+
+				.context
+					display: block
+
+				&::after
+					display: none
+
+		.context
+			height: 32px
+			line-height: 32px
+
+		&:hover
+			.table-name
+				background-color: $grey200
+
+			.context
+				display: none
+
+		&.active
+			.table-name
+				background-color: $grey300
+
+		&.expanded
+			.table-columns
+				display: block
+
+			.expand
+				color: $grey500
+
+				i
+					transform: rotate(90deg)
+
+	.table-columns
+		display: none
+
+		li
+			position: relative
+			height: 24px
+			line-height: 24px
+			font-size: 12px
+			color: $grey700
+			padding: 0 8px 0 24px
+			display: flex
+			cursor: default
+
+			&::before
+				content: '-'
+				color: $grey500
+				margin: 0 4px 0 0
+
+			div
+				flex-grow: 1
+
+			span
+				font-size: 10px
+				color: $grey500
+				margin: 0 0 0 4px
+
+			&:hover
+				background-color: $grey200
+
+#new-table, #new-database
+	position: absolute
+	bottom: 0
+	width: 50%
+	height: 32px
+	line-height: 32px
+	display: block
+	border-top: 1px solid $grey300
+	box-sizing: border-box
+	color: $grey700
+
+	&:hover
+		background-color: $grey200
+
+#new-table
+	left: 0
+	border-right: 1px solid $grey300
+
+#new-database
+	left: 50%
+
+#connection
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
+	height: 24px
+	line-height: 24px
+	border-top: 1px solid $grey300
+	box-sizing: border-box
+	background-color: $grey100
+
+	.name
+		padding: 0 8px 0 24px
+		font-size: 12px
+		overflow: hidden
+		text-overflow: ellipsis
+
+	.status
+		position: absolute
+		top: 0
+		left: 0
+		width: 8px
+		height: 8px
+		border-radius: 50%
+		background-color: $red500
+		vertical-align: middle
+		margin: 8px
+
+	#content[data-connection="connecting"] &
+		.status
+			background-color: $orange500
+
+	#content[data-connection="connected"] &
+		.status
+			background-color: $green500
+
+#new
+	form
+		width: 90%
+		max-width: 400px
+		margin: auto
+		background-color: $grey50
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2)
+		box-sizing: border-box
+
+		#ssh-toggle
+			height: 32px
+			line-height: 32px
+			padding: 0 16px
+
+			label
+				width: 100%
+				display: block
+
+			input
+				display: inline-block
+				margin: 0 4px
+				outline: 0
+
+		#ssh-settings
+			display: none
+
+			&.active
+				display: block
+
+		#group-sshpassword
+			.input-label
+				padding: 4px 48px 4px 24px
+				text-overflow: ellipsis
+				overflow: hidden
+				white-space: pre
+				transition: transform .2s, width .2s
+
+			&.active
+				.input-label
+					width: 143%
+
+			&.hasfile
+				#label-sshpassword
+					&::before
+						content: 'Passphrase 'attr(data-file)
+
+				#upload-sshkeyfile
+					color: $blue500
+
+					.icon-upload
+						display: none
+
+					.icon-cross
+						display: block
+
+		#label-sshpassword
+			&::before
+				content: 'SSH Password'
+
+		#upload-sshkeyfile
+			position: absolute
+			top: 0
+			right: 0
+			width: 48px
+			height: 48px
+
+			.icon-cross
+				display: none
+
+			&:hover
+				background-color: $grey300
+
+		input[name="sshkeyfile-input"]
+			visibility: hidden
+			position: absolute
+			top: 100%
+			left: 100%
+
+	.edit-title
+		display: none
+		background-color: $blue50
+
+	.actions
+		display: flex
+		position: relative
+
+		button
+			flex-grow: 1
+			border-left: 1px solid $grey300
+
+		.clear
+			border-color: transparent
+
+		.save, .delete
+			display: none
+
+	&.editing
+		.new-title
+			display: none
+
+		.edit-title
+			display: block
+
+		.actions
+			.delete
+				border-color: transparent
+
+			.clear
+				border-color: $grey300
+
+			.save, .delete
+				display: block
+
+			.go, .add
+				display: none
+
+#result
+	flex-grow: 1
+	position: relative
+	flex-direction: column
+
+	.box
+		background-color: $grey50;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+		position: relative
+
+#command
+	padding: 8px 16px
+	flex-shrink: 0
+	display: none
+
+	&::before
+		content: 'SQL'
+		font-size: 10px
+		font-weight: 300
+		color: $grey700
+		margin: 0 8px 0 0
+
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
+
+#command-save
+	position: absolute
+	top: 0
+	right: 16px
+	width: 32px
+	height: 32px
+	line-height: 32px
+	display: none
+
+	&:hover
+		background-color: $grey300
+
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
+
+#result-box
+	flex-grow: 1
+	margin: 8px 16px 16px 16px
+	border-top: 3px solid transparent
+	display: none
+
+	#result[data-state="error"] &
+		display: block
+		border-color: $red500
+
+	#result[data-state="loading"] &
+		display: block
+		border-color: $orange500
+
+	#result[data-state="success"] &
+		display: block
+		border-color: $green500
+
+#meta
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
+	height: 24px
+	line-height: 24px
+	padding: 0 0 0 8px
+	box-sizing: border-box
+	display: none
+
+	button
+		float: right
+		width: 24px
+		height: 24px
+		line-height: 24px
+		color: $grey700
+
+		&:hover
+			background-color: $grey300
+
+	&::after
+		content: ''
+		clear: both
+		display: table
+
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
+
+#total
+	float: left
+
+	&::before
+		content: 'Total Rows:'
+		font-size: 10px
+		font-weight: 300
+		color: $grey700
+		margin: 0 8px 0 0
+
+#table
+	position: absolute
+	top: 0
+	left: 0
+	bottom: 24px
+	width: 100%
+	overflow: auto
+	display: none
+	font-size: 12px
+
+	#result[data-state="success"] &,
+	#result[data-state="loading"] &
+		display: block
+
+	table
+		.text
+			min-width: 150px
+
+		.datetime
+			white-space: nowrap;
+
+		.tiny,
+		.null,
+		.timestamp,
+		.date,
+		.time,
+		.datetime,
+		.year,
+		.newdate,
+		.bit,
+		.timestamp2,
+		.datetime2,
+		.time2,
+		.newdecimal
+			text-align: center
+
+		.short,
+		.long,
+		.float,
+		.double,
+			text-align: right
+
+		.null
+			color: $grey500
+
+#error-message
+	display: none
+	padding: 16px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	overflow: auto;
+	box-sizing: border-box;
+
+	#result[data-state="error"] &
+		display: block
+
+#table-edit
+	display: none
+	font-size: 12px
+	flex-grow: 1
+	margin: 8px 16px
+	flex-direction: column
+
+	#result[data-state="table-edit"] &
+		display: flex
+
+	h2
+		font-weight: 500
+
+		&::before
+			content: 'Edit Table: '
+			color: $grey500
+
+	h3
+		font-weight: 500
+		color: $grey500
+
+	.box
+		margin: 8px 0
+
+#table-edit-info
+	display: flex
+	flex-wrap: wrap
+
+	.group
+		width: 100%
+
+		&.half
+			width: 50%
+			padding: 0 8px
+			box-sizing: border-box
+
+	label
+		display: block
+		box-sizing: border-box
+		width: 100%
+		margin: 8px 0 0 0
+		color: $grey500
+
+	.select,
+	select,
+	i,
+	input
+		height: 24px
+		line-height: 24px
+
+	input,
+	.select
+		border-bottom: 1px solid $grey300
+		margin: 8px 0
+		box-sizing: border-box
+
+	input
+		padding: 0 8px
+
+	.select
+		select
+			padding: 0 24px 0 0
+
+		i
+			width: 24px
+
+#table-edit-columns
+	overflow: auto
+	flex-grow: 1
+
+#table-edit-indexes
+	overflow: auto
+	flex-grow: 1
+
+#query-panel
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
+	height: 150px
+	border-top: 1px solid $grey300
+
+	#content[data-tab="servers"] &,
+	#content[data-tab="settings"] &
+		display: none
+
+	&::before
+		display: block
+		content: 'SQL QUERY'
+		font-size: 10px
+		padding: 0 48px 0 8px
+		position: absolute
+		top: 0
+		left: 0
+		width: 100%
+		height: 24px
+		line-height: 24px
+		color: $grey500
+		background-color: white
+		font-weight: 300
+
+	.actions
+		position: absolute
+		bottom: 0
+		width: 100%
+		height: 24px
+		background-color: $grey100
+		border-top: 1px solid $grey300
+		box-sizing: border-box
+
+		&::after
+			content: ''
+			display: table
+			clear: both
+
+		button
+			width: 24px
+			height: 24px
+			line-height: 24px
+			cursor: pointer
+			color: $grey700
+			float: right
+
+			&:hover
+				background-color: $grey300
+
+#query-save
+	#content.guest &
+		display: none
+
+#editor
+	padding: 0 8px
+	position: absolute
+	top: 24px
+	bottom: 24px
+	left: 0
+	width: 100%
+	box-sizing: border-box
+	outline: 0
+	overflow: auto
+	font-size: 12px
+
+#popup
+	position: fixed
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	z-index: 1
+	display: none
+
+	&[data-popup]
+		display: flex
+
+	&[data-popup="query-save"] #popup-query-save,
+	&[data-popup="error"] #popup-error,
+	&[data-popup="loading"] #popup-loading,
+	&[data-popup="newdatabase"] #popup-newdatabase,
+	&[data-popup="history-clear"] #popup-history-clear,
+	&[data-popup="truncate-table"] #popup-truncate-table,
+	&[data-popup="drop-table"] #popup-drop-table,
+	&[data-popup="newtable"] #popup-newtable
+		display: block
+
+#popup-overlay
+	background-color: rgba(0, 0, 0, 0.2)
+	position: fixed
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+
+.popup-body
+	position: relative
+	width: 100%
+	max-width: 300px
+	margin: auto
+	background-color: white
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3)
+	display: none
+	overflow: hidden
+	border-radius: 1px
+
+	.popup-title
+		text-transform: uppercase
+		height: 32px
+		line-height: 32px
+		font-weight: 500
+		background-color: $grey200
+		text-align: center
+		border-bottom: 1px solid $grey300
+		font-size: 12px
+
+	.actions
+		display: flex
+		border-top: 1px solid $grey300
+
+		button
+			height: 48px
+			flex-shrink: 0
+			flex-grow: 1
+			box-sizing: border-box
+	.no
+		color: $red500
+		border-right: 1px solid $grey300
+
+		&:hover
+			background-color: $red50
+
+	.yes
+		color: $green500
+
+		&:hover
+			background-color: $green50
+
+	p
+		position: relative
+		padding: 16px
+
+	input
+		display: block
+		height: 48px
+		padding: 0 8px
+		box-sizing: border-box
+		position: relative
+
+	label
+		display: block
+		padding: 0 8px
+		box-sizing: border-box
+		margin: 8px 0 0 0
+		color: $grey500
+		font-size: 12px
+
+#popup-error
+	.yes
+		color: $grey500
+
+		&:hover
+			background-color: $grey50
+
+@keyframes loadingblob
+	0%
+		transform: scale3d(0, 0, 0)
+		opacity: 0
+
+	50%
+		opacity: 0.8
+
+	100%
+		transform: scale3d(1, 1, 1)
+		opacity: 0
+
+#popup-loading
+	padding: 24px 0
+	text-align: center
+	overflow: hidden
+
+	p
+		padding: 0
+
+	#popup[data-popup="loading"] &
+		.loading-blob
+			&::before
+				animation-name: loadingblob
+
+	.loading-blob
+		position: absolute
+		top: 50%
+		left: 50%
+		width: 300px
+		height: 300px
+		transform: translate(-50%, -50%) rotate(45deg)
+
+		&::before
+			content: ''
+			position: absolute
+			top: 0
+			left: 0
+			width: 100%
+			height: 100%
+			background-color: $grey200
+			opacity: 0
+			transform: scale3d(0, 0, 0)
+			animation-duration: 2s
+			animation-iteration-count: infinite
+
+#popup-newdatabase
+	input,
+	.select
+		border-bottom: 1px solid $grey300
+
+		&.error
+			border-color: $red500
+
+	.select
+		&:nth-of-type(3)
+			border-bottom: 0
+
+#popup-newtable
+	input,
+	.select
+		border-bottom: 1px solid $grey300
+
+		&.error
+			border-color: $red500
+
+	.select
+		&:nth-of-type(4)
+			border-bottom: 0

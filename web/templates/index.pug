@@ -1,0 +1,288 @@
+extends html
+
+block stylesheets
+	link(rel="stylesheet", type="text/css", href="assets/css/index.css")
+
+block scripts
+	script(type="text/javascript", src="assets/js/handler-web.js")
+	script(type="text/javascript", src="assets/static/jquery-3.0.0.min.js")
+	script(type="text/javascript", src="assets/static/lodash.core-4.13.1.min.js")
+	script(type="text/javascript", src="assets/js/library.js")
+	script(type="text/javascript", src="assets/js/index.js")
+
+block body
+	#content.panels(data-tab="servers", data-content="new")
+		#sidebar-tab-nav
+			button(data-name="servers")
+				i.icon.icon-server
+			button(data-name="tables")
+				i.icon.icon-columns
+			button(data-name="folder")
+				i.icon.icon-heart
+			button(data-name="history")
+				i.icon.icon-clock
+			//- button(data-name="resultset")
+			//- 	i.icon.icon-folder
+			//- button(data-name="report")
+			//- 	i.icon.icon-paper
+			//- button(data-name="user")
+			//- 	i.icon.icon-head
+			//- button(data-name="settings")
+			//- 	i.icon.icon-cog
+
+		.panel-sidebar
+			#sidebar-tab-content
+				#databases
+					i.icon.icon-layout
+					i.icon-fa.icon-angle-down
+					select#database-list
+						optgroup#database-list-group(label="Databases")
+							//- template#database-list-item
+						optgroup(label="────────────")
+							option(value="#newdatabase") New Database
+
+				#servers.tab
+					ul#server-list.list
+						//- template#server-list-item
+				#tables.tab
+					ul#table-list.list
+						//- template#table-list-item
+					button#new-table.icon.icon-plus Table
+					button#new-database.icon.icon-plus Database
+				#folder.tab
+					ul#folder-list.list
+						//- template#folder-list-item
+				#history.tab
+					ul#history-list.list
+						//- template#history-list-item
+					button#history-clear.icon.icon-trash Clear History
+			#connection
+				span.status
+				.name
+					//- current connection user@host
+		.panel-separator
+		.panel-content
+			#new.content
+				form
+					h2.new-title New Connection
+					h2.edit-title Edit Connection
+					.group
+						label.input-label Host
+						input(type="text", name="host")
+					.group
+						label.input-label User
+						input(type="text", name="user")
+					.group
+						label.input-label Password
+						input(type="password", name="password")
+					.group
+						label.input-label Port
+						input(type="number", name="port")
+					.group#ssh-toggle
+						label
+							input(type="checkbox", name="ssh")
+							=" SSH"
+					#ssh-settings
+						.group
+							label.input-label SSH Host
+							input(type="text", name="sshhost")
+						.group
+							label.input-label SSH User
+							input(type="text", name="sshuser")
+						#group-sshpassword.group
+							label#label-sshpassword.input-label
+							input(type="password", name="sshpassword")
+							button#upload-sshkeyfile(type="button")
+								i.icon.icon-upload
+								i.icon.icon-cross
+							input(type="file", name="sshkeyfile-input")
+							input(type="hidden", name="sshkeyfile")
+						.group
+							label.input-label SSH Port
+							input(type="number", name="sshport")
+						.group
+							label.input-label Local Binding Port (Random by default)
+							input(type="number", name="sshport")
+					.actions
+						button.red.delete(type="button")
+							i.icon.icon-trash
+						button.orange.clear(type="button")
+							i.icon.icon-cross
+						button.blue.add(type="button")
+							i.icon.icon-plus
+						button.green.go(type="button")
+							i.icon.icon-arrow-right
+						button.green.save(type="button")
+							i.icon.icon-check
+			#result.content
+				//- effective sql
+				#command
+				button#command-save
+					i.icon.icon-heart
+				//- result table
+				#result-box.box
+					#table
+						table
+							thead
+								//- template#result-table-row
+							tbody
+								//- template#result-table-row
+					#meta
+						//- total rows
+						#total
+						button#result-next
+							i.icon.icon-fast-forward
+						button#result-prev
+							i.icon.icon-rewind
+						button#export
+							i.icon.icon-download
+					#error-message
+				#table-edit
+					h2
+					#table-edit-info.box
+						.group.half
+							label Name
+							input#table-edit-name(type="text")
+						.group.half
+							label Auto Increment
+							input#table-edit-increment(type="number")
+						.group.half
+							label Encoding
+							.select
+								i.icon-fa.icon-angle-down
+								select#table-edit-encoding
+						.group.half
+							label Collation
+							.select
+								i.icon-fa.icon-angle-down
+								select#table-edit-collation
+					h3 Columns
+					#table-edit-columns.box
+						table
+							thead
+								tr
+									th
+									th Column
+									th Type
+									th Length
+									th Unsigned
+									th Null
+									th Default
+									th Comment
+							tbody
+								//- template#table-edit-columns-row
+					//- h3 Indexes
+					//- #table-edit-indexes.box
+					//- 	table
+					//- 		thead
+					//- 			tr
+					//- 				th
+					//- 				th Name
+					//- 				th Type
+					//- 		tbody
+
+			#query-panel
+				#editor(contenteditable="true")
+				.actions
+					button#query-run
+						i.icon.icon-play
+					button#query-save
+						i.icon.icon-heart
+					button#query-clear
+						i.icon.icon-cross
+
+	#popup
+		#popup-overlay
+		#popup-query-save.popup-body
+			.popup-title Save Query
+			input#query-save-name(type="text", placeholder="Query Name (Optional)")
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+		#popup-error.popup-body
+			.popup-title Error
+			p
+			.actions
+				button.yes
+					i.icon.icon-check
+		#popup-loading.popup-body
+			.loading-blob
+			p Loading
+		#popup-newdatabase.popup-body
+			.popup-title New Database
+			input#newdatabase-name(type="text", placeholder="Database Name")
+			label Encoding
+			.select
+				i.icon-fa.icon-angle-down
+				select#newdatabase-encoding
+					//- template#newdatabase-select-default-item
+					//- template#newdatabase-select-disabled-item
+					//- template#newdatabase-select-item
+			label Collation
+			.select
+				i.icon-fa.icon-angle-down
+				select#newdatabase-collation
+					//- template#newdatabase-select-default-item
+					//- template#newdatabase-select-disabled-item
+					//- template#newdatabase-select-item
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+		#popup-history-clear.popup-body
+			.popup-title Clear History
+			p This will clear all SQL history for this connection.
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+		#popup-truncate-table.popup-body
+			.popup-title Truncate Table
+			p This will delete all entries of the table and reset the primary key.
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+		#popup-drop-table.popup-body
+			.popup-title Drop Table
+			p This will drop the table.
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+		#popup-newtable.popup-body
+			.popup-title New Table
+			input#newtable-name(type="text", placeholder="Table Name")
+			label Storage Type
+			.select
+				i.icon-fa.icon-angle-down
+				select#newtable-engine(name="engine")
+					//- template#newdatabase-select-default-item
+					//- template#newdatabase-select-disabled-item
+					//- template#newdatabase-select-item
+			label Encoding
+			.select
+				i.icon-fa.icon-angle-down
+				select#newtable-encoding(name="encoding")
+					//- template#newdatabase-select-default-item
+					//- template#newdatabase-select-disabled-item
+					//- template#newdatabase-select-item
+			label Collation
+			.select
+				i.icon-fa.icon-angle-down
+				select#newtable-collation(name="collation")
+					//- template#newdatabase-select-default-item
+					//- template#newdatabase-select-disabled-item
+					//- template#newdatabase-select-item
+			.actions
+				button.no
+					i.icon.icon-cross
+				button.yes
+					i.icon.icon-check
+	include templates.pug

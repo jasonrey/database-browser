@@ -1,0 +1,19 @@
+extends index
+
+block scripts
+	script.
+		require('./assets/js/handler-app.js');
+
+	script.
+		if (typeof module === 'object') {
+			window.module = module;
+			module = undefined;
+		}
+	script(type="text/javascript", src="assets/static/jquery-3.0.0.min.js")
+	script(type="text/javascript", src="assets/static/lodash.core-4.13.1.min.js")
+
+	script.
+		if (window.module) module = window.module;
+
+	script(type="text/javascript", src="assets/js/library.js")
+	script(type="text/javascript", src="assets/js/index.js")
