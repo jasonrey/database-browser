@@ -90,48 +90,52 @@
 	//- cells - table edit columns from
 	script#table-edit-columns-row(type="text/html")
 		tr
-			td
+			td.actions
 				button
 					i.icon.icon-arrow-up
+				button
+					i.icon.icon-arrow-down
+				button
+					i.icon.icon-cross
+			td
+				input.column(type="text", value="{{column}}")
+			td
+				.select
+					i.icon-fa.icon-angle-down
+					select.type
+						option("{{typetinyint}}") TINYINT
+						option("{{typeint}}") INT
+						option("{{typebigint}}") BIGINT
+						option("{{typefloat}}") FLOAT
+						option("{{typedouble}}") DOUBLE
+						option("{{typechar}}") CHAR
+						option("{{typevarchar}}") VARCHAR
+						option("{{typetext}}") TEXT
+						option("{{typedate}}") DATE
+						option("{{typetimestamp}}") TIMESTAMP
+						option("{{typetime}}") TIME
+						option("{{typeyear}}") YEAR
+						option("{{typedatetime}}") DATETIME
+			td.col-length
+				input.length(type="number", value="{{length}}", data-nolength="{{nolength}}")
+			td.col-unsigned
+				input.unsigned(type="checkbox", {{unsigned}})
+			td.col-allownull
+				input.allownull(type="checkbox", {{allownull}})
+			td
+				input.default(type="text", value="{{default}}", {{defaultnull}})
+			td
+				input.comment(type="text", value="{{comment}}")
+
+	script#table-edit-columns-cell(type="text/html")
+		td
+			div(contenteditable="true") {{value}}
+
+	script#table-edit-columns-cell-action(type="text/html")
+		td
+			button
+				i.icon.icon-arrow-up
 			button
 				i.icon.icon-arrow-down
 			button
 				i.icon.icon-cross
-		td
-			input.column(type="text", value="{{column}}")
-		td
-			select.type
-				option INT
-				option BIGINT
-				option FLOAT
-				option DOUBLE
-				option VARCHAR
-				option TEXT
-				option DATE
-				option TIMESTAMP
-				option TIME
-				option YEAR
-				option DATETIME
-		td
-			input.length(type="text", value="{{length}}")
-		td
-			input.unsigned(type="checkbox", checked="{{unsigned}}")
-		td
-			input.allownull(type="checkbox", checked="{{allownull}}")
-		td
-			input.default(type="text", value="{{default}}")
-		td
-			input.comment(type="text", value="{{comment}}")
-
-script#table-edit-columns-cell(type="text/html")
-	td
-		div(contenteditable="true") {{value}}
-
-script#table-edit-columns-cell-action(type="text/html")
-	td
-		button
-			i.icon.icon-arrow-up
-		button
-			i.icon.icon-arrow-down
-		button
-			i.icon.icon-cross

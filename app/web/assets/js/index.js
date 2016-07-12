@@ -547,7 +547,41 @@ $(function() {
 
 			$db.q('show full columns from ??', [name])
 				.then(function(response) {
+					var html = '';
 
+					var nolengthKeys = [
+						'float',
+						'double',
+						'text',
+						'date',
+						'timestamp',
+						'time',
+						'year',
+						'datetime'
+					];
+
+					_.each(response.result, function(row) {
+						var length = row.Type.match(/\((.+)\)/);
+
+						var type = row.Type.split('(')[0].toLowerCase();
+
+						var data = {
+							column: row.Field,
+							length: length !== null ? length[1] : '',
+							nolength: nolengthKeys.indexOf(type) >= 0 ? 'true' : '',
+							unsigned: /unsigned/.test(row.Type) ? 'checked="checked"' : '',
+							allownull: row.Null === 'YES' ? 'checked="checked"' : '',
+							default: row.Default === null ? '' : row.Default,
+							defaultnull: row.Default === null && row.Null === 'YES' ? 'placeholder="null"' : '',
+							comment: row.Comment
+						};
+
+						data['type' + type] = 'selected="selected"';
+
+						html += $template('table-edit-columns-row', data);
+					});
+
+					$$.TABLEEDITBODY.html(html);
 				});
 		}
 	};
@@ -709,6 +743,37 @@ $(function() {
 
 	$$.TABLEEDITCOLLATION.on('blur', function() {
 
+	});
+
+	$$.TABLEEDITBODY.on('focus', 'input[type="text"], input[type="number"]', function() {
+		$(this).parents('td').addClass('active');
+	});
+
+	$$.TABLEEDITBODY.on('blur', 'input[type="text"], input[type="number"]', function() {
+		$(this).parents('td').removeClass('active');
+	});
+
+	$$.TABLEEDITBODY.on('click', 'td', function(event) {
+		if (event.target.tagName === 'TD') {
+			var target = $(event.target),
+				input = target.find('input[type="text"], input[type="number"]');
+
+			if (input.length) {
+				input.trigger('focus');
+			}
+
+			var checkbox = target.find('input[type="checkbox"]');
+
+			if (checkbox.length) {
+				checkbox.trigger('click');
+			}
+
+			var select = target.find('select');
+
+			if (select.length) {
+				select.trigger('click');
+			}
+		}
 	});
 
 	$$.SERVERLIST.on('click', '.edit', function(event) {

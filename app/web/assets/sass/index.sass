@@ -1015,6 +1015,7 @@ table
 #table-edit-info
 	display: flex
 	flex-wrap: wrap
+	flex-shrink: 0
 
 	.group
 		width: 100%
@@ -1057,6 +1058,60 @@ table
 #table-edit-columns
 	overflow: auto
 	flex-grow: 1
+
+	td
+		vertical-align: middle
+
+		&.active
+			background-color: $grey300
+
+	.actions
+		min-width: 80px;
+		box-sizing: border-box;
+		padding: 4px
+
+		button
+			width: 24px
+			height: 24px
+			line-height: 24px
+			text-align: center
+			float: left
+			color: $grey700
+
+			&:hover
+				background-color: $grey300
+
+		&::after
+			content: ''
+			clear: both
+			display: table
+
+	.select
+		height: 24px
+		padding: 0
+
+		i
+			width: 16px
+			line-height: 24px
+			height: 24px
+
+		select
+			height: 100%
+			padding: 0 16px 0 0
+
+	.col-type
+		min-width: 80px
+
+	.col-length
+		input
+			text-align: center
+
+			&[data-nolength="true"]
+				display: none
+
+	.col-unsigned,
+	.col-allownull
+		text-align: center
 
 #table-edit-indexes
 	overflow: auto
