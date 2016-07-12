@@ -25,7 +25,7 @@ let createWindow = function() {
 		processes.push(new Promise((resolve, reject) => {
 			const pug = require('pug');
 
-			let html = pug.renderFile('web/templates/app.pug', {
+			let html = pug.renderFile(__dirname + '/web/templates/app.pug', {
 				pretty: true
 			});
 

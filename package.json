@@ -1,6 +1,6 @@
 {
   "name": "database-browser-builder",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "app/main.js",
   "dependencies": {
     "electron-builder": "^5.11.3",
@@ -19,6 +19,7 @@
     "pack": "build --dir",
     "dist": "build",
     "dist:linux": "build --linux",
+    "dist:docker-linux": "docker run --rm -v $(pwd):/project -v ~/.electron:/root/.electron electronuserland/electron-builder:latest /bin/bash -c 'cp -R /project /build; cd /build; rm -rf node_modules; npm install; npm run dist:linux; mkdir -p /project/dist; cp -Rf /build/dist/* /project/dist; exit'",
     "dist:mac": "build --mac",
     "build": "electron-packager ./app --platform=win32,darwin,linux --arch=x64 --prune --app-version=$APPVERSION --icon=./build/icon.icns --overwrite --out=./dist",
     "build:mac": "electron-packager ./app --platform=darwin --arch=x64 --prune --app-version=$APPVERSION --icon=./build/icon.icns --overwrite --out=./dist",
