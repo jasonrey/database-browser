@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500">
+    <link rel="stylesheet" type="text/css" href="assets/css/index.css">
+    <script>
+      require('./assets/js/handler-app.js');
+      
+    </script>
+    <script>
+      if (typeof module === 'object') {
+      	window.module = module;
+      	module = undefined;
+      }
+    </script>
+    <script type="text/javascript" src="assets/static/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript" src="assets/static/lodash.core-4.13.1.min.js"></script>
+    <script>
+      if (window.module) module = window.module;
+      
+    </script>
+    <script type="text/javascript" src="assets/js/library.js"></script>
+    <script type="text/javascript" src="assets/js/index.js"></script>
+    <title>Database Browser</title>
+  </head>
+  <body>
+    <div class="panels" id="content" data-tab="servers" data-content="new">
+      <div id="sidebar-tab-nav">
+        <button data-name="servers"><i class="icon icon-server"></i></button>
+        <button data-name="tables"><i class="icon icon-columns"></i></button>
+        <button data-name="folder"><i class="icon icon-heart"></i></button>
+        <button data-name="history"><i class="icon icon-clock"></i></button>
+      </div>
+      <div class="panel-sidebar">
+        <div id="sidebar-tab-content">
+          <div id="databases"><i class="icon icon-layout"></i><i class="icon-fa icon-angle-down"></i>
+            <select id="database-list">
+              <optgroup id="database-list-group" label="Databases"></optgroup>
+              <optgroup label="────────────">
+                <option value="#newdatabase">New Database</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="tab" id="servers">
+            <ul class="list" id="server-list"></ul>
+          </div>
+          <div class="tab" id="tables">
+            <ul class="list" id="table-list"></ul>
+            <button class="icon icon-plus" id="new-table">Table</button>
+            <button class="icon icon-plus" id="new-database">Database</button>
+          </div>
+          <div class="tab" id="folder">
+            <ul class="list" id="folder-list"></ul>
+          </div>
+          <div class="tab" id="history">
+            <ul class="list" id="history-list"></ul>
+            <button class="icon icon-trash" id="history-clear">Clear History</button>
+          </div>
+        </div>
+        <div id="connection"><span class="status"></span>
+          <div class="name"></div>
+        </div>
+      </div>
+      <div class="panel-separator"></div>
+      <div class="panel-content">
+        <div class="content" id="new">
+          <form>
+            <h2 class="new-title">New Connection</h2>
+            <h2 class="edit-title">Edit Connection</h2>
+            <div class="group">
+              <label class="input-label">Host</label>
+              <input type="text" name="host">
+            </div>
+            <div class="group">
+              <label class="input-label">User</label>
+              <input type="text" name="user">
+            </div>
+            <div class="group">
+              <label class="input-label">Password</label>
+              <input type="password" name="password">
+            </div>
+            <div class="group">
+              <label class="input-label">Port</label>
+              <input type="number" name="port">
+            </div>
+            <div class="group" id="ssh-toggle">
+              <label>
+                <input type="checkbox" name="ssh"> SSH
+              </label>
+            </div>
+            <div id="ssh-settings">
+              <div class="group">
+                <label class="input-label">SSH Host</label>
+                <input type="text" name="sshhost">
+              </div>
+              <div class="group">
+                <label class="input-label">SSH User</label>
+                <input type="text" name="sshuser">
+              </div>
+              <div class="group" id="group-sshpassword">
+                <label class="input-label" id="label-sshpassword"></label>
+                <input type="password" name="sshpassword">
+                <button id="upload-sshkeyfile" type="button"><i class="icon icon-upload"></i><i class="icon icon-cross"></i></button>
+                <input type="file" name="sshkeyfile-input">
+                <input type="hidden" name="sshkeyfile">
+              </div>
+              <div class="group">
+                <label class="input-label">SSH Port</label>
+                <input type="number" name="sshport">
+              </div>
+              <div class="group">
+                <label class="input-label">Local Binding Port (Random by default)</label>
+                <input type="number" name="sshport">
+              </div>
+            </div>
+            <div class="actions">
+              <button class="red delete" type="button"><i class="icon icon-trash"></i></button>
+              <button class="orange clear" type="button"><i class="icon icon-cross"></i></button>
+              <button class="blue add" type="button"><i class="icon icon-plus"></i></button>
+              <button class="green go" type="button"><i class="icon icon-arrow-right"></i></button>
+              <button class="green save" type="button"><i class="icon icon-check"></i></button>
+            </div>
+          </form>
+        </div>
+        <div class="content" id="result">
+          <div id="command"></div>
+          <button id="command-save"><i class="icon icon-heart"></i></button>
+          <div class="box" id="result-box">
+            <div id="table">
+              <table>
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div id="meta">
+              <div id="total"></div>
+              <button id="result-next"><i class="icon icon-fast-forward"></i></button>
+              <button id="result-prev"><i class="icon icon-rewind"></i></button>
+              <button id="export"><i class="icon icon-download"></i></button>
+            </div>
+            <div id="error-message"></div>
+          </div>
+          <div id="table-edit">
+            <h2></h2>
+            <div class="box" id="table-edit-info">
+              <div class="group half">
+                <label>Name</label>
+                <input id="table-edit-name" type="text">
+              </div>
+              <div class="group half">
+                <label>Auto Increment</label>
+                <input id="table-edit-increment" type="number">
+              </div>
+              <div class="group half">
+                <label>Encoding</label>
+                <div class="select"><i class="icon-fa icon-angle-down"></i>
+                  <select id="table-edit-encoding"></select>
+                </div>
+              </div>
+              <div class="group half">
+                <label>Collation</label>
+                <div class="select"><i class="icon-fa icon-angle-down"></i>
+                  <select id="table-edit-collation"></select>
+                </div>
+              </div>
+            </div>
+            <h3>Columns</h3>
+            <div class="box" id="table-edit-columns">
+              <table>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Length</th>
+                    <th>Unsigned</th>
+                    <th>Null</th>
+                    <th>Default</th>
+                    <th>Comment</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="query-panel">
+          <div id="editor" contenteditable="true"></div>
+          <div class="actions">
+            <button id="query-run"><i class="icon icon-play"></i></button>
+            <button id="query-save"><i class="icon icon-heart"></i></button>
+            <button id="query-clear"><i class="icon icon-cross"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="popup">
+      <div id="popup-overlay"></div>
+      <div class="popup-body" id="popup-query-save">
+        <div class="popup-title">Save Query</div>
+        <input id="query-save-name" type="text" placeholder="Query Name (Optional)">
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-error">
+        <div class="popup-title">Error</div>
+        <p></p>
+        <div class="actions">
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-loading">
+        <div class="loading-blob"></div>
+        <p>Loading</p>
+      </div>
+      <div class="popup-body" id="popup-newdatabase">
+        <div class="popup-title">New Database</div>
+        <input id="newdatabase-name" type="text" placeholder="Database Name">
+        <label>Encoding</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newdatabase-encoding"></select>
+        </div>
+        <label>Collation</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newdatabase-collation"></select>
+        </div>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-history-clear">
+        <div class="popup-title">Clear History</div>
+        <p>This will clear all SQL history for this connection.</p>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-truncate-table">
+        <div class="popup-title">Truncate Table</div>
+        <p>This will delete all entries of the table and reset the primary key.</p>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-drop-table">
+        <div class="popup-title">Drop Table</div>
+        <p>This will drop the table.</p>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+      <div class="popup-body" id="popup-newtable">
+        <div class="popup-title">New Table</div>
+        <input id="newtable-name" type="text" placeholder="Table Name">
+        <label>Storage Type</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newtable-engine" name="engine"></select>
+        </div>
+        <label>Encoding</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newtable-encoding" name="encoding"></select>
+        </div>
+        <label>Collation</label>
+        <div class="select"><i class="icon-fa icon-angle-down"></i>
+          <select id="newtable-collation" name="collation"></select>
+        </div>
+        <div class="actions">
+          <button class="no"><i class="icon icon-cross"></i></button>
+          <button class="yes"><i class="icon icon-check"></i></button>
+        </div>
+      </div>
+    </div>
+    <div id="templates">
+      <script id="server-list-item" type="text/html">
+        <li class="{{withssh}}" data-key="{{key}}"><span>
+            <div class="host">{{user}}@{{host}}</div>
+            <div class="ssh">{{ssh}}</div></span>
+          <button class="context edit"><i class="icon icon-stack"></i></button>
+        </li>
+      </script>
+      <script id="history-list-item" type="text/html">
+        <li class="{{state}}">
+          <div class="query">{{query}}</div>
+          <div class="db">{{db}}</div>
+          <div class="total">{{total}}</div>
+          <div class="date">{{date}}</div>
+          <button class="context history-context"><i class="icon icon-stack"></i></button>
+        </li>
+      </script>
+      <script id="folder-list-item" type="text/html">
+        <li class="{{type}}" data-key="{{key}}">
+          <div class="name">{{name}}</div>
+          <div class="query">{{query}}</div>
+          <div class="date">{{date}}</div>
+          <button class="context folder-context"><i class="icon icon-stack"></i></button>
+        </li>
+      </script>
+      <script id="database-list-item" type="text/html">
+        <option value="{{name}}">{{name}}</option>
+      </script>
+      <script id="table-list-item" type="text/html">
+        <li data-name="{{name}}" title="{{name}}">
+          <div class="table-name">
+            <div class="name">{{name}}</div>
+            <button class="context table-context"><i class="icon icon-stack"></i></button>
+          </div>
+          <div class="expand"><i class="icon-fa icon-dir-right"></i></div>
+          <ul class="table-columns">{{columns}}</ul>
+        </li>
+      </script>
+      <script id="table-columns-item" type="text/html">
+        <li>
+          <div>{{name}}</div><span>{{type}}</span>
+        </li>
+      </script>
+      <script id="result-table-row" type="text/html">
+        <tr data-id="{{id}}">{{cells}}</tr>
+      </script>
+      <script id="result-table-head-cell" type="text/html">
+        <th class="{{type}}">{{name}}</th>
+      </script>
+      <script id="result-table-cell" type="text/html">
+        <td class="{{type}}">{{value}}</td>
+      </script>
+      <script id="newdatabase-select-default-item" type="text/html">
+        <option value="{{name}}">{{name}} (Default)</option>
+      </script>
+      <script id="newdatabase-select-item" type="text/html">
+        <option value="{{name}}">{{name}}</option>
+      </script>
+      <script id="newdatabase-select-disabled-item" type="text/html">
+        <option disabled="disabled">────────────</option>
+      </script>
+      <script id="table-edit-columns-row" type="text/html">
+        <tr>
+          <td>
+            <button><i class="icon icon-arrow-up"></i></button>
+          </td>
+          <button><i class="icon icon-arrow-down"></i></button>
+          <button><i class="icon icon-cross"></i></button>
+        </tr>
+        <td>
+          <input class="column" type="text" value="{{column}}">
+        </td>
+        <td>
+          <select class="type">
+            <option>INT</option>
+            <option>BIGINT</option>
+            <option>FLOAT</option>
+            <option>DOUBLE</option>
+            <option>VARCHAR</option>
+            <option>TEXT</option>
+            <option>DATE</option>
+            <option>TIMESTAMP</option>
+            <option>TIME</option>
+            <option>YEAR</option>
+            <option>DATETIME</option>
+          </select>
+        </td>
+        <td>
+          <input class="length" type="text" value="{{length}}">
+        </td>
+        <td>
+          <input class="unsigned" type="checkbox" checked="{{unsigned}}">
+        </td>
+        <td>
+          <input class="allownull" type="checkbox" checked="{{allownull}}">
+        </td>
+        <td>
+          <input class="default" type="text" value="{{default}}">
+        </td>
+        <td>
+          <input class="comment" type="text" value="{{comment}}">
+        </td>
+      </script>
+    </div>
+    <script id="table-edit-columns-cell" type="text/html">
+      <td>
+        <div contenteditable="true">{{value}}</div>
+      </td>
+    </script>
+    <script id="table-edit-columns-cell-action" type="text/html">
+      <td>
+        <button><i class="icon icon-arrow-up"></i></button>
+        <button><i class="icon icon-arrow-down"></i></button>
+        <button><i class="icon icon-cross"></i></button>
+      </td>
+    </script>
+  </body>
+</html>
