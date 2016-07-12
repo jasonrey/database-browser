@@ -58,7 +58,7 @@ block body
 					button#history-clear.icon.icon-trash Clear History
 			#connection
 				span.status
-				.name
+				#connection-name.name
 					//- current connection user@host
 		.panel-separator
 		.panel-content
@@ -123,9 +123,9 @@ block body
 				#result-box.box
 					#table
 						table
-							thead
+							thead#table-head
 								//- template#result-table-row
-							tbody
+							tbody#table-body
 								//- template#result-table-row
 					#meta
 						//- total rows

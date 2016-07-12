@@ -13,9 +13,6 @@ $(function() {
 
 	$$.BODY = $('body');
 	$$.NEWCONNECTIONFORMINPUTS = $$.NEW.find('input');
-	$$.CONNECTIONNAME = $$.CONNECTION.find('.name');
-	$$.TABLEHEAD = $$.TABLE.find('thead');
-	$$.TABLEBODY = $$.TABLE.find('tbody');
 
 	// DB
 	var $db;
