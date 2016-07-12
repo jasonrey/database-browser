@@ -15,6 +15,14 @@
 - Context menu for server item
 - SSH random tunnel port
 - SQL file drag drop
+- Duplicate table
+    + SHOW CREATE TABLE `user`;
+    + CREATE TABLE `user_copy`;
+    + INSERT INTO `user_copy` SELECT * FROM `user`;
+    + SHOW TABLE STATUS LIKE 'user_copy';
+    + SHOW CREATE TABLE `user_copy`;
+    + SELECT COUNT(1) FROM `user_copy`;
+- History/Folder - Paste to Editor
 
 # Completed
 
