@@ -14,6 +14,31 @@ $(function() {
 	$$.BODY = $('body');
 	$$.NEWCONNECTIONFORMINPUTS = $$.NEW.find('input');
 
+	// Constant data
+	var DATA = {
+		nolengthKeys: [
+			'float',
+			'double',
+			'text',
+			'date',
+			'timestamp',
+			'time',
+			'year',
+			'datetime'
+		],
+		noUnsigned: [
+			'text',
+			'char',
+			'varchar',
+			'text',
+			'date',
+			'timestamp',
+			'time',
+			'year',
+			'datetime'
+		]
+	};
+
 	// DB
 	var $db;
 
@@ -549,28 +574,21 @@ $(function() {
 				.then(function(response) {
 					var html = '';
 
-					var nolengthKeys = [
-						'float',
-						'double',
-						'text',
-						'date',
-						'timestamp',
-						'time',
-						'year',
-						'datetime'
-					];
-
 					_.each(response.result, function(row) {
 						var length = row.Type.match(/\((.+)\)/);
 
 						var type = row.Type.split('(')[0].toLowerCase();
 
 						var data = {
+							key: row.Key,
+							extra: row.Extra,
 							column: row.Field,
 							length: length !== null ? length[1] : '',
-							nolength: nolengthKeys.indexOf(type) >= 0 ? 'true' : '',
+							nolength: DATA.nolengthKeys.indexOf(type) >= 0 ? 'true' : '',
 							unsigned: /unsigned/.test(row.Type) ? 'checked="checked"' : '',
+							nounsigned: DATA.noUnsigned.indexOf(type) >= 0 ? 'disabled' : '',
 							allownull: row.Null === 'YES' ? 'checked="checked"' : '',
+							noallownull: row.Key === 'PRI' ? 'disabled' : '',
 							default: row.Default === null ? '' : row.Default,
 							defaultnull: row.Default === null && row.Null === 'YES' ? 'placeholder="null"' : '',
 							comment: row.Comment
@@ -745,18 +763,18 @@ $(function() {
 
 	});
 
-	$$.TABLEEDITBODY.on('focus', 'input[type="text"], input[type="number"]', function() {
+	$$.TABLEEDITBODY.on('focus', 'input[type="text"], input[type="number"], [contenteditable="true"]', function() {
 		$(this).parents('td').addClass('active');
 	});
 
-	$$.TABLEEDITBODY.on('blur', 'input[type="text"], input[type="number"]', function() {
+	$$.TABLEEDITBODY.on('blur', 'input[type="text"], input[type="number"], [contenteditable="true"]', function() {
 		$(this).parents('td').removeClass('active');
 	});
 
 	$$.TABLEEDITBODY.on('click', 'td', function(event) {
 		if (event.target.tagName === 'TD') {
 			var target = $(event.target),
-				input = target.find('input[type="text"], input[type="number"]');
+				input = target.find('input[type="text"], input[type="number"], [contenteditable="true"]');
 
 			if (input.length) {
 				input.trigger('focus');
@@ -771,9 +789,124 @@ $(function() {
 			var select = target.find('select');
 
 			if (select.length) {
-				select.trigger('click');
+				var selectClickEvent = document.createEvent('MouseEvents');
+
+				selectClickEvent.initMouseEvent('mousedown', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+				select[0].dispatchEvent(selectClickEvent);
 			}
 		}
+	});
+
+	$$.TABLEEDITBODY.on('paste', '[contenteditable="true"]', function(event) {
+		event.preventDefault();
+
+		var text = event.originalEvent.clipboardData.getData('text/plain');
+
+		document.execCommand('insertText', false, text);
+	});
+
+	$$.TABLEEDITBODY.on('change', '.type', function() {
+		var row = $(this).parents('tr'),
+			length = row.find('.length'),
+			unsigned = row.find('.unsigned'),
+			type = this.value.toLowerCase();
+
+		if (DATA.nolengthKeys.indexOf(type) >= 0) {
+			length.attr('data-nolength', true);
+		} else {
+			length.removeAttr('data-nolength');
+		}
+
+		if (DATA.noUnsigned.indexOf(type) >= 0) {
+			unsigned
+				.prop('checked', false)
+				.prop('disabled', true);
+		} else {
+			unsigned.removeAttr('disabled');
+		}
+	});
+
+	$$.TABLEEDITBODY.on('change', '.type', function() {
+		$(this).parents('tr').trigger('rowupdate');
+	});
+
+	$$.TABLEEDITBODY.on('change', 'input', function() {
+		$(this).parents('tr').trigger('rowupdate');
+	});
+
+	var tableEditContentBeforeValue;
+
+	$$.TABLEEDITBODY.on('focus', '[contenteditable]', function() {
+		tableEditContentBeforeValue = $(this).text();
+	});
+
+	$$.TABLEEDITBODY.on('blur', '[contenteditable]', function() {
+		console.log(tableEditContentBeforeValue);
+		if ($(this).text() !== tableEditContentBeforeValue) {
+			$(this).parents('tr').trigger('rowupdate');
+		}
+	});
+
+	$$.TABLEEDITBODY.on('rowupdate', 'tr', function() {
+		var row = $(this),
+			tablename = $$.TABLEEDITNAME.val(),
+			name = row.attr('data-name'),
+			key = row.find('.key').val(),
+			extra = row.find('.extra').val(),
+			column = row.find('.column').text(),
+			type = row.find('.type').val().toLowerCase(),
+			length = row.find('.length').val(),
+			haslength = DATA.nolengthKeys.indexOf(type) < 0,
+			unsigned = DATA.noUnsigned.indexOf(type) < 0 && row.find('.unsigned').is(':checked') ? 'unsigned' : '',
+			allownull = key !== 'PRI' && row.find('.allownull').is(':checked'),
+			defaultvalue = row.find('.default').val(),
+			comment = row.find('.comment').text();
+
+		defaultvalue = allownull && defaultvalue.length === 0 ? 'null' : '';
+
+		var query = 'alter table ?? change ?? ?? ' + type;
+		var values = [tablename, name, column];
+
+		if (haslength && length.length) {
+			query += '(' + length + ')';
+		}
+
+		if (unsigned) {
+			query += ' unsigned';
+		}
+
+		if (!allownull) {
+			query += ' not null';
+		}
+
+		if (defaultvalue.length) {
+			if (defaultvalue === 'null') {
+				query += ' default null';
+			} else {
+				query += ' default ?';
+				values.push(defaultvalue);
+			}
+		}
+
+		if (extra === 'auto_increment') {
+			query += ' auto_increment';
+		}
+
+		if (comment.length) {
+			query += ' comment ?';
+			values.push(comment);
+		}
+
+		$dbquery(query, values)
+			.then(function(response) {
+				console.log(response);
+			})
+			.catch(function(err) {
+				console.log(err);
+			});
+
+		//row.attr('data-name', column);
 	});
 
 	$$.SERVERLIST.on('click', '.edit', function(event) {
@@ -1145,6 +1278,14 @@ $(function() {
 				$$.QUERYCLEAR.trigger('click');
 			}
 		}
+	});
+
+	$$.EDITOR.on('paste', function(event) {
+		event.preventDefault();
+
+		var text = event.originalEvent.clipboardData.getData('text/plain');
+
+		document.execCommand('insertText', false, text);
 	});
 
 	$$.QUERYRUN.on('click', function() {

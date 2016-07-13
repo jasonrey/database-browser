@@ -1065,10 +1065,36 @@ table
 		&.active
 			background-color: $grey300
 
+	input
+		text-overflow: ellipsis
+
+	[contenteditable="true"]
+		outline: 0
+
 	.actions
-		min-width: 80px;
+		min-width: 56px;
 		box-sizing: border-box;
 		padding: 4px
+
+		.button-group
+			width: 24px
+			height: 24px
+			position: relative
+			float: left
+
+			button
+				font-size: 10px
+				width: 24px
+				height: 12px
+				line-height: 12px
+				position: absolute
+				left: 0
+
+				&:nth-child(1)
+					top: 0
+
+				&:nth-child(2)
+					top: 12px
 
 		button
 			width: 24px
@@ -1086,6 +1112,22 @@ table
 			clear: both
 			display: table
 
+	tbody
+		tr
+			&:first-child
+				.actions
+					.button-group
+						button
+							&:nth-child(1)
+								display: none
+			&:last-child
+				.actions
+					.button-group
+						button
+							&:nth-child(2)
+								display: none
+
+
 	.select
 		height: 24px
 		padding: 0
@@ -1099,8 +1141,21 @@ table
 			height: 100%
 			padding: 0 16px 0 0
 
+	.column,
+	.comment
+		max-width: 150px
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+
+	.comment
+		max-width: 250px
+
+	.col-column
+		box-sizing: border-box
+
 	.col-type
-		min-width: 80px
+		min-width: 100px
 
 	.col-length
 		input

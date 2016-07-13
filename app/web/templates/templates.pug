@@ -89,16 +89,19 @@
 
 	//- cells - table edit columns from
 	script#table-edit-columns-row(type="text/html")
-		tr
+		tr(data-name="{{column}}")
 			td.actions
-				button
-					i.icon.icon-arrow-up
-				button
-					i.icon.icon-arrow-down
+				.button-group
+					button
+						i.icon.icon-arrow-up
+					button
+						i.icon.icon-arrow-down
 				button
 					i.icon.icon-cross
-			td
-				input.column(type="text", value="{{column}}")
+			td.col-column
+				.column(contenteditable="true") {{column}}
+				input.key(type="hidden", value="{{key}}")
+				input.extra(type="hidden", value="{{extra}}")
 			td
 				.select
 					i.icon-fa.icon-angle-down
@@ -119,13 +122,13 @@
 			td.col-length
 				input.length(type="number", value="{{length}}", data-nolength="{{nolength}}")
 			td.col-unsigned
-				input.unsigned(type="checkbox", {{unsigned}})
+				input.unsigned(type="checkbox", {{unsigned}}, {{nounsigned}})
 			td.col-allownull
-				input.allownull(type="checkbox", {{allownull}})
+				input.allownull(type="checkbox", {{allownull}}, {{noallownull}})
 			td
 				input.default(type="text", value="{{default}}", {{defaultnull}})
 			td
-				input.comment(type="text", value="{{comment}}")
+				.comment(contenteditable="true") {{comment}}
 
 	script#table-edit-columns-cell(type="text/html")
 		td
