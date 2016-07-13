@@ -23,6 +23,7 @@
     + SHOW CREATE TABLE `user_copy`;
     + SELECT COUNT(1) FROM `user_copy`;
 - History/Folder - Paste to Editor
+- Split package to content and app
 
 # Completed
 
