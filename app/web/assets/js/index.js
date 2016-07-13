@@ -133,7 +133,7 @@ $(function() {
 			.catch(function(err) {
 				$$.CONTENT.attr('data-connection', '');
 
-				$$.POPUPERROR.find('p').html(err);
+				$$.POPUPERRORMESSAGE.html(err);
 				$$.POPUP.attr('data-popup', 'error');
 			});
 
@@ -194,7 +194,9 @@ $(function() {
 
 		$$.COMMAND.text(sql);
 
-		$$.RESULT.attr('data-state', 'loading');
+		if (!options.noResult) {
+			$$.RESULT.attr('data-state', 'loading');
+		}
 
 		$$.TOTAL.text('');
 		$$.TABLEHEAD.html('');
@@ -359,13 +361,15 @@ $(function() {
 
 		process
 			.then(function(response) {
-				$$.RESULT.attr('data-state', 'success');
+				if (!options.noResult) {
+					$$.RESULT.attr('data-state', 'success');
+				}
 
 				if (!options.noHistory) {
 					history.update();
 				}
 
-				if (!response.err) {
+				if (!options.noResult && !response.err) {
 					if (response.fields && response.result) {
 						$populate.resultTable(response.fields, response.result);
 					}
@@ -377,7 +381,9 @@ $(function() {
 					history.update();
 				}
 
-				$populate.resultError(err);
+				if (!options.noResult) {
+					$populate.resultError(err);
+				}
 			});
 
 		return process;
@@ -825,9 +831,7 @@ $(function() {
 		} else {
 			unsigned.removeAttr('disabled');
 		}
-	});
 
-	$$.TABLEEDITBODY.on('change', '.type', function() {
 		$(this).parents('tr').trigger('rowupdate');
 	});
 
@@ -842,7 +846,6 @@ $(function() {
 	});
 
 	$$.TABLEEDITBODY.on('blur', '[contenteditable]', function() {
-		console.log(tableEditContentBeforeValue);
 		if ($(this).text() !== tableEditContentBeforeValue) {
 			$(this).parents('tr').trigger('rowupdate');
 		}
@@ -898,15 +901,23 @@ $(function() {
 			values.push(comment);
 		}
 
-		$dbquery(query, values)
+		$dbquery(query, values, {
+			noResult: true
+		})
 			.then(function(response) {
+				// TODO $populate.updateTablEditRow
+
 				console.log(response);
+
+				row.attr('data-name', column);
 			})
 			.catch(function(err) {
-				console.log(err);
-			});
+				$$.POPUPERRORMESSAGE.html(err);
 
-		//row.attr('data-name', column);
+				$$.POPUP.attr('data-popup', 'error');
+
+				// Reedit
+			});
 	});
 
 	$$.SERVERLIST.on('click', '.edit', function(event) {
