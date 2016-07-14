@@ -516,7 +516,7 @@ $(function() {
 		},
 
 		tableColumns: function(tablename) {
-			var process = $db.q('describe ??', [tablename]);
+			var process = $db.q('show full columns from ??', [tablename]);
 
 			process.then(function(response) {
 				$populate.updateTableColumns(tablename, response);
@@ -561,7 +561,7 @@ $(function() {
 
 			$$.TABLEEDITNAME.val(name);
 
-			$db.q('show table status like ?', [name])
+			$db.q('show table status where ?? = ?', ['Name', name])
 				.then(function(response) {
 					var data = response.result[0];
 
@@ -581,32 +581,46 @@ $(function() {
 					var html = '';
 
 					_.each(response.result, function(row) {
-						var length = row.Type.match(/\((.+)\)/);
-
-						var type = row.Type.split('(')[0].toLowerCase();
-
-						var data = {
-							key: row.Key,
-							extra: row.Extra,
-							column: row.Field,
-							length: length !== null ? length[1] : '',
-							nolength: DATA.nolengthKeys.indexOf(type) >= 0 ? 'true' : '',
-							unsigned: /unsigned/.test(row.Type) ? 'checked="checked"' : '',
-							nounsigned: DATA.noUnsigned.indexOf(type) >= 0 ? 'disabled' : '',
-							allownull: row.Null === 'YES' ? 'checked="checked"' : '',
-							noallownull: row.Key === 'PRI' ? 'disabled' : '',
-							default: row.Default === null ? '' : row.Default,
-							defaultnull: row.Default === null && row.Null === 'YES' ? 'placeholder="null"' : '',
-							comment: row.Comment
-						};
-
-						data['type' + type] = 'selected="selected"';
-
-						html += $template('table-edit-columns-row', data);
+						html += $populate.editTableRowHTML(row);
 					});
 
 					$$.TABLEEDITBODY.html(html);
 				});
+		},
+
+		editTableRow: function(tablename, columnname) {
+			$db.q('show full columns from ?? where ?? = ?', [tablename, 'Field', columnname])
+				.then(function(response) {
+					if (response.result.length) {
+						$$.TABLEEDITBODY.find('tr[data-name="' + columnname + '"]').replaceWith($populate.editTableRowHTML(response.result[0]));
+					}
+				});
+		},
+
+		editTableRowHTML: function(row) {
+			var length = row.Type.match(/\((.+)\)/);
+
+			var type = row.Type.split('(')[0].toLowerCase();
+
+			var data = {
+				key: row.Key,
+				extra: row.Extra,
+				column: row.Field,
+				columnname: 'data-name="' + row.Field + '"',
+				length: length !== null ? length[1] : '',
+				nolength: DATA.nolengthKeys.indexOf(type) >= 0 ? 'true' : '',
+				unsigned: /unsigned/.test(row.Type) ? 'checked="checked"' : '',
+				nounsigned: DATA.noUnsigned.indexOf(type) >= 0 ? 'disabled' : '',
+				allownull: row.Null === 'YES' ? 'checked="checked"' : '',
+				noallownull: row.Key === 'PRI' ? 'disabled' : '',
+				default: row.Default === null ? '' : row.Default,
+				defaultnull: row.Default === null && row.Null === 'YES' ? 'placeholder="null"' : '',
+				comment: row.Comment
+			};
+
+			data['type' + type] = 'selected="selected"';
+
+			return $template('table-edit-columns-row', data);
 		}
 	};
 
@@ -630,7 +644,7 @@ $(function() {
 		var input = $(this),
 			group = input.parents('.group');
 
-		if (input.val() === '') {
+		if (input.val().trim().length === 0) {
 			group.removeClass('active');
 		}
 
@@ -753,20 +767,67 @@ $(function() {
 			.trigger('change');
 	});
 
+	var tableEditNameBeforeValue;
+
+	$$.TABLEEDITNAME.on('focus', function() {
+		tableEditNameBeforeValue = this.value.trim();
+	});
+
 	$$.TABLEEDITNAME.on('blur', function() {
+		var name = this.value.trim();
 
+		if (name === '') {
+			this.value = tableEditNameBeforeValue;
+			return;
+		}
+
+		if (name !== tableEditNameBeforeValue) {
+			$dbquery('rename table ?? to ??', [tableEditNameBeforeValue, name], {
+				noResult: true
+			})
+				.then(function() {
+					$$.TABLEEDIT.find('h2').text(name);
+					$$.TABLELIST.find('li[data-name="' + tableEditNameBeforeValue + '"]')
+						.attr('data-name', name)
+						.attr('title', name)
+						.find('.name')
+							.text(name);
+				})
+				.catch(function(err) {
+					$$.POPUP.attr('data-popup', 'error');
+					$$.POPUPERRORMESSAGE.html(err);
+				});
+		}
 	});
 
-	$$.TABLEEDITINCREMENT.on('blur', function() {
+	$$.TABLEEDITINCREMENT.on('change', function() {
+		var tablename = $$.TABLEEDITNAME.val().trim();
 
+		$dbquery('alter table ?? auto_increment = ' + (this.value.trim() || 1), [tablename], {
+			noResult: true
+		})
+			.then(function() {
+				$db.q('show table status where ?? = ?', ['Name', tablename])
+					.then(function(response) {
+						$$.TABLEEDITINCREMENT.val(response.result[0].Auto_increment);
+					});
+			})
+			.catch(function(err) {
+				$$.POPUP.attr('data-popup', 'error');
+				$$.POPUPERRORMESSAGE.html(err);
+			});
 	});
 
-	$$.TABLEEDITENCODING.on('blur', function() {
-
+	$$.TABLEEDITENCODING.on('change', function() {
+		$dbquery('alter table ?? character set = ' + this.value, [$$.TABLEEDITNAME.val().trim()], {
+			noResult: true
+		});
 	});
 
-	$$.TABLEEDITCOLLATION.on('blur', function() {
-
+	$$.TABLEEDITCOLLATION.on('change', function() {
+		$dbquery('alter table ?? collate = ' + this.value, [$$.TABLEEDITNAME.val().trim()], {
+			noResult: true
+		});
 	});
 
 	$$.TABLEEDITBODY.on('focus', 'input[type="text"], input[type="number"], [contenteditable="true"]', function() {
@@ -842,34 +903,59 @@ $(function() {
 	var tableEditContentBeforeValue;
 
 	$$.TABLEEDITBODY.on('focus', '[contenteditable]', function() {
-		tableEditContentBeforeValue = $(this).text();
+		tableEditContentBeforeValue = $(this).text().trim();
 	});
 
-	$$.TABLEEDITBODY.on('blur', '[contenteditable]', function() {
-		if ($(this).text() !== tableEditContentBeforeValue) {
-			$(this).parents('tr').trigger('rowupdate');
+	$$.TABLEEDITBODY.on('keydown', '[contenteditable]', function(event) {
+		if (event.keyCode === 13) {
+			$(this).trigger('blur');
+			return false;
 		}
 	});
 
-	$$.TABLEEDITBODY.on('rowupdate', 'tr', function() {
+	$$.TABLEEDITBODY.on('blur', '[contenteditable]', function() {
+		var item = $(this),
+			value = item.text().trim(),
+			row = item.parents('tr'),
+			isNew = row.attr('data-new') === 'true';
+
+		if (item.hasClass('column') && value.length === 0 && !isNew) {
+			$$.POPUP.attr('data-popup', 'error');
+			$$.POPUPERRORMESSAGE.html('Please provide a column name.');
+			item.trigger('focus');
+			return;
+		}
+
+		if (value !== tableEditContentBeforeValue) {
+			row.trigger('rowupdate');
+		}
+	});
+
+	$$.TABLEEDITBODY.on('rowupdate', 'tr', function(event, mode) {
 		var row = $(this),
-			tablename = $$.TABLEEDITNAME.val(),
+			tablename = $$.TABLEEDITNAME.val().trim(),
 			name = row.attr('data-name'),
-			key = row.find('.key').val(),
-			extra = row.find('.extra').val(),
-			column = row.find('.column').text(),
-			type = row.find('.type').val().toLowerCase(),
-			length = row.find('.length').val(),
+			isNew = row.attr('data-new') === 'true',
+			key = row.find('.key').val().trim(),
+			extra = row.find('.extra').val().trim(),
+			column = row.find('.column').text().trim(),
+			type = row.find('.type').val().trim().toLowerCase(),
+			length = row.find('.length').val().trim(),
 			haslength = DATA.nolengthKeys.indexOf(type) < 0,
 			unsigned = DATA.noUnsigned.indexOf(type) < 0 && row.find('.unsigned').is(':checked') ? 'unsigned' : '',
 			allownull = key !== 'PRI' && row.find('.allownull').is(':checked'),
-			defaultvalue = row.find('.default').val(),
-			comment = row.find('.comment').text();
+			defaultvalue = row.find('.default').val().trim(),
+			comment = row.find('.comment').text().trim();
 
 		defaultvalue = allownull && defaultvalue.length === 0 ? 'null' : '';
 
 		var query = 'alter table ?? change ?? ?? ' + type;
 		var values = [tablename, name, column];
+
+		if (isNew) {
+			query = 'alter table ?? add column ??' + type;
+			values = [tablename, column];
+		}
 
 		if (haslength && length.length) {
 			query += '(' + length + ')';
@@ -901,23 +987,113 @@ $(function() {
 			values.push(comment);
 		}
 
+		var moveColumn = mode === 'down' || mode === 'up';
+
+		if (moveColumn) {
+			if (isNew) {
+				return;
+			}
+
+			row[mode === 'down' ? 'next' : 'prev']()[mode === 'down' ? 'after' : 'before'](row);
+		}
+
+
+		if (row.index() === 0) {
+			query += ' first';
+		} else {
+			query += ' after ??';
+			values.push(row.prev().find('.column').text().trim());
+		}
+
 		$dbquery(query, values, {
 			noResult: true
 		})
 			.then(function(response) {
-				// TODO $populate.updateTablEditRow
-
-				console.log(response);
-
-				row.attr('data-name', column);
+				_.each(response.result, function(newRow) {
+					if (newRow.Field === column) {
+						row.replaceWith($populate.editTableRowHTML(newRow));
+					}
+				});
 			})
 			.catch(function(err) {
 				$$.POPUPERRORMESSAGE.html(err);
 
 				$$.POPUP.attr('data-popup', 'error');
 
-				// Reedit
+				if (!isNew) {
+					$populate.editTableRow(tablename, name);
+				}
 			});
+	});
+
+	$$.TABLEEDITCOLUMNS.on('click', '#table-edit-new-column', function() {
+		if ($$.TABLEEDITBODY.find('tr[data-new="true"]').length > 0) {
+			return;
+		}
+
+		var newRow = $($template('table-edit-columns-row'));
+
+		$$.TABLEEDITBODY.append(newRow);
+
+		newRow
+			.attr('data-new', 'true')
+			.find('.column')
+				.trigger('focus');
+	});
+
+	$$.TABLEEDITBODY.on('click', '.column-delete', function() {
+		var button = $(this),
+			row = button.parents('tr'),
+			name = row.attr('data-name'),
+			isNew = row.attr('data-new') === 'true',
+			tablename = $$.TABLEEDITNAME.val().trim();
+
+		row.addClass('pending-delete');
+
+		if (!isNew) {
+			$dbquery('alter table ?? drop column ??', [tablename, name], {
+				noResult: true
+			})
+				.then(function(response) {
+					row.remove();
+				})
+				.catch(function(err) {
+					row.removeClass('pending-delete');
+
+					$$.POPUPERRORMESSAGE.html(err);
+
+					$$.POPUP.attr('data-popup', 'error');
+				});
+		} else {
+			row.remove();
+		}
+	});
+
+	$$.TABLEEDITBODY.on('click', '.column-shift', function() {
+		var button = $(this),
+			row = button.parents('tr'),
+			column = row.find('.column'),
+			direction = button.attr('data-move');
+
+		if (direction === 'down') {
+			var nextRow = row.next();
+
+			if (nextRow.attr('data-new') === 'true' && nextRow.find('.column').text().trim().length === 0) {
+				$$.POPUP.attr('data-popup', 'error');
+				$$.POPUPERRORMESSAGE.html('Please provide a column name.');
+				nextRow.find('.column').trigger('focus');
+				return;
+			}
+		}
+
+		if (row.attr('data-new') === 'true' && column.text().trim().length === 0) {
+			$$.POPUP.attr('data-popup', 'error');
+			$$.POPUPERRORMESSAGE.html('Please provide a column name.');
+			column.trigger('focus');
+			return;
+		}
+
+		row.trigger('rowupdate', direction);
 	});
 
 	$$.SERVERLIST.on('click', '.edit', function(event) {
@@ -1040,7 +1216,8 @@ $(function() {
 			return;
 		}
 
-		var query = item.find('.query').text();
+		// TODO: Change to use storage data instead
+		var query = item.find('.query').text().trim();
 
 		$dbquery(query);
 	});
@@ -1141,6 +1318,8 @@ $(function() {
 		$$.TABLEEDITCOLLATION.html(encodingCollationsOptionsHTML[this.value]);
 
 		$$.TABLEEDITCOLLATION.val($db.collationsDefault[this.value]);
+
+		$$.TABLEEDITCOLLATION.trigger('change');
 	});
 
 	$$.NEW.on('change', 'input[name="ssh"]', function() {
@@ -1300,9 +1479,9 @@ $(function() {
 	});
 
 	$$.QUERYRUN.on('click', function() {
-		var sql = $$.EDITOR.text();
+		var sql = $$.EDITOR.text().trim();
 
-		if (sql === '') {
+		if (sql.length === 0) {
 			return;
 		}
 
@@ -1310,7 +1489,7 @@ $(function() {
 	});
 
 	$$.QUERYSAVE.on('click', function() {
-		if ($$.EDITOR.text() === '') {
+		if ($$.EDITOR.text().trim().length === 0) {
 			return;
 		}
 
@@ -1336,11 +1515,11 @@ $(function() {
 	});
 
 	$$.POPUPQUERYSAVE.on('click', '.yes', function() {
-		var name = $$.QUERYSAVENAME.val(),
-			query = $$.EDITOR.text();
+		var name = $$.QUERYSAVENAME.val().trim(),
+			query = $$.EDITOR.text().trim();
 
 		if ($$.POPUP.attr('data-source') === 'command') {
-			query = $$.COMMAND.text();
+			query = $$.COMMAND.text().trim();
 		}
 
 		$folder($KEY).add({
@@ -1393,7 +1572,7 @@ $(function() {
 	});
 
 	$$.POPUPNEWDATABASE.on('click', '.yes', function(event) {
-		var name = $$.NEWDATABASENAME.val(),
+		var name = $$.NEWDATABASENAME.val().trim(),
 			encoding = $$.NEWDATABASEENCODING.val(),
 			collation = $$.NEWDATABASECOLLATION.val();
 
@@ -1435,7 +1614,7 @@ $(function() {
 	});
 
 	$$.POPUPNEWTABLE.on('click', '.yes', function(event) {
-		var name = $$.NEWTABLENAME.val(),
+		var name = $$.NEWTABLENAME.val().trim(),
 			engine = $$.NEWTABLEENGINE.val(),
 			encoding = $$.NEWTABLEENCODING.val(),
 			collation = $$.NEWTABLECOLLATION.val();

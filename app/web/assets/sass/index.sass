@@ -661,11 +661,15 @@ table
 	bottom: 0
 	width: 50%
 	height: 32px
-	line-height: 32px
+	line-height: 31px
 	display: block
 	border-top: 1px solid $grey300
 	box-sizing: border-box
 	color: $grey700
+
+	&::before
+		line-height: 31px
+		vertical-align: top
 
 	&:hover
 		background-color: $grey200
@@ -1058,6 +1062,11 @@ table
 #table-edit-columns
 	overflow: auto
 	flex-grow: 1
+	padding: 0 0 24px 0;
+
+	tr
+		&.pending-delete
+			display: none
 
 	td
 		vertical-align: middle
@@ -1120,13 +1129,13 @@ table
 						button
 							&:nth-child(1)
 								display: none
+
 			&:last-child
 				.actions
 					.button-group
 						button
 							&:nth-child(2)
 								display: none
-
 
 	.select
 		height: 24px
@@ -1167,6 +1176,24 @@ table
 	.col-unsigned,
 	.col-allownull
 		text-align: center
+
+#table-edit-new-column
+	background-color: $grey200
+	color: $grey700
+	border-top: 1px solid $grey300
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
+	height: 24px
+	line-height: 23px
+
+	&:hover
+		background-color: $grey300
+
+	&::before
+		vertical-align: top
+		line-height: 23px
 
 #table-edit-indexes
 	overflow: auto

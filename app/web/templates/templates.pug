@@ -89,14 +89,14 @@
 
 	//- cells - table edit columns from
 	script#table-edit-columns-row(type="text/html")
-		tr(data-name="{{column}}")
+		tr({{columnname}})
 			td.actions
 				.button-group
-					button
+					button.column-up.column-shift(data-move="up")
 						i.icon.icon-arrow-up
-					button
+					button.column-down.column-shift(data-move="down")
 						i.icon.icon-arrow-down
-				button
+				button.column-delete
 					i.icon.icon-cross
 			td.col-column
 				.column(contenteditable="true") {{column}}
@@ -129,16 +129,3 @@
 				input.default(type="text", value="{{default}}", {{defaultnull}})
 			td
 				.comment(contenteditable="true") {{comment}}
-
-	script#table-edit-columns-cell(type="text/html")
-		td
-			div(contenteditable="true") {{value}}
-
-	script#table-edit-columns-cell-action(type="text/html")
-		td
-			button
-				i.icon.icon-arrow-up
-			button
-				i.icon.icon-arrow-down
-			button
-				i.icon.icon-cross

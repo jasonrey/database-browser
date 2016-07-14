@@ -161,7 +161,7 @@ block body
 						table
 							thead
 								tr
-									th
+									th.actions
 									th Column
 									th.col-type Type
 									th Length
@@ -171,6 +171,7 @@ block body
 									th Comment
 							tbody#table-edit-body
 								//- template#table-edit-columns-row
+						button#table-edit-new-column.icon.icon-plus New Column
 					//- h3 Indexes
 					//- #table-edit-indexes.box
 					//- 	table
@@ -203,7 +204,7 @@ block body
 					i.icon.icon-check
 		#popup-error.popup-body
 			.popup-title Error
-			p
+			p#popup-error-message
 			.actions
 				button.yes
 					i.icon.icon-check
