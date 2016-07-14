@@ -1,3 +1,7 @@
+# v0.3.1 - 2016-07-14
+
+- Fixed: Incompatible build for Linux
+
 # v0.3.0 - 2016-07-14
 
 - Feature: Edit table interface
