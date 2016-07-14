@@ -1,6 +1,6 @@
 {
   "name": "database-browser-builder",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "app/main.js",
   "dependencies": {
     "electron-builder": "^5.11.3",
