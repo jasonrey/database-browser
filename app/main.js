@@ -11,6 +11,7 @@ const config = new Config({
 const appMenu = require(__dirname + '/menus/app.js');
 
 const environment = process.env.NODE_ENV || 'production';
+const debug = process.env.DEBUG;
 
 global.__basepath = __dirname;
 
@@ -19,7 +20,7 @@ let win;
 let createWindow = function() {
 	let processes = [];
 
-	let target = `${__dirname}/web/index.html`;
+	let target = `${__dirname}/web/app.html`;
 
 	if (environment === 'development') {
 		processes.push(new Promise((resolve, reject) => {
@@ -77,7 +78,7 @@ let createWindow = function() {
 
 		win.loadURL(`file://${target}`);
 
-		if (environment === 'development') {
+		if (environment === 'development' || debug) {
 			win.webContents.openDevTools();
 		}
 
