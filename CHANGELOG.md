@@ -1,7 +1,18 @@
-# v0.1.0 - 2016-07-12
+# v0.3.0 - 2016-07-14
 
-- Prerelease for build testing
+- Feature: Edit table interface
 
 # v0.2.0 - 2016-07-12
 
 - Prerelease on macOS and Ubuntu for testing
+- Feature: MySQL database connect
+- Feature: MySQL SSH connect
+- Feature: SQL queries
+- Feature: Smart query handling for `INSERT INTO`, `ALTER TABLE`
+- Feature: Queries history
+- Feature: Queries bookmark
+- Feature: Connection bookmark
+
+# v0.1.0 - 2016-07-12
+
+- Prerelease for build testing

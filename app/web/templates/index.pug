@@ -58,7 +58,7 @@ block body
 					button#history-clear.icon.icon-trash Clear History
 			#connection
 				span.status
-				.name
+				#connection-name.name
 					//- current connection user@host
 		.panel-separator
 		.panel-content
@@ -123,19 +123,19 @@ block body
 				#result-box.box
 					#table
 						table
-							thead
+							thead#table-head
 								//- template#result-table-row
-							tbody
+							tbody#table-body
 								//- template#result-table-row
 					#meta
 						//- total rows
 						#total
-						button#result-next
-							i.icon.icon-fast-forward
-						button#result-prev
-							i.icon.icon-rewind
-						button#export
-							i.icon.icon-download
+						//- button#result-next
+						//- 	i.icon.icon-fast-forward
+						//- button#result-prev
+						//- 	i.icon.icon-rewind
+						//- button#export
+						//- 	i.icon.icon-download
 					#error-message
 				#table-edit
 					h2
@@ -161,16 +161,17 @@ block body
 						table
 							thead
 								tr
-									th
+									th.actions
 									th Column
-									th Type
+									th.col-type Type
 									th Length
 									th Unsigned
-									th Null
+									th Allow Null
 									th Default
 									th Comment
-							tbody
+							tbody#table-edit-body
 								//- template#table-edit-columns-row
+						button#table-edit-new-column.icon.icon-plus New Column
 					//- h3 Indexes
 					//- #table-edit-indexes.box
 					//- 	table
@@ -203,7 +204,7 @@ block body
 					i.icon.icon-check
 		#popup-error.popup-body
 			.popup-title Error
-			p
+			p#popup-error-message
 			.actions
 				button.yes
 					i.icon.icon-check

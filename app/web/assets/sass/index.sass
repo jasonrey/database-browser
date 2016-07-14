@@ -661,11 +661,15 @@ table
 	bottom: 0
 	width: 50%
 	height: 32px
-	line-height: 32px
+	line-height: 31px
 	display: block
 	border-top: 1px solid $grey300
 	box-sizing: border-box
 	color: $grey700
+
+	&::before
+		line-height: 31px
+		vertical-align: top
 
 	&:hover
 		background-color: $grey200
@@ -1015,6 +1019,7 @@ table
 #table-edit-info
 	display: flex
 	flex-wrap: wrap
+	flex-shrink: 0
 
 	.group
 		width: 100%
@@ -1057,6 +1062,138 @@ table
 #table-edit-columns
 	overflow: auto
 	flex-grow: 1
+	padding: 0 0 24px 0;
+
+	tr
+		&.pending-delete
+			display: none
+
+	td
+		vertical-align: middle
+
+		&.active
+			background-color: $grey300
+
+	input
+		text-overflow: ellipsis
+
+	[contenteditable="true"]
+		outline: 0
+
+	.actions
+		min-width: 56px;
+		box-sizing: border-box;
+		padding: 4px
+
+		.button-group
+			width: 24px
+			height: 24px
+			position: relative
+			float: left
+
+			button
+				font-size: 10px
+				width: 24px
+				height: 12px
+				line-height: 12px
+				position: absolute
+				left: 0
+
+				&:nth-child(1)
+					top: 0
+
+				&:nth-child(2)
+					top: 12px
+
+		button
+			width: 24px
+			height: 24px
+			line-height: 24px
+			text-align: center
+			float: left
+			color: $grey700
+
+			&:hover
+				background-color: $grey300
+
+		&::after
+			content: ''
+			clear: both
+			display: table
+
+	tbody
+		tr
+			&:first-child
+				.actions
+					.button-group
+						button
+							&:nth-child(1)
+								display: none
+
+			&:last-child
+				.actions
+					.button-group
+						button
+							&:nth-child(2)
+								display: none
+
+	.select
+		height: 24px
+		padding: 0
+
+		i
+			width: 16px
+			line-height: 24px
+			height: 24px
+
+		select
+			height: 100%
+			padding: 0 16px 0 0
+
+	.column,
+	.comment
+		max-width: 150px
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+
+	.comment
+		max-width: 250px
+
+	.col-column
+		box-sizing: border-box
+
+	.col-type
+		min-width: 100px
+
+	.col-length
+		input
+			text-align: center
+
+			&[data-nolength="true"]
+				display: none
+
+	.col-unsigned,
+	.col-allownull
+		text-align: center
+
+#table-edit-new-column
+	background-color: $grey200
+	color: $grey700
+	border-top: 1px solid $grey300
+	position: absolute
+	bottom: 0
+	left: 0
+	width: 100%
+	height: 24px
+	line-height: 23px
+
+	&:hover
+		background-color: $grey300
+
+	&::before
+		vertical-align: top
+		line-height: 23px
 
 #table-edit-indexes
 	overflow: auto
@@ -1298,3 +1435,8 @@ table
 	.select
 		&:nth-of-type(4)
 			border-bottom: 0
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+	-webkit-appearance: none
+	margin: 0
