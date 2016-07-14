@@ -1,3 +1,7 @@
+# v0.3.0 - 2016-07-14
+
+- Feature: Edit table interface
+
 # v0.2.0 - 2016-07-12
 
 - Prerelease on macOS and Ubuntu for testing
