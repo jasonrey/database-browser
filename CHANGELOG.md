@@ -1,3 +1,8 @@
+# v0.3.2 - 2016-07-15
+
+- Updated: Application icon
+- Updated: SSH connection will use ~/.ssh/id_rsa as fallback
+
 # v0.3.1 - 2016-07-14
 
 - Fixed: Incompatible build for Linux
