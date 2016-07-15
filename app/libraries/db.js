@@ -75,8 +75,14 @@
 			return db;
 		}
 
+		static randomTunnelPort(min = 30000, max = 40000) {
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
+
 		connect(data) {
 			return new Promise((resolve, reject) => {
+				var randomTunnelPort = DB.randomTunnelPort();
+
 				if (data.ssh) {
 					var option = {
 						host: data.sshhost,
@@ -87,7 +93,7 @@
 						dstAddr: data.host,
 						dstPort: data.port || 3306,
 						localAddr: '127.0.0.1',
-						localPort: 5000,
+						localPort: data.sshtunnelport || randomTunnelPort,
 						forwardTimeout: 5000
 					};
 
@@ -113,7 +119,7 @@
 							user: data.user,
 							password: data.password,
 							host: '127.0.0.1',
-							port: '5000',
+							port: randomTunnelPort,
 							dateStrings: true
 						});
 
