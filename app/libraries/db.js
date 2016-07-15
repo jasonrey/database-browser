@@ -95,7 +95,15 @@
 						option.privateKey = fs.readFileSync(data.sshkeyfile);
 						option.passphrase = data.sshpassword;
 					} else {
-						option.password = data.sshpassword;
+						if (data.sshpassword.length) {
+							option.password = data.sshpassword;
+						} else {
+							try {
+								option.privateKey = fs.readFileSync(require('os').homedir() + '/.ssh/id_rsa');
+							} catch (exception) {
+
+							}
+						}
 					}
 
 					tunnel(option).then((server) => {
