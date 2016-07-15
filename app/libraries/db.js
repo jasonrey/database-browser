@@ -81,7 +81,6 @@
 					var option = {
 						host: data.sshhost,
 						username: data.sshuser,
-						password: data.sshpassword,
 						port: data.sshport || 22,
 						srcAddr: data.host,
 						srcPort: data.port || 3306,
@@ -96,7 +95,7 @@
 						option.privateKey = fs.readFileSync(data.sshkeyfile);
 						option.passphrase = data.sshpassword;
 					} else {
-						data.password = data.sshpassword;
+						option.password = data.sshpassword;
 					}
 
 					tunnel(option).then((server) => {
