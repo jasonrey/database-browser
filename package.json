@@ -1,0 +1,39 @@
+{
+  "name": "database-browser",
+  "version": "1.0.0",
+  "description": "MySQL Database Browser.",
+  "main": "main.js",
+  "scripts": {
+    "watch": "gulp && gulp watch",
+    "dev": "gulp && NODE_ENV=development electron .",
+    "prod": "gulp --production && NODE_ENV=production electron .",
+    "start": "npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jasonrey/database-browser.git"
+  },
+  "author": "JSON object <hello@jsonobject.io>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jasonrey/database-browser/issues"
+  },
+  "homepage": "https://github.com/jasonrey/database-browser#readme",
+  "dependencies": {
+    "electron": "^1.6.11",
+    "electron-config": "^1.0.0",
+    "mysql": "^2.13.0",
+    "open-ssh-tunnel": "^0.3.1"
+  },
+  "devDependencies": {
+    "bootstrap": "^3.3.7",
+    "gulp": "^3.9.1",
+    "gulp-notifiable-task": "^1.1.1",
+    "gulp-pug": "^3.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-util": "^3.0.8",
+    "vue": "^2.3.4",
+    "vuex": "^2.3.1"
+  }
+}
