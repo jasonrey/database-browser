@@ -1,6 +1,0 @@
-.DS_Store
-node_modules
-*.css
-app/web/index.html
-app/web/app.html
-dist
