@@ -9,7 +9,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        connections: [],
+        connections: [1],
 
         selectedConnection: null
     },
@@ -23,7 +23,8 @@ const store = new Vuex.Store({
         },
 
         selectConnection(state, connection) {
-            selectedConnection = connection;
+            console.log('here');
+            state.selectedConnection = connection;
         }
     }
 });

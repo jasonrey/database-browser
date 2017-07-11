@@ -1,8 +1,8 @@
 <template lang="pug">
-    li
+    li(:class="{ active: connection === selectedConnection }", @click="selectConnection(connection)")
         a(href="javascript:;")
-            span.connection-status
-            h5=" {{ servername }}"
+            .connection-status
+            .inline-block {{ servername }}
 </template>
 
 <style lang="sass" scoped>
@@ -22,11 +22,27 @@
 </style>
 
 <script>
+    import { mapState, mapMutations } from 'vuex'
+
     export default {
+        props: ['connection'],
+
         data() {
             return {
                 servername: 'Home'
             }
+        },
+
+        computed: {
+            ...mapState([
+                'selectedConnection'
+            ])
+        },
+
+        methods: {
+            ...mapMutations([
+                'selectConnection'
+            ])
         }
     }
 </script>

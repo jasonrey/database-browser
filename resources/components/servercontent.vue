@@ -1,11 +1,11 @@
 <template lang="pug">
-    .server-content.active-only.active-flex.abs.abs-full-size
+    .active-only.active-flex.abs.abs-full-size(:class="{ active: connection === selectedConnection }")
         .sidebar.flex-no-shrink.flex.flex-column
-            .table-list.flex-grow
+            .flex-grow
                 .abs.abs-full-size.overflow-auto
                     tableitem(v-for="table in tables", :key="table.name", :table="table")
 
-            .table-control.flex-no-grow.flex-no-shrink.btn-group.btn-group-justified
+            .flex-no-grow.flex-no-shrink.btn-group.btn-group-justified
                 .btn-group
                     button.btn.btn-default
                         i.glyphicon.glyphicon-plus
@@ -15,7 +15,7 @@
                 .btn-group
                     button.btn.btn-default
                         i.glyphicon.glyphicon-cog
-        .content.flex.flex-grow.flex-column
+        .flex.flex-grow.flex-column
             .content-query
                 ul.nav.nav-tabs
                     li(:class="{ active: queryTab === '' || queryTab === 'editor' }", @click="queryTab = 'editor'")
@@ -26,7 +26,7 @@
                         a(href="javascript:;") History
 
                 .nav-contents
-                    .query-editor.active-only.active-flex.flex-column(:class="{ active: queryTab === '' || queryTab === 'editor' }")
+                    .active-only.active-flex.flex-column(:class="{ active: queryTab === '' || queryTab === 'editor' }")
                         textarea.form-control.flex-grow.monospace
                         .clearfix.bg-muted
                             button.btn.btn-link.btn-sm.pull-right
@@ -85,10 +85,12 @@
 </style>
 
 <script>
-    import tableitem from './tableitem.vue';
-    import resultitem from './resultitem.vue';
-    import querysaveditem from './querysaveditem.vue';
-    import queryhistoryitem from './queryhistoryitem.vue';
+    import { mapState } from 'vuex'
+
+    import tableitem from './tableitem.vue'
+    import resultitem from './resultitem.vue'
+    import querysaveditem from './querysaveditem.vue'
+    import queryhistoryitem from './queryhistoryitem.vue'
 
     export default {
         components: {
@@ -97,6 +99,8 @@
             querysaveditem,
             queryhistoryitem
         },
+
+        props: ['connection'],
 
         data() {
             return {
@@ -112,6 +116,10 @@
         },
 
         computed: {
+            ...mapState([
+                'selectedConnection'
+            ]),
+
             results() {
                 if (this.selectedResult) {
                     return this.selectedResult;
