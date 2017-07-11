@@ -1,24 +1,18 @@
 <template lang="pug">
     li(:class="{ active: connection === selectedConnection }", @click="selectConnection(connection)")
         a(href="javascript:;")
-            .connection-status
+            .connection-status.inline-block
             .inline-block {{ servername }}
 </template>
 
 <style lang="sass" scoped>
     .connection-status
-        display: inline-block
         vertical-align: middle
         width: 6px
         height: 6px
         border-radius: 50%
         background-color: red
-        margin: 0 4px 0 0
-
-    h5
-        margin: 0
-        display: inline-block
-
+        margin: 0 5px 0 0
 </style>
 
 <script>

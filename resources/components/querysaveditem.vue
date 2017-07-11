@@ -1,6 +1,6 @@
 <template lang="pug">
     .item.item-gutter.item-hover.item-border
-        .query select * from blablabla
+        .query.monospace select * from blablabla
         button.btn.btn-link.btn-xs.close-button
             i.glyphicon.glyphicon-remove
         .meta.flex.small.text-muted
