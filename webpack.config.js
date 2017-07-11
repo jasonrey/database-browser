@@ -16,7 +16,8 @@ module.exports = {
             loader: 'vue-loader',
             options: {
                 loaders: {
-                    sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax'
+                    sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
+                    js: 'babel-loader?plugins[]=transform-object-rest-spread'
                 }
             }
         }, {

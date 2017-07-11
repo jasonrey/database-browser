@@ -4,9 +4,9 @@
   "description": "MySQL Database Browser.",
   "main": "main.js",
   "scripts": {
-    "watch": "gulp && gulp watch",
-    "dev": "gulp && NODE_ENV=development electron .",
-    "prod": "gulp --production && NODE_ENV=production electron .",
+    "watch": "webpack-dev-server",
+    "dev": "webpack-dev-server && NODE_ENV=development electron .",
+    "prod": "webpack-dev-server --production && NODE_ENV=production electron .",
     "start": "npm run dev"
   },
   "repository": {
@@ -30,6 +30,9 @@
     "vuex": "^2.3.1"
   },
   "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "bootstrap-sass": "^3.3.7",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^2.1.2",
