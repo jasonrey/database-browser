@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -6,7 +7,7 @@ module.exports = {
     entry: './resources/js/index.js',
     output: {
         filename: 'js/bundle.js',
-        path: path.resolve(__dirname, './app')
+        path: path.resolve(__dirname, 'app')
     },
     devtool: 'cheap-eval-source-map',
     module: {
@@ -35,7 +36,7 @@ module.exports = {
             test: /\.(png|jpg)$/,
             loader: 'file-loader'
         }, {
-            test: /\.sass$/,
+            test: /\.(sass|scss)$/,
             use: ExtractTextPlugin.extract([{
                 loader: 'css-loader',
                 options: {
@@ -55,11 +56,18 @@ module.exports = {
         }
     },
     plugins: [
+        new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             title: 'DBBR',
             filename: 'index.html',
             template: 'resources/pug/index.pug'
         }),
         new ExtractTextPlugin('css/bundle.css')
-    ]
+    ],
+
+    devServer: {
+        hot: true,
+        contentBase: path.resolve(__dirname, 'app'),
+        publicPath: '/'
+    }
 }
