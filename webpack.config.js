@@ -70,5 +70,7 @@ module.exports = {
         hot: true,
         contentBase: path.resolve(__dirname, 'app'),
         publicPath: '/'
-    }
+    },
+
+    target: 'electron'
 }

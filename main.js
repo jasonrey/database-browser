@@ -30,7 +30,7 @@ const createWindow = () => {
 
     appWindow = new BrowserWindow(option);
 
-    appWindow.loadURL(`file://${target}`);
+    appWindow.loadURL(env === 'development' ? 'http://localhost:8080' : `file://${target}`);
 
     (env === 'development' || debug) && appWindow.webContents.openDevTools();
 
