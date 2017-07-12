@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "watch": "webpack-dev-server",
-    "dev": "webpack-dev-server && NODE_ENV=development electron .",
-    "prod": "webpack-dev-server --production && NODE_ENV=production electron .",
+    "dev": "NODE_ENV=development electron .",
+    "prod": "NODE_ENV=production electron .",
     "start": "npm run dev"
   },
   "repository": {
