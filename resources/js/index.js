@@ -23,7 +23,6 @@ const store = new Vuex.Store({
         },
 
         selectConnection(state, connection) {
-            console.log('here');
             state.selectedConnection = connection;
         }
     }
