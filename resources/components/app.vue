@@ -1,12 +1,12 @@
 <template lang="pug">
     main.flex.flex-column
-        ul#servers-tab-nav.nav.nav-tabs.flex-no-grow.flex-no-shrink
+        ul.nav.nav-tabs.flex-no-grow.flex-no-shrink.bg-muted
             servernav(v-for="(connection, index) in connections", :key="index", :connection="connection")
 
             li(:class="{ active: selectedConnection === null }", @click="selectConnection(null)")
                 a(href="javascript:;")
                     i.glyphicon.glyphicon-plus
-        #servers-tab-content.flex-grow
+        .flex-grow
             servercontent(v-for="(connection, index) in connections", :key="index", :connection="connection")
 
             .active-only.active-flex.abs.abs-full-size(:class="{ active: selectedConnection === null }")
@@ -14,46 +14,59 @@
                     serveritem
 
                 .connection-form.flex-grow.flex.overflow-auto
-                    form.col-xs-6.col-xs-offset-3
+                    form.col-xs-6.col-xs-offset-3(@submit.prevent="createConnection")
                         .form-group
-                            input.form-control(placeholder="Connection Name")
+                            input.form-control(placeholder="Connection Name", v-model="newconnection.name")
+
+                        .form-group
+                            .connection-colors
+                                button.btn.btn-link.btn.xs(type="button", @click="newconnection.color = null")
+                                    i.glyphicon.glyphicon-remove
+                                button.red(type="button", @click="newconnection.color = 'red'", :class="{ active: newconnection.color === 'red' }") Red
+                                button.orange(type="button", @click="newconnection.color = 'orange'", :class="{ active: newconnection.color === 'orange' }") Orange
+                                button.yellow(type="button", @click="newconnection.color = 'yellow'", :class="{ active: newconnection.color === 'yellow' }") Yellow
+                                button.green(type="button", @click="newconnection.color = 'green'", :class="{ active: newconnection.color === 'green' }") Green
+                                button.blue(type="button", @click="newconnection.color = 'blue'", :class="{ active: newconnection.color === 'blue' }") Blue
+                                button.purple(type="button", @click="newconnection.color = 'purple'", :class="{ active: newconnection.color === 'purple' }") Purple
 
                         hr
 
                         .form-group
-                            input.form-control(placeholder="Host")
-                            input.form-control(placeholder="Username")
-                            input.form-control(type="password", placeholder="Password")
-                            input.form-control(type="number", placeholder="Port")
+                            input.form-control(placeholder="Host", v-model="newconnection.host")
+                            input.form-control(placeholder="Username", v-model="newconnection.username")
+                            input.form-control(type="password", placeholder="Password", v-model="newconnection.password")
+                            input.form-control(type="number", placeholder="Port", v-model="newconnection.port")
 
                         .checkbox
                             label
-                                input(type="checkbox", v-model="useSSH")
+                                input(type="checkbox", v-model="newconnection.useSSH")
                                 =" Use SSH"
 
-                        .form-group(v-show="useSSH")
-                            input.form-control(placeholder="SSH Host")
-                            input.form-control(placeholder="SSH Username")
-                            input.form-control(type="password", placeholder="SSH Password")
-                            input.form-control(type="number", placeholder="SSH Port")
+                        .form-group(v-show="newconnection.useSSH")
+                            input.form-control(placeholder="SSH Host", v-model="newconnection.sshhost")
+                            input.form-control(placeholder="SSH Username", v-model="newconnection.sshusername")
+                            input.form-control(type="password", placeholder="SSH Password", v-model="newconnection.sshpassword")
+                            input.form-control(type="number", placeholder="SSH Port", v-model="newconnection.sshport")
 
                         hr
 
                         .btn-group.btn-group-justified
                             .btn-group
-                                button.btn.btn-block.btn-lg.btn-danger(type="button")
+                                button.btn.btn-block.btn-lg.btn-danger(type="button", @click="resetForm")
                                     i.glyphicon.glyphicon-remove
 
                             .btn-group
-                                button.btn.btn-block.btn-lg.btn-primary(type="button")
+                                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled")
                                     i.glyphicon.glyphicon-plus
 
                             .btn-group
-                                button.btn.btn-block.btn-lg.btn-success
+                                button.btn.btn-block.btn-lg.btn-success(:disabled="!formFilled")
                                     i.glyphicon.glyphicon-ok
 </template>
 
 <style lang="sass">
+    @import '../sass/colors'
+
     main
         height: 100%
         overflow: hidden
@@ -64,10 +77,76 @@
 
         @media (max-height: 600px)
             align-items: initial
+
+    .connection-colors
+        button
+            width: 24px
+            height: 24px
+            border-radius: 50%
+            border: 1px solid transparent
+            outline: none
+            padding: 3px
+            font-size: 0
+            vertical-align: top
+            margin: 0 5px 0 0
+            background-color: transparent
+
+            &::before
+                content: ''
+                display: block
+                width: 100%
+                height: 100%
+                border-radius: 50%
+
+            &:hover
+                background-color: $gray-lighter
+                border-color: $gray-light
+
+            &.btn
+                font-size: 14px
+
+                &::before
+                    display: none
+
+                &:hover
+                    background-color: transparent
+
+            &.active
+                background-color: $gray-light
+                border-color: $gray
+
+        .red
+            &::before
+                background-color: red
+
+        .orange
+            &::before
+                background-color: orange
+
+        .yellow
+            &::before
+                background-color: yellow
+
+        .green
+            &::before
+                background-color: green
+
+        .blue
+            &::before
+                background-color: blue
+
+        .purple
+            &::before
+                background-color: purple
+
+        .violet
+            &::before
+                background-color: violet
+
 </style>
 
 <script>
-    import { mapState, mapMutations } from 'vuex'
+    import { mapState, mapMutations, mapActions } from 'vuex'
     import servernav from './servernav.vue'
     import servercontent from './servercontent.vue'
     import serveritem from './serveritem.vue'
@@ -81,7 +160,19 @@
 
         data() {
             return {
-                useSSH: false
+                newconnection: {
+                    name: '',
+                    host: '',
+                    username: '',
+                    password: '',
+                    port: 3306,
+                    useSSH: false,
+                    sshhost: '',
+                    sshusername: '',
+                    sshpassword: '',
+                    sshport: 22,
+                    color: null
+                }
             }
         },
 
@@ -89,13 +180,54 @@
             ...mapState([
                 'connections',
                 'selectedConnection'
-            ])
+            ]),
+
+            formFilled() {
+                if (!this.newconnection.host ||
+                    !this.newconnection.username ||
+                    !this.newconnection.password ||
+                    !this.newconnection.port || (
+                        this.newconnection.useSSH && (
+                            !this.newconnection.sshhost ||
+                            !this.newconnection.sshusername ||
+                            !this.newconnection.sshpassword ||
+                            !this.newconnection.sshport
+                        )
+                    )
+                ) {
+                    return false;
+                }
+
+                return true;
+            }
         },
 
         methods: {
             ...mapMutations([
                 'selectConnection'
-            ])
+            ]),
+
+            createConnection() {
+                let connectiondata = JSON.parse(JSON.stringify(this.newconnection));
+
+                this.$store.dispatch('createConnection', connectiondata);
+
+                this.resetForm();
+            },
+
+            resetForm() {
+                this.newconnection.name = '';
+                this.newconnection.host = '';
+                this.newconnection.username = '';
+                this.newconnection.password = '';
+                this.newconnection.port = 3306;
+                this.newconnection.useSSH = false;
+                this.newconnection.sshhost = '';
+                this.newconnection.sshusername = '';
+                this.newconnection.sshpassword = '';
+                this.newconnection.sshport = 22;
+                this.newconnection.color = null;
+            }
         }
     }
 </script>

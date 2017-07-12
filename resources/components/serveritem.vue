@@ -4,8 +4,6 @@
 
             .actions
                 button.btn.btn-sm.btn-link
-                    i.glyphicon.glyphicon-pencil
-                button.btn.btn-sm.btn-link
                     i.glyphicon.glyphicon-remove
 </template>
 
