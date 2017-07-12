@@ -1,5 +1,5 @@
 <template lang="pug">
-    .active-only.active-flex.abs.abs-full-size(:class="{ active: connection === selectedConnection }")
+    .active-only.active-flex.abs.abs-full-size
         .sidebar.flex-no-shrink.flex.flex-column
             .flex-grow
                 .abs.abs-full-size.overflow-auto
@@ -116,10 +116,6 @@
         },
 
         computed: {
-            ...mapState([
-                'selectedConnection'
-            ]),
-
             results() {
                 if (this.selectedResult) {
                     return this.selectedResult;

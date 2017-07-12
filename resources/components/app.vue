@@ -1,13 +1,13 @@
 <template lang="pug">
     main.flex.flex-column
         ul.nav.nav-tabs.flex-no-grow.flex-no-shrink.bg-muted
-            servernav(v-for="(connection, index) in connections", :key="index", :connection="connection")
+            servernav(v-for="(connection, index) in connections", :key="index", :connection="connection", :class="{ active: connection === selectedConnection }")
 
             li(:class="{ active: selectedConnection === null }", @click="selectConnection(null)")
                 a(href="javascript:;")
                     i.glyphicon.glyphicon-plus
         .flex-grow
-            servercontent(v-for="(connection, index) in connections", :key="index", :connection="connection")
+            servercontent(v-for="(connection, index) in connections", :key="index", :connection="connection", :class="{ active: connection === selectedConnection }")
 
             .active-only.active-flex.abs.abs-full-size(:class="{ active: selectedConnection === null }")
                 .sidebar.flex-no-shrink.overflow-auto
@@ -16,7 +16,7 @@
                 .connection-form.flex-grow.flex.overflow-auto
                     form.col-xs-6.col-xs-offset-3(@submit.prevent="createConnection")
                         .form-group
-                            input.form-control(placeholder="Connection Name", v-model="newconnection.name")
+                            input.form-control(placeholder="Connection Name", v-model="newconnection.name", tabindex="1")
 
                         .form-group
                             .connection-colors
@@ -32,21 +32,21 @@
                         hr
 
                         .form-group
-                            input.form-control(placeholder="Host", v-model="newconnection.host")
-                            input.form-control(placeholder="Username", v-model="newconnection.username")
-                            input.form-control(type="password", placeholder="Password", v-model="newconnection.password")
-                            input.form-control(type="number", placeholder="Port", v-model="newconnection.port")
+                            input.form-control(placeholder="Host", v-model="newconnection.host", tabindex="2")
+                            input.form-control(placeholder="Username", v-model="newconnection.username", tabindex="3")
+                            input.form-control(type="password", placeholder="Password", v-model="newconnection.password", tabindex="4")
+                            input.form-control(type="number", placeholder="Port", v-model="newconnection.port", tabindex="5")
 
                         .checkbox
                             label
-                                input(type="checkbox", v-model="newconnection.useSSH")
+                                input(type="checkbox", v-model="newconnection.useSSH", tabindex="6")
                                 =" Use SSH"
 
                         .form-group(v-show="newconnection.useSSH")
-                            input.form-control(placeholder="SSH Host", v-model="newconnection.sshhost")
-                            input.form-control(placeholder="SSH Username", v-model="newconnection.sshusername")
-                            input.form-control(type="password", placeholder="SSH Password", v-model="newconnection.sshpassword")
-                            input.form-control(type="number", placeholder="SSH Port", v-model="newconnection.sshport")
+                            input.form-control(placeholder="SSH Host", v-model="newconnection.sshhost", tabindex="7")
+                            input.form-control(placeholder="SSH Username", v-model="newconnection.sshusername", tabindex="8")
+                            input.form-control(type="password", placeholder="SSH Password", v-model="newconnection.sshpassword", tabindex="9")
+                            input.form-control(type="number", placeholder="SSH Port", v-model="newconnection.sshport", tabindex="10")
 
                         hr
 
@@ -161,6 +161,7 @@
         data() {
             return {
                 newconnection: {
+                    id: '',
                     name: '',
                     host: '',
                     username: '',
@@ -171,7 +172,8 @@
                     sshusername: '',
                     sshpassword: '',
                     sshport: 22,
-                    color: null
+                    color: null,
+                    status: null
                 }
             }
         },
@@ -227,6 +229,8 @@
                 this.newconnection.sshpassword = '';
                 this.newconnection.sshport = 22;
                 this.newconnection.color = null;
+                this.newconnection.id = '';
+                this.newconnection.status = null;
             }
         }
     }
