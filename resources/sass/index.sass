@@ -15,6 +15,22 @@ body
 button
   outline: 0 !important
 
+.select
+  .caret
+    position: absolute
+    top: 50%
+    right: 4px
+    transform: translateY(-50%)
+
+  select
+    -webkit-appearance: none
+
+    &.form-control
+      background-color: transparent
+      border: 0
+      border-bottom: 2px solid $gray-light
+      box-shadow: none
+
 .abs
   position: absolute
 

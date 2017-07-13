@@ -1,20 +1,27 @@
-import '../sass/index.sass';
+import '../sass/index.sass'
 
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-import app from '../components/app.vue';
-import modal from '../components/modal.vue';
+import app from '../components/app.vue'
+import modal from '../components/modal.vue'
 
-const mysql = require('mysql')
+import Server from './classes/Server.js'
+import Config from './classes/Config.js'
 
-Vue.use(Vuex);
+Vue.config.devtools = true
+
+Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
     connections: [],
 
-    selectedConnection: null
+    selectedConnection: null,
+
+    servers: [],
+
+    selectedServer: null
   },
   mutations: {
     addConnection(state, connection) {
@@ -31,6 +38,32 @@ const store = new Vuex.Store({
 
     setConnectionStatus(state, {connection, status}) {
       connection.status = status
+    },
+
+    initServers(state, servers) {
+      state.servers = Config.get('servers', []).map(server => new Server(server))
+    },
+
+    addServer(state, server) {
+      state.servers.push(server)
+
+      Config.set('servers', state.servers.map(server => server.data))
+    },
+
+    selectServer(state, server) {
+      state.selectedServer = server
+    },
+
+    updateServer(state, server) {
+      state.selectedServer.update(server)
+
+      Config.set('servers', state.servers.map(server => server.data))
+    },
+
+    removeServer(state, server) {
+      state.servers.splice(state.servers.indexOf(server), 1)
+
+      Config.set('servers', state.servers.map(server => server.data))
     }
   },
 
@@ -38,35 +71,27 @@ const store = new Vuex.Store({
     createConnection({commit}, connection) {
       commit('addConnection', connection)
       commit('selectConnection', connection)
-
-      const db = mysql.createConnection({
-        host: connection.host,
-        user: connection.username,
-        password: connection.password,
-        port: connection.port
-      })
-
-      db.connect(err => {
-        if (err) {
-          return commit('setConnectionStatus', {connection, status: false})
-        }
-
-        connection.id = db.threadId
-
-        commit('setConnectionStatus', {connection, status: true})
-      })
+      commit('setConnectionStatus', {connection, status: true})
     },
 
-    closeConnection({commit, state}, data) {
-      let index = Math.max(0, state.connections.indexOf(data) - 1)
+    closeConnection({commit, state}, connection) {
+      connection.end()
 
-      commit('removeConnection', data)
+      commit('removeConnection', connection)
 
       if (state.connections.length === 0) {
         return commit('selectConnection', null)
       }
 
       commit('selectConnection', state.connections[0])
+    },
+
+    deleteServer({commit, state}, server) {
+      if (server === state.selectedServer) {
+        commit('selectServer', null)
+      }
+
+      commit('removeServer', server)
     }
   }
 })

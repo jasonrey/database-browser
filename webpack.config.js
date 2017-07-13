@@ -72,5 +72,9 @@ module.exports = {
     publicPath: '/'
   },
 
-  target: 'electron'
+  target: 'electron',
+
+  externals: {
+    'electron-config': 'require(\'electron-config\')'
+  }
 }

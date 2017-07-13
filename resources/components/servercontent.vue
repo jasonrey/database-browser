@@ -1,6 +1,13 @@
 <template lang="pug">
   .active-only.active-flex.abs.abs-full-size
     .sidebar.flex-no-shrink.flex.flex-column
+      .select.flex-no-shrink
+        .caret
+        select.form-control
+          option test
+          option test
+          option test
+          option test
       .flex-grow
         .abs.abs-full-size.overflow-auto
           tableitem(v-for="table in tables", :key="table.name", :table="table")
@@ -15,6 +22,9 @@
         .btn-group
           button.btn.btn-default
             i.glyphicon.glyphicon-cog
+        .btn-group
+          button.btn.btn-default
+            i.glyphicon.glyphicon-info-sign
     .flex.flex-grow.flex-column
       .content-query
         ul.nav.nav-tabs

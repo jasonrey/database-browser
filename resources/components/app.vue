@@ -1,20 +1,25 @@
 <template lang="pug">
   main.flex.flex-column
     ul.nav.nav-tabs.flex-no-grow.flex-no-shrink.bg-muted
-      servernav(v-for="(connection, index) in connections", :key="index", :connection="connection", :class="{ active: connection === selectedConnection }")
+      servernav(v-for="(connection, index) in connections", :key="connection.id", :connection="connection", :class="{ active: connection === selectedConnection }")
 
       li(:class="{ active: selectedConnection === null }", @click="selectConnection(null)")
         a(href="javascript:;")
           i.glyphicon.glyphicon-plus
     .flex-grow
-      servercontent(v-for="(connection, index) in connections", :key="index", :connection="connection", :class="{ active: connection === selectedConnection }")
+      servercontent(v-for="(connection, index) in connections", :key="connection.id", :connection="connection", :class="{ active: connection === selectedConnection }")
 
       .active-only.active-flex.abs.abs-full-size(:class="{ active: selectedConnection === null }")
         .sidebar.flex-no-shrink.overflow-auto
-          serveritem
+          serveritem(:server="null", :class="{ active: selectedServer === null }")
+          serveritem(v-for="(server, index) in servers", :key="index", :server="server", :class="{ active: selectedServer === server }", @connect="createConnection")
 
         .connection-form.flex-grow.flex.overflow-auto
-          form.col-xs-6.col-xs-offset-3(@submit.prevent="createConnection")
+          .col-xs-6.col-xs-offset-3.text-center(v-show="isConnecting")
+            p Connecting...
+            .btn.btn-danger(@click="isConnecting = false") Cancel
+          form.col-xs-6.col-xs-offset-3(@submit.prevent="createConnection", v-show="!isConnecting")
+            .alert.alert-warning(v-if="connectionError") {{ connectionError }}
             .form-group
               input.form-control(placeholder="Connection Name", v-model="newconnection.name", tabindex="1")
 
@@ -52,11 +57,15 @@
 
             .btn-group.btn-group-justified
               .btn-group
-                button.btn.btn-block.btn-lg.btn-danger(type="button", @click="resetForm")
+                button.btn.btn-block.btn-lg.btn-danger(type="button", @click="selectServer(null)")
                   i.glyphicon.glyphicon-remove
 
-              .btn-group
-                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled")
+              .btn-group(v-if="selectedServer")
+                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer")
+                  i.glyphicon.glyphicon-floppy-saved
+
+              .btn-group(v-if="!selectedServer")
+                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer")
                   i.glyphicon.glyphicon-plus
 
               .btn-group
@@ -117,31 +126,27 @@
 
     .red
       &::before
-        background-color: red
+        background-color: $tag-red
 
     .orange
       &::before
-        background-color: orange
+        background-color: $tag-orange
 
     .yellow
       &::before
-        background-color: yellow
+        background-color: $tag-yellow
 
     .green
       &::before
-        background-color: green
+        background-color: $tag-green
 
     .blue
       &::before
-        background-color: blue
+        background-color: $tag-blue
 
     .purple
       &::before
-        background-color: purple
-
-    .violet
-      &::before
-        background-color: violet
+        background-color: $tag-purple
 
 </style>
 
@@ -150,6 +155,11 @@
   import servernav from './servernav.vue'
   import servercontent from './servercontent.vue'
   import serveritem from './serveritem.vue'
+
+  import Connection from '../js/classes/Connection.js'
+  import Server from '../js/classes/Server.js'
+
+  import Config from '../js/classes/Config.js'
 
   export default {
     components: {
@@ -174,14 +184,19 @@
           sshport: 22,
           color: null,
           status: null
-        }
+        },
+
+        isConnecting: false,
+        connectionError: ''
       }
     },
 
     computed: {
       ...mapState([
         'connections',
-        'selectedConnection'
+        'selectedConnection',
+        'servers',
+        'selectedServer'
       ]),
 
       formFilled() {
@@ -197,40 +212,82 @@
             )
           )
         ) {
-          return false;
+          return false
         }
 
-        return true;
+        return true
+      }
+    },
+
+    created() {
+      this.$store.commit('initServers')
+    },
+
+    watch: {
+      selectedServer(newValue) {
+        if (newValue === null) {
+          return this.resetForm()
+        }
+
+        Object.keys(this.newconnection).map(key => {
+          this.newconnection[key] = newValue.data[key]
+        })
       }
     },
 
     methods: {
       ...mapMutations([
-        'selectConnection'
+        'selectConnection',
+        'selectServer'
       ]),
 
       createConnection() {
-        let connectiondata = JSON.parse(JSON.stringify(this.newconnection));
+        this.isConnecting = true
+        this.connectionError = ''
 
-        this.$store.dispatch('createConnection', connectiondata);
+        let connection = new Connection(this.newconnection)
 
-        this.resetForm();
+        connection.connect()
+          .then(() => {
+            this.isConnecting = false
+            this.$store.dispatch('createConnection', connection)
+            this.resetForm()
+            this.selectServer(null)
+          })
+          .catch(res => {
+            this.isConnecting = false
+            this.connectionError = res.message
+          })
       },
 
       resetForm() {
-        this.newconnection.name = '';
-        this.newconnection.host = '';
-        this.newconnection.username = '';
-        this.newconnection.password = '';
-        this.newconnection.port = 3306;
-        this.newconnection.useSSH = false;
-        this.newconnection.sshhost = '';
-        this.newconnection.sshusername = '';
-        this.newconnection.sshpassword = '';
-        this.newconnection.sshport = 22;
-        this.newconnection.color = null;
-        this.newconnection.id = '';
-        this.newconnection.status = null;
+        this.newconnection.name = ''
+        this.newconnection.host = ''
+        this.newconnection.username = ''
+        this.newconnection.password = ''
+        this.newconnection.port = 3306
+        this.newconnection.useSSH = false
+        this.newconnection.sshhost = ''
+        this.newconnection.sshusername = ''
+        this.newconnection.sshpassword = ''
+        this.newconnection.sshport = 22
+        this.newconnection.color = null
+        this.newconnection.id = ''
+        this.newconnection.status = null
+      },
+
+      saveServer() {
+        if (this.selectedServer === null) {
+          let server = new Server(this.newconnection)
+
+          this.$store.commit('addServer', server)
+
+          this.resetForm()
+
+          return
+        }
+
+        this.$store.commit('updateServer', this.newconnection)
       }
     }
   }

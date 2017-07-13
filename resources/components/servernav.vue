@@ -44,7 +44,7 @@
 </style>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapMutations, mapActions } from 'vuex'
 
   export default {
     props: ['connection'],
@@ -54,8 +54,6 @@
         if (this.connection.status === null) {
           return 'connecting';
         }
-
-        console.log(this.connection.status);
 
         return this.connection.status ? 'connected' : false;
       }
