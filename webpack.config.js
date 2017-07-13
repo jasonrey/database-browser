@@ -24,6 +24,9 @@ module.exports = {
       test: /\.pug$/,
       loader: 'pug-loader'
     }, {
+      test: /\.js$/,
+      loader: 'babel-loader?plugins[]=transform-object-rest-spread'
+    }, {
       test: /\.css$/,
       use: ExtractTextPlugin.extract(['css-loader'])
     }, {
