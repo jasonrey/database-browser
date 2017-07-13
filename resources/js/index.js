@@ -7,7 +7,6 @@ import app from '../components/app.vue'
 import modal from '../components/modal.vue'
 
 import Server from './classes/Server.js'
-import Config from './classes/Config.js'
 
 import Store from './store.js'
 

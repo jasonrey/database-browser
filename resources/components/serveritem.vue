@@ -70,7 +70,7 @@
 </style>
 
 <script>
-  import { mapState, mapMutations } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
 
   export default {
     props: ['server'],
@@ -90,8 +90,8 @@
     },
 
     methods: {
-      ...mapMutations({
-        selectServer: 'server/select'
+      ...mapActions('server', {
+        selectServer: 'select'
       }),
 
       connectServer(server) {

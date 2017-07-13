@@ -1,3 +1,6 @@
+import Config from '../classes/Config.js'
+import Server from '../classes/Server.js'
+
 export default {
   namespaced: true,
 
@@ -7,8 +10,8 @@ export default {
   },
 
   mutations: {
-    init(state, servers) {
-      state.items = servers
+    init(state) {
+      state.items = Config.get('servers', []).map(server => new Server(server))
     },
 
     add(state, item) {
@@ -17,7 +20,7 @@ export default {
       Config.set('servers', state.items.map(item => item.data))
     },
 
-    select(state, item) {
+    set(state, item) {
       state.selected = item
     },
 
@@ -35,12 +38,36 @@ export default {
   },
 
   actions: {
-    delete({commit, state}, item) {
+    delete({commit, state, dispatch}, item) {
       if (item === state.selected) {
-        commit('select', null)
+        dispatch('select', null)
       }
 
       commit('remove', item)
+    },
+
+    select({commit}, item) {
+      commit('set', item)
+
+      if (item === null) {
+        return commit('connection/resetForm', null, {root: true})
+      }
+
+      return commit('connection/setForm', item.data, {root: true})
+    },
+
+    save({commit, state}, item) {
+      if (state.selected === null) {
+        let server = new Server(item)
+
+        commit('add', server)
+
+        commit('connection/resetForm', null, {root: true})
+
+        return
+      }
+
+      commit('update', item)
     }
   }
 }

@@ -61,11 +61,11 @@
                   i.glyphicon.glyphicon-remove
 
               .btn-group(v-if="selectedServer")
-                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer")
+                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer(newconnection)")
                   i.glyphicon.glyphicon-floppy-saved
 
               .btn-group(v-if="!selectedServer")
-                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer")
+                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer(newconnection)")
                   i.glyphicon.glyphicon-plus
 
               .btn-group
@@ -159,36 +159,11 @@
   import Connection from '../js/classes/Connection.js'
   import Server from '../js/classes/Server.js'
 
-  import Config from '../js/classes/Config.js'
-
   export default {
     components: {
       servernav,
       servercontent,
       serveritem
-    },
-
-    data() {
-      return {
-        newconnection: {
-          id: '',
-          name: '',
-          host: '',
-          username: '',
-          password: '',
-          port: 3306,
-          useSSH: false,
-          sshhost: '',
-          sshusername: '',
-          sshpassword: '',
-          sshport: 22,
-          color: null,
-          status: null
-        },
-
-        isConnecting: false,
-        connectionError: ''
-      }
     },
 
     computed: {
@@ -200,6 +175,9 @@
       ...mapState('connection', {
         connections: 'items',
         selectedConnection: 'selected',
+        isConnecting: 'connecting',
+        connectionError: 'error',
+        newconnection: 'form'
       }),
 
       formFilled() {
@@ -223,84 +201,22 @@
     },
 
     created() {
-      this.initServer(Config.get('servers', []).map(server => new Server(server)))
-    },
-
-    watch: {
-      selectedServer(newValue) {
-        if (newValue === null) {
-          return this.resetForm()
-        }
-
-        Object.keys(this.newconnection).map(key => {
-          this.newconnection[key] = newValue.data[key]
-        })
-      }
+      this.$store.commit('server/init')
     },
 
     methods: {
-      ...mapMutations('server', {
-        initServer: 'init',
-        selectServer: 'select'
-      }),
-
       ...mapMutations('connection', {
-        selectConnection: 'select',
-        addConnection: 'add',
-        setConnectionStatus: 'setStatus'
+        selectConnection: 'select'
       }),
 
-      createConnection() {
-        this.isConnecting = true
-        this.connectionError = ''
+      ...mapActions('connection', {
+        createConnection: 'create'
+      }),
 
-        let connection = new Connection(this.newconnection)
-
-        connection.connect()
-          .then(() => {
-            this.isConnecting = false
-
-            this.addConnection(connection)
-            this.selectConnection(connection)
-            this.setConnectedStatus(connection)
-            this.resetForm()
-            this.selectServer(null)
-          })
-          .catch(res => {
-            this.isConnecting = false
-            this.connectionError = res.message
-          })
-      },
-
-      resetForm() {
-        this.newconnection.name = ''
-        this.newconnection.host = ''
-        this.newconnection.username = ''
-        this.newconnection.password = ''
-        this.newconnection.port = 3306
-        this.newconnection.useSSH = false
-        this.newconnection.sshhost = ''
-        this.newconnection.sshusername = ''
-        this.newconnection.sshpassword = ''
-        this.newconnection.sshport = 22
-        this.newconnection.color = null
-        this.newconnection.id = ''
-        this.newconnection.status = null
-      },
-
-      saveServer() {
-        if (this.selectedServer === null) {
-          let server = new Server(this.newconnection)
-
-          this.$store.commit('server/add', server)
-
-          this.resetForm()
-
-          return
-        }
-
-        this.$store.commit('server/update', this.newconnection)
-      }
+      ...mapActions('server', {
+        selectServer: 'select',
+        saveServer: 'save'
+      })
     }
   }
 </script>
