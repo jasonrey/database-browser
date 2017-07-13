@@ -4,10 +4,7 @@
       .select.flex-no-shrink
         .caret
         select.form-control
-          option test
-          option test
-          option test
-          option test
+          option(v-for="database in databases", :key="database") {{ database }}
       .flex-grow
         .abs.abs-full-size.overflow-auto
           tableitem(v-for="table in tables", :key="table.name", :table="table")
@@ -116,35 +113,33 @@
       return {
         queryTab: '',
 
+        databases: [],
         tables: [],
         fullresults: [],
         savedqueries: [],
         historyqueries: [],
 
-        selectedResult: null
+        selectedResult: null,
+
+        selectedDatabase: null
       }
     },
 
     computed: {
       results() {
-        if (this.selectedResult) {
-          return this.selectedResult;
-        }
-
-        return this.fullresults;
+        return this.selectedResult || this.fullresults;
       }
     },
 
     created() {
-      this.tables.push({
-        name: 'test'
-      }, {
-        name: 'test2'
-      });
+      this.connection.query('show databases')
+        .then(([result]) => {
+          this.databases = result.map(item => item.Database)
 
-      this.fullresults.push(1, 2, 3);
-      this.savedqueries.push(1, 2, 3);
-      this.historyqueries.push(1, 2, 3);
+          if (this.databases.length) {
+            this.selectedDatabase = this.databases[0]
+          }
+        })
     }
   }
 </script>

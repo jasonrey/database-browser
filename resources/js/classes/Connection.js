@@ -26,6 +26,18 @@ class Connection {
     })
   }
 
+  query(sql, values) {
+    return new Promise((resolve, reject) => {
+      this.db.query(sql, values, (err, result, fields) => {
+        if (err) {
+          return reject(err)
+        }
+
+        resolve([result, fields])
+      })
+    })
+  }
+
   end() {
     return this.db.end()
   }
