@@ -1,74 +1,74 @@
 <template lang="pug">
-    li
-        a(href="javascript:;", @click="selectConnection(connection)", :data-status="status")
-            .inline-block {{ connection.name || connection.host }}
+  li
+    a(href="javascript:;", @click="selectConnection(connection)", :data-status="status")
+      .inline-block {{ connection.name || connection.host }}
 
-        button.btn.btn-link.btn-xs(@click="closeConnection(connection)")
-            i.glyphicon.glyphicon-remove
+    button.btn.btn-link.btn-xs(@click="closeConnection(connection)")
+      i.glyphicon.glyphicon-remove
 </template>
 
 <style lang="sass" scoped>
-    a
-        &::before
-            content: ''
-            display: inline-block
-            vertical-align: middle
-            width: 6px
-            height: 6px
-            border-radius: 50%
-            background-color: red
-            margin: 0 4px 0 0
+  a
+    &::before
+      content: ''
+      display: inline-block
+      vertical-align: middle
+      width: 6px
+      height: 6px
+      border-radius: 50%
+      background-color: red
+      margin: 0 4px 0 0
 
-        &[data-status="connecting"]
-            &::before
-                background-color: yellow
+    &[data-status="connecting"]
+      &::before
+        background-color: yellow
 
-        &[data-status="connected"]
-            &::before
-                background-color: green
+    &[data-status="connected"]
+      &::before
+        background-color: green
 
-        .inline-block
-            margin: 0 10px 0 5px
+    .inline-block
+      margin: 0 10px 0 5px
 
-    button
-        position: absolute
-        top: 50%
-        right: 4px
-        transform: translateY(-50%)
-        display: none
+  button
+    position: absolute
+    top: 50%
+    right: 4px
+    transform: translateY(-50%)
+    display: none
 
-    li
-        &:hover
-            button
-                display: block
+  li
+    &:hover
+      button
+        display: block
 </style>
 
 <script>
-    import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapMutations, mapActions } from 'vuex'
 
-    export default {
-        props: ['connection'],
+  export default {
+    props: ['connection'],
 
-        computed: {
-            status() {
-                if (this.connection.status === null) {
-                    return 'connecting';
-                }
-
-                console.log(this.connection.status);
-
-                return this.connection.status ? 'connected' : false;
-            }
-        },
-
-        methods: {
-            ...mapMutations([
-                'selectConnection'
-            ]),
-
-            ...mapActions([
-                'closeConnection'
-            ])
+    computed: {
+      status() {
+        if (this.connection.status === null) {
+          return 'connecting';
         }
+
+        console.log(this.connection.status);
+
+        return this.connection.status ? 'connected' : false;
+      }
+    },
+
+    methods: {
+      ...mapMutations([
+        'selectConnection'
+      ]),
+
+      ...mapActions([
+        'closeConnection'
+      ])
     }
+  }
 </script>

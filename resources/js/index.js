@@ -11,73 +11,71 @@ const mysql = require('mysql')
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-    state: {
-        connections: [],
+  state: {
+    connections: [],
 
-        selectedConnection: null
-    },
-    mutations: {
-        addConnection(state, connection) {
-            state.connections.push(connection)
-        },
-
-        removeConnection(state, connection) {
-            state.connections.splice(state.connections.indexOf(connection), 1)
-        },
-
-        selectConnection(state, connection) {
-            state.selectedConnection = connection
-        },
-
-        setConnectionStatus(state, {connection, status}) {
-            connection.status = status;
-        }
+    selectedConnection: null
+  },
+  mutations: {
+    addConnection(state, connection) {
+      state.connections.push(connection)
     },
 
-    actions: {
-        createConnection({commit}, connection) {
-            commit('addConnection', connection)
-            commit('selectConnection', connection)
+    removeConnection(state, connection) {
+      state.connections.splice(state.connections.indexOf(connection), 1)
+    },
 
-            const db = mysql.createConnection({
-                host: connection.host,
-                user: connection.username,
-                password: connection.password,
-                port: connection.port
-            });
+    selectConnection(state, connection) {
+      state.selectedConnection = connection
+    },
 
-            db.connect(err => {
-                console.log(err);
-
-                if (err) {
-                    return commit('setConnectionStatus', {connection, status: false});
-                }
-
-                connection.id = db.threadId;
-
-                commit('setConnectionStatus', {connection, status: true});
-            });
-        },
-
-        closeConnection({commit, state}, data) {
-            let index = Math.max(0, state.connections.indexOf(data) - 1)
-
-            commit('removeConnection', data)
-
-            if (state.connections.length === 0) {
-                return commit('selectConnection', null)
-            }
-
-            commit('selectConnection', state.connections[0])
-        }
+    setConnectionStatus(state, {connection, status}) {
+      connection.status = status
     }
-});
+  },
+
+  actions: {
+    createConnection({commit}, connection) {
+      commit('addConnection', connection)
+      commit('selectConnection', connection)
+
+      const db = mysql.createConnection({
+        host: connection.host,
+        user: connection.username,
+        password: connection.password,
+        port: connection.port
+      })
+
+      db.connect(err => {
+        if (err) {
+          return commit('setConnectionStatus', {connection, status: false})
+        }
+
+        connection.id = db.threadId
+
+        commit('setConnectionStatus', {connection, status: true})
+      })
+    },
+
+    closeConnection({commit, state}, data) {
+      let index = Math.max(0, state.connections.indexOf(data) - 1)
+
+      commit('removeConnection', data)
+
+      if (state.connections.length === 0) {
+        return commit('selectConnection', null)
+      }
+
+      commit('selectConnection', state.connections[0])
+    }
+  }
+})
 
 new Vue({
-    store,
-    el: '#app',
-    components: {
-        app,
-        modal
-    }
-});
+  store,
+  el: '#app',
+  components: {
+    app,
+    modal
+  }
+})
