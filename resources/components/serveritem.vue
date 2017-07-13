@@ -70,7 +70,7 @@
 </style>
 
 <script>
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapMutations } from 'vuex'
 
   export default {
     props: ['server'],
@@ -84,19 +84,15 @@
         return this.server.data.name || this.server.data.host
       },
 
-      ...mapState([
-        'selectedServer'
-      ])
+      ...mapState({
+        selectedServer: 'server/selected'
+      })
     },
 
     methods: {
-      ...mapMutations([
-        'selectServer'
-      ]),
-
-      ...mapActions([
-        'deleteServer'
-      ]),
+      ...mapMutations({
+        selectServer: 'server/select'
+      }),
 
       connectServer(server) {
         this.selectServer(server)
@@ -108,7 +104,7 @@
         const result = confirm('Delete the server - ' + (server.data.name || server.data.host))
 
         if (result) {
-          this.$store.dispatch('deleteServer', server)
+          this.$store.dispatch('server/delete', server)
         }
       }
     }

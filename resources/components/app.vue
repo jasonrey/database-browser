@@ -192,12 +192,15 @@
     },
 
     computed: {
-      ...mapState([
-        'connections',
-        'selectedConnection',
-        'servers',
-        'selectedServer'
-      ]),
+      ...mapState('server', {
+        servers: 'items',
+        selectedServer: 'selected',
+      }),
+
+      ...mapState('connection', {
+        connections: 'items',
+        selectedConnection: 'selected',
+      }),
 
       formFilled() {
         if (!this.newconnection.host ||
@@ -220,7 +223,7 @@
     },
 
     created() {
-      this.$store.commit('initServers')
+      this.initServer(Config.get('servers', []).map(server => new Server(server)))
     },
 
     watch: {
@@ -236,10 +239,16 @@
     },
 
     methods: {
-      ...mapMutations([
-        'selectConnection',
-        'selectServer'
-      ]),
+      ...mapMutations('server', {
+        initServer: 'init',
+        selectServer: 'select'
+      }),
+
+      ...mapMutations('connection', {
+        selectConnection: 'select',
+        addConnection: 'add',
+        setConnectionStatus: 'setStatus'
+      }),
 
       createConnection() {
         this.isConnecting = true
@@ -250,7 +259,10 @@
         connection.connect()
           .then(() => {
             this.isConnecting = false
-            this.$store.dispatch('createConnection', connection)
+
+            this.addConnection(connection)
+            this.selectConnection(connection)
+            this.setConnectedStatus(connection)
             this.resetForm()
             this.selectServer(null)
           })
@@ -280,14 +292,14 @@
         if (this.selectedServer === null) {
           let server = new Server(this.newconnection)
 
-          this.$store.commit('addServer', server)
+          this.$store.commit('server/add', server)
 
           this.resetForm()
 
           return
         }
 
-        this.$store.commit('updateServer', this.newconnection)
+        this.$store.commit('server/update', this.newconnection)
       }
     }
   }

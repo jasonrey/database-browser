@@ -60,13 +60,13 @@
     },
 
     methods: {
-      ...mapMutations([
-        'selectConnection'
-      ]),
+      ...mapMutations({
+        selectConnection: 'connection/select'
+      }),
 
-      ...mapActions([
-        'closeConnection'
-      ])
+      ...mapActions({
+        closeConnection: 'connection/close'
+      })
     }
   }
 </script>

@@ -92,8 +92,6 @@
 </style>
 
 <script>
-  import { mapState } from 'vuex'
-
   import tableitem from './tableitem.vue'
   import resultitem from './resultitem.vue'
   import querysaveditem from './querysaveditem.vue'
