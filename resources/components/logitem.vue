@@ -1,7 +1,7 @@
 <template lang="pug">
-  .item
+  .item.mh-10.pv-10
     h5.flex.flex-align-items-center
-      .small {{ item.date }}
+      .small.mr-5 {{ item.date }}
       span {{ item.type + (item.action ? ' - ' + item.action : '') }}
       .flex-grow
       .monospace {{ item.connection.username }}@{{ item.connection.host }}:{{ item.connection.port }}
@@ -15,11 +15,8 @@
 
   .small
     color: $gray
-    margin: 0 5px 0 0
 
   .item
-    margin: 0 10px
-    padding: 10px 0
     border-bottom: 1px solid $gray-light
 </style>
 

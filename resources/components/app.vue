@@ -42,36 +42,37 @@
               input.form-control(placeholder="Host", v-model="newconnection.host", tabindex="2")
               input.form-control(placeholder="Username", v-model="newconnection.username", tabindex="3")
               input.form-control(type="password", placeholder="Password", v-model="newconnection.password", tabindex="4")
-              input.form-control(type="number", placeholder="Port", v-model="newconnection.port", tabindex="5")
+              input.form-control(placeholder="Database", v-model="newconnection.database", tabindex="5")
+              input.form-control(type="number", placeholder="Port", v-model="newconnection.port", tabindex="6")
 
             .checkbox
               label
-                input(type="checkbox", v-model="newconnection.useSSH", tabindex="6")
+                input(type="checkbox", v-model="newconnection.useSSH", tabindex="7")
                 =" Use SSH"
 
             .form-group(v-show="newconnection.useSSH")
-              input.form-control(placeholder="SSH Host", v-model="newconnection.sshhost", tabindex="7")
-              input.form-control(placeholder="SSH Username", v-model="newconnection.sshusername", tabindex="8")
-              input.form-control(type="password", placeholder="SSH Password", v-model="newconnection.sshpassword", tabindex="9")
-              input.form-control(type="number", placeholder="SSH Port", v-model="newconnection.sshport", tabindex="10")
+              input.form-control(placeholder="SSH Host", v-model="newconnection.sshhost", tabindex="8")
+              input.form-control(placeholder="SSH Username", v-model="newconnection.sshusername", tabindex="9")
+              input.form-control(type="password", placeholder="SSH Password", v-model="newconnection.sshpassword", tabindex="10")
+              input.form-control(type="number", placeholder="SSH Port", v-model="newconnection.sshport", tabindex="11")
 
             hr
 
             .btn-group.btn-group-justified
               .btn-group
-                button.btn.btn-block.btn-lg.btn-danger(type="button", @click="selectServer(null)")
+                button.btn.btn-block.btn-lg.btn-danger(type="button", @click="selectServer(null)", tabindex="14")
                   i.glyphicon.glyphicon-remove
 
               .btn-group(v-if="selectedServer")
-                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer(newconnection)")
+                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer(newconnection)", tabindex="13")
                   i.glyphicon.glyphicon-floppy-saved
 
               .btn-group(v-if="!selectedServer")
-                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer(newconnection)")
+                button.btn.btn-block.btn-lg.btn-primary(type="button", :disabled="!formFilled", @click="saveServer(newconnection)", tabindex="13")
                   i.glyphicon.glyphicon-plus
 
               .btn-group
-                button.btn.btn-block.btn-lg.btn-success(:disabled="!formFilled")
+                button.btn.btn-block.btn-lg.btn-success(:disabled="!formFilled", tabindex="12")
                   i.glyphicon.glyphicon-ok
 
       .active-only.abs.abs-full-size.overflow-auto(:class="{ active: selectedConnection === false }")

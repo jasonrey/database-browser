@@ -17,6 +17,7 @@ Server.dataKeys = [
   'host',
   'username',
   'password',
+  'database',
   'port',
   'useSSH',
   'sshhost',

@@ -1,12 +1,10 @@
 <template lang="pug">
   div
-    .bg-danger {{ item.err }}
-    .bg-info.monospace(v-if="item.payload") {{ JSON.stringify(item.payload) }}
+    .bg-danger.p-5.small {{ item.err }}
+    .bg-info.monospace.p-5.small(v-if="item.payload") {{ JSON.stringify(item.payload) }}
 </template>
 
 <style lang="sass" scoped>
-  .bg-danger, .bg-info
-    padding: 10px
 </style>
 
 <script>

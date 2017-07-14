@@ -117,12 +117,138 @@ button
 .monospace
   font-family: monospace
 
+.p-0
+  @extend .pv-0
+  @extend .ph-0
+
+.pv-0
+  @extend .pt-0
+  @extend .pb-0
+
+.ph-0
+  @extend .pr-0
+  @extend .pl-0
+
+.pt-0
+  padding-top: 0
+.pr-0
+  padding-right: 0
+.pb-0
+  padding-bottom: 0
+.pl-0
+  padding-left: 0
+
+.p-5
+  @extend .pv-5
+  @extend .ph-5
+
+.pv-5
+  @extend .pt-5
+  @extend .pb-5
+
+.ph-5
+  @extend .pr-5
+  @extend .pl-5
+
+.pt-5
+  padding-top: 5px
+.pr-5
+  padding-right: 5px
+.pb-5
+  padding-bottom: 5px
+.pl-5
+  padding-left: 5px
+
+.p-10
+  @extend .pv-10
+  @extend .ph-10
+
+.pv-10
+  @extend .pt-10
+  @extend .pb-10
+
+.ph-10
+  @extend .pr-10
+  @extend .pl-10
+
+.pt-10
+  padding-top: 10px
+.pr-10
+  padding-right: 10px
+.pb-10
+  padding-bottom: 10px
+.pl-10
+  padding-left: 10px
+
+.m-0
+  @extend .mv-0
+  @extend .mh-0
+
+.mv-0
+  @extend .mt-0
+  @extend .mb-0
+
+.mh-0
+  @extend .mr-0
+  @extend .ml-0
+
+.mt-0
+  margin-top: 0
+.mr-0
+  margin-right: 0
+.mb-0
+  margin-bottom: 0
+.ml-0
+  margin-left: 0
+
+.m-5
+  @extend .mv-5
+  @extend .mh-5
+
+.mv-5
+  @extend .mt-5
+  @extend .mb-5
+
+.mh-5
+  @extend .mr-5
+  @extend .ml-5
+
+.mt-5
+  margin-top: 5px
+.mr-5
+  margin-right: 5px
+.mb-5
+  margin-bottom: 5px
+.ml-5
+  margin-left: 5px
+
+.m-10
+  @extend .mv-10
+  @extend .mh-10
+
+.mv-10
+  @extend .mt-10
+  @extend .mb-10
+
+.mh-10
+  @extend .mr-10
+  @extend .ml-10
+
+.mt-10
+  margin-top: 10px
+.mr-10
+  margin-right: 10px
+.mb-10
+  margin-bottom: 10px
+.ml-10
+  margin-left: 10px
+
 .item
   &-border
     border: 1px solid $gray-light
 
   &-gutter
-    margin: 10px 0
+    @extend .mv-10
 
   &-hover
     cursor: pointer

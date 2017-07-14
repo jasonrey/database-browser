@@ -2,7 +2,8 @@
   .item.clearfix(:data-tag="server && server.data.color")
     .tag.abs.abs-full-height
     .connectionname.item-hover(@click="selectServer(server)", @dblclick="connectServer(server)")
-      strong {{ connectionname || 'Quick Connect' }}
+      span(v-if="server") {{ connectionname }}
+      strong(v-else) Quick Connect
 
     .actions(v-if="server !== null")
       button.btn.btn-sm.btn-link(@click="deleteServer(server)")
@@ -29,7 +30,8 @@
       background-color: rgba($brand-info, 0.1)
 
   .connectionname
-    padding: 10px
+    padding: 5px 10px
+    color: $gray
 
   .actions
     position: absolute
@@ -81,7 +83,7 @@
           return ''
         }
 
-        return this.server.data.name || this.server.data.host
+        return this.server.data.name || (this.server.data.username + '@' + this.server.data.host + (parseInt(this.server.data.port) !== 3306 ? ':' + this.server.data.port : ''))
       },
 
       ...mapState({

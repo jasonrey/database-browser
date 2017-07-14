@@ -3,8 +3,9 @@
     .sidebar.flex-no-shrink.flex.flex-column
       .select.flex-no-shrink
         .caret
-        select.form-control
-          option(v-for="database in databases", :key="database") {{ database }}
+        select.form-control(v-model="selectedDatabase")
+          option(disabled, :value="null") Select Database
+          option(v-for="database in databases", :key="database", :value="database") {{ database }}
       .flex-grow
         .abs.abs-full-size.overflow-auto
           tableitem(v-for="table in tables", :key="table.name", :table="table")
@@ -34,12 +35,16 @@
 
         .nav-contents
           .active-only.active-flex.flex-column(:class="{ active: queryTab === '' || queryTab === 'editor' }")
-            textarea.form-control.flex-grow.monospace
-            .clearfix.bg-muted
-              button.btn.btn-link.btn-sm.pull-right
-                i.glyphicon.glyphicon-remove
-              button.btn.btn-link.btn-sm.pull-right
+            textarea.form-control.flex-grow.monospace(v-model="query", @keyup.ctrl.enter="execute", :class="{ querying: isQuerying, queryerror: queryError }")
+            .bg-muted.flex.flex-align-items-center
+              .small.p-5(v-if="query") Count: {{ query.length }}
+              .flex-grow
+              button.btn.btn-link.btn-sm
                 i.glyphicon.glyphicon-star-empty
+              button.btn.btn-link.btn-sm(@click="query = ''")
+                i.glyphicon.glyphicon-remove
+              button.btn.btn-link.btn-sm(@click="execute")
+                i.glyphicon.glyphicon-ok
           .query-saved.active-only.overflow-auto(:class="{ active: queryTab === 'saved' }")
             querysaveditem(v-for="(item, index) in savedqueries", :key="index")
           .query-history.active-only.overflow-auto(:class="{ active: queryTab === 'history' }")
@@ -47,7 +52,11 @@
 
       .content-result.flex-grow(:class="{ 'full-result': selectedResult }")
         .abs.abs-full-width.abs-full-height.overflow-auto
-          resultitem(v-for="(item, index) in results", :key="index", :selected="selectedResult", @viewHistory="selectedResult = null", @viewResult="selectedResult = item")
+          resultitem(v-if="selectedResult", :selected="selectedResult", @viewHistory="selectedResult = null", :item="selectedResult")
+
+          .p-10(v-else)
+            resultitem(v-for="(item, index) in results", :key="index", :selected="selectedResult", @viewResult="selectedResult = item", :item="item")
+
 </template>
 
 <style lang="sass" scoped>
@@ -75,6 +84,12 @@
     border: 0
     resize: none
     z-index: 1
+
+    &.querying
+      background-color: rgba($brand-warning, .1)
+
+    &.queryerror
+      background-color: rgba($brand-danger, .1)
 
   .query-saved, .query-history
     padding: 0 10px
@@ -113,40 +128,77 @@
 
         databases: [],
         tables: [],
-        fullresults: [],
+        results: [],
         savedqueries: [],
         historyqueries: [],
 
         selectedResult: null,
 
-        selectedDatabase: null
-      }
-    },
+        selectedDatabase: null,
 
-    computed: {
-      results() {
-        return this.selectedResult || this.fullresults;
+        query: '',
+
+        isQuerying: false,
+        queryError: ''
       }
     },
 
     watch: {
       selectedDatabase(newValue) {
-        this.connection.query('use ??', [newValue])
-          .then(() => {
-
-          })
+        this.connection.useDatabase(newValue)
+          .then(() => this.refreshTables())
       }
     },
 
     created() {
-      this.connection.query('show databases')
-        .then(([result]) => {
-          this.databases = result.map(item => item.Database)
-
-          if (this.databases.length) {
-            this.selectedDatabase = this.databases[0]
+      this.refreshDatabases()
+        .then(() => {
+          if (this.connection.data.database && this.databases.indexOf(this.connection.data.database) >= 0) {
+            this.selectedDatabase = this.connection.data.database
           }
         })
+    },
+
+    methods: {
+      refreshDatabases() {
+        return this.connection.getDatabases()
+          .then(result => this.databases = result)
+          .catch(err => {
+            alert(err)
+          })
+      },
+
+      refreshTables() {
+        this.tables = []
+
+        return this.connection.getTables(this.selectedDatabase)
+          .then(result => this.tables = result)
+      },
+
+      execute() {
+        if (!this.query.trim()) {
+          return
+        }
+
+        this.queryError = false
+        this.isQuering = true
+
+        return this.connection.query(this.query)
+          .then(([result, fields]) => {
+            this.results.push({
+              result, fields
+            })
+
+            this.selectedResult = this.results[this.results.length - 1]
+
+            this.isQuerying = false
+
+          })
+          .catch(err => {
+            this.isQuerying = false
+            this.queryError = err
+          })
+      }
     }
   }
 </script>

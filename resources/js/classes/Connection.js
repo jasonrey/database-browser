@@ -13,6 +13,8 @@ class Connection {
 
     this.adapter = new adapters[adapter](filteredData)
 
+    this.data = filteredData
+
     store.commit('log/action', {
       action: 'createConnection',
       connection: this.adapter.connectioninfo
@@ -83,6 +85,29 @@ class Connection {
 
     return this.adapter.end()
   }
+
+  getDatabases() {
+    return this.query('show databases')
+      .then(([result]) => result.map(item => item.Database).filter(item => [
+        'performance_schema',
+        'information_schema',
+        'mysql',
+        'sys'
+      ].indexOf(item) === -1))
+  }
+
+  useDatabase(db) {
+    return this.query('use ??', [db])
+  }
+
+  getTables(db) {
+    return this.query('select table_name as name, table_rows as total from information_schema.tables where table_schema = ?', [db])
+      .then(([result, fields]) => result)
+  }
+
+  getResult(query) {
+    return this.query(query)
+  }
 }
 
 Connection.adapters = {}
@@ -92,6 +117,7 @@ Connection.dataKeys = [
   'host',
   'username',
   'password',
+  'database',
   'port',
   'useSSH',
   'sshhost',

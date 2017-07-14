@@ -50,6 +50,6 @@
 
 <script>
   export default {
-    props: ['selected']
+    props: ['selected', 'item']
   }
 </script>

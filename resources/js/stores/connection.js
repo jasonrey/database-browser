@@ -15,6 +15,7 @@ export default {
       host: '',
       username: '',
       password: '',
+      database: '',
       port: 3306,
       useSSH: false,
       sshhost: '',
@@ -52,6 +53,7 @@ export default {
       state.form.host = ''
       state.form.username = ''
       state.form.password = ''
+      state.form.database = ''
       state.form.port = 3306
       state.form.useSSH = false
       state.form.sshhost = ''

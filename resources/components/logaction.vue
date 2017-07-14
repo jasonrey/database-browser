@@ -1,10 +1,8 @@
 <template lang="pug">
-  .bg-info.monospace(v-if="item.payload") {{ JSON.stringify(item.payload) }}
+  .bg-info.monospace.small.p-5(v-if="item.payload") {{ JSON.stringify(item.payload) }}
 </template>
 
 <style lang="sass" scoped>
-  .bg-info
-    padding: 10px
 </style>
 
 <script>

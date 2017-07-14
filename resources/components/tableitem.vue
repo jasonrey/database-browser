@@ -1,10 +1,9 @@
 <template lang="pug">
   .item
-    .tablename.item-hover(@click="showFields = !showFields")
-      span.caret
-      =" {{ table.name }}"
-
-      .badge 13
+    .item-hover.flex.flex-align-items-center(@click="showFields = !showFields")
+      span.caret.flex-no-shrink
+      .tablename.small.flex-grow(:title="table.name")=" {{ table.name }}"
+      .label.label-default.label-xs.flex-no-shrink {{ table.total }}
 
     ul(v-show="showFields")
       li.monospace(v-for="field in fields", :key="field.name")
@@ -23,12 +22,9 @@
 
   .tablename
     padding: 10px 0
-
-  .badge
-    position: absolute
-    top: 50%
-    right: 4px
-    transform: translateY(-50%)
+    white-space: pre
+    text-overflow: ellipsis
+    overflow: hidden
 
   .field-type
     &::before
@@ -59,13 +55,6 @@
 
     methods: {
       initFields() {
-        this.fields.push({
-          name: 'id',
-          type: 'int'
-        }, {
-          name: 'name',
-          type: 'varchar'
-        });
       }
     }
   }
