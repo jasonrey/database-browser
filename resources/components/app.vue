@@ -6,13 +6,15 @@
       li(:class="{ active: selectedConnection === null }", @click="selectConnection(null)")
         a(href="javascript:;")
           i.glyphicon.glyphicon-plus
+      li.pull-right(:class="{ active: selectedConnection === false }", @click="selectConnection(false)")
+        a(href="javascript:;") Log
     .flex-grow
       servercontent(v-for="(connection, index) in connections", :key="connection.id", :connection="connection", :class="{ active: connection === selectedConnection }")
 
       .active-only.active-flex.abs.abs-full-size(:class="{ active: selectedConnection === null }")
         .sidebar.flex-no-shrink.overflow-auto
           serveritem(:server="null", :class="{ active: selectedServer === null }")
-          serveritem(v-for="(server, index) in servers", :key="index", :server="server", :class="{ active: selectedServer === server }", @connect="createConnection")
+          serveritem(v-for="(server, index) in servers", :key="index", :server="server", :class="{ active: selectedServer === server }")
 
         .connection-form.flex-grow.flex.overflow-auto
           .col-xs-6.col-xs-offset-3.text-center(v-show="isConnecting")
@@ -71,6 +73,10 @@
               .btn-group
                 button.btn.btn-block.btn-lg.btn-success(:disabled="!formFilled")
                   i.glyphicon.glyphicon-ok
+
+      .active-only.abs.abs-full-size.overflow-auto(:class="{ active: selectedConnection === false }")
+        logitem(v-for="log in logs", :key="log.hash", :item="log")
+
 </template>
 
 <style lang="sass">
@@ -156,6 +162,8 @@
   import servercontent from './servercontent.vue'
   import serveritem from './serveritem.vue'
 
+  import logitem from './logitem.vue'
+
   import Connection from '../js/classes/Connection.js'
   import Server from '../js/classes/Server.js'
 
@@ -163,7 +171,8 @@
     components: {
       servernav,
       servercontent,
-      serveritem
+      serveritem,
+      logitem
     },
 
     computed: {
@@ -178,6 +187,10 @@
         isConnecting: 'connecting',
         connectionError: 'error',
         newconnection: 'form'
+      }),
+
+      ...mapState('log', {
+        logs: 'items'
       }),
 
       formFilled() {

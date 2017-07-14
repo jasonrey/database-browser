@@ -129,6 +129,15 @@
       }
     },
 
+    watch: {
+      selectedDatabase(newValue) {
+        this.connection.query('use ??', [newValue])
+          .then(() => {
+
+          })
+      }
+    },
+
     created() {
       this.connection.query('show databases')
         .then(([result]) => {

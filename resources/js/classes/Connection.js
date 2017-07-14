@@ -1,94 +1,91 @@
-const mysql = require('mysql')
+import mysql from '../adapters/mysql.js'
+
+const adapters = {
+  mysql
+}
 
 class Connection {
-  constructor(data) {
-    this.db = mysql.createConnection({
-      host: data.host,
-      user: data.user || data.username,
-      password: data.password,
-      port: data.port || 3306
-    })
+  constructor(data, adapter = 'mysql') {
+    let filteredData = Connection.dataKeys.reduce((result, key) => {
+      result[key] = data[key]
+      return result
+    }, {})
 
-    Connection.dataKeys.map(key => this[key] = data[key])
+    this.adapter = new adapters[adapter](filteredData)
 
     store.commit('log/action', {
       action: 'createConnection',
-      ...this.data
+      connection: this.adapter.connectioninfo
     })
   }
 
-  get logdata() {
-    return {
-      host: this.host,
-      username: this.username,
-      port: this.port
-    }
+  get name() {
+    return this.adapter.connectionname
   }
 
   connect() {
-    return new Promise((resolve, reject) => {
-      this.db.connect(err => {
-        if (err) {
-          store.commit('log/error', {
-            action: 'connect',
-            err,
-            connection: this.logdata
-          })
-
-          return reject(err)
-        }
-
-        this.id = this.db.threadId
+    return this.adapter.connect()
+      .then(() => {
+        this.id = this.adapter.id
 
         store.commit('log/action', {
           action: 'connect',
-          id: this.id,
-          connection: this.logdata
+          connection: this.adapter.connectioninfo,
+          payload: {
+            id: this.id
+          }
+        })
+      })
+      .catch(err => {
+        store.commit('log/error', {
+          connection: this.adapter.connectioninfo,
+          action: 'connect',
+          err
         })
 
-        resolve(this)
+        throw new Error(err)
       })
-    })
   }
 
   query(query, values) {
-    return new Promise((resolve, reject) => {
-      this.db.query(query, values, (err, result, fields) => {
-        if (err) {
-          store.commit('log/error', {
-            action: 'query',
-            query,
-            values,
-            err,
-            connection: this.logdata
-          })
-
-          return reject(err)
-        }
-
+    return this.adapter.query(query, values)
+      .then(([result, fields]) => {
         store.commit('log/query', {
+          connection: this.adapter.connectioninfo,
           query,
           values,
-          err,
           result,
-          fields,
-          connection: this.logdata
+          fields
         })
 
-        resolve([result, fields])
+        return [result, fields]
       })
-    })
+      .catch(err => {
+        store.commit('log/error', {
+          connection: this.adapter.connectioninfo,
+          action: 'query',
+          err,
+          payload: {
+            query,
+            values
+          }
+        })
+
+        throw new Error(err)
+      })
   }
 
   end() {
     store.commit('log/action', {
       action: 'end',
-      connection: this.logdata
+      connection: this.adapter.connectioninfo
     })
 
-    return this.db.end()
+    return this.adapter.end()
   }
 }
+
+Connection.adapters = {}
 
 Connection.dataKeys = [
   'name',

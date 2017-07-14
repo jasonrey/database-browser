@@ -2,7 +2,7 @@
   .item.clearfix(:data-tag="server && server.data.color")
     .tag.abs.abs-full-height
     .connectionname.item-hover(@click="selectServer(server)", @dblclick="connectServer(server)")
-      strong {{ connectionname || '⚡ Quick Connect' }}
+      strong {{ connectionname || 'Quick Connect' }}
 
     .actions(v-if="server !== null")
       button.btn.btn-sm.btn-link(@click="deleteServer(server)")
@@ -94,10 +94,14 @@
         selectServer: 'select'
       }),
 
+      ...mapActions('connection', {
+        createConnection: 'create'
+      }),
+
       connectServer(server) {
         this.selectServer(server)
 
-        this.$emit('connect')
+        this.createConnection()
       },
 
       deleteServer(server) {

@@ -1,7 +1,7 @@
 <template lang="pug">
   li
     a(href="javascript:;", @click="selectConnection(connection)", :data-status="status")
-      .inline-block {{ connection.name || connection.host }}
+      .inline-block {{ connection.name }}
 
     button.btn.btn-link.btn-xs(@click="closeConnection(connection)")
       i.glyphicon.glyphicon-remove
