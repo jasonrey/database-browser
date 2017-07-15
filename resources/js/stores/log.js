@@ -10,7 +10,7 @@ class Log {
   }
 
   get date() {
-    return moment(this.unix).format('YY-MM-DD HH:mm:ss')
+    return moment(this.unix).format('YYYY-MM-DD HH:mm:ss')
   }
 
   get unix() {
