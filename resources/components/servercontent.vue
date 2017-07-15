@@ -15,7 +15,7 @@
           button.btn.btn-default
             i.glyphicon.glyphicon-plus
         .btn-group
-          button.btn.btn-default
+          button.btn.btn-default(@click="refresh")
             i.glyphicon.glyphicon-refresh
         .btn-group
           button.btn.btn-default
@@ -45,17 +45,16 @@
                 i.glyphicon.glyphicon-remove
               button.btn.btn-link.btn-sm(@click="execute")
                 i.glyphicon.glyphicon-ok
-          .query-saved.active-only.overflow-auto(:class="{ active: queryTab === 'saved' }")
+          .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'saved' }")
             querysaveditem(v-for="(item, index) in savedqueries", :key="index")
-          .query-history.active-only.overflow-auto(:class="{ active: queryTab === 'history' }")
+          .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'history' }")
             queryhistoryitem(v-for="(item, index) in historyqueries", :key="index")
 
       .content-result.flex-grow(:class="{ 'full-result': selectedResult }")
-        .abs.abs-full-width.abs-full-height.overflow-auto
-          resultitem(v-if="selectedResult", :selected="selectedResult", @viewHistory="selectedResult = null", :item="selectedResult")
+        resultitem(v-if="selectedResult", :selected="selectedResult", @viewHistory="selectedResult = null", :item="selectedResult")
 
-          .p-10(v-else)
-            resultitem(v-for="(item, index) in results", :key="index", :selected="selectedResult", @viewResult="selectedResult = item", :item="item")
+        .abs.abs-full-size.p-10.overflow-auto(v-else)
+          resultitem(v-for="(item, index) in results", :key="index", :selected="selectedResult", @viewResult="selectedResult = item", :item="item")
 
 </template>
 
@@ -91,19 +90,8 @@
     &.queryerror
       background-color: rgba($brand-danger, .1)
 
-  .query-saved, .query-history
-    padding: 0 10px
-
   .content-result
     border-top: 1px solid $gray-light
-
-    > .abs
-      padding: 10px
-
-    &.full-result
-
-      > .abs
-        padding: 0
 </style>
 
 <script>
@@ -145,6 +133,11 @@
 
     watch: {
       selectedDatabase(newValue) {
+        if (!newValue) {
+          this.tables = []
+          return
+        }
+
         this.connection.useDatabase(newValue)
           .then(() => this.refreshTables())
       }
@@ -160,6 +153,19 @@
     },
 
     methods: {
+      refresh() {
+        return this.refreshDatabases()
+          .then(result => {
+            if (this.selectedDatabase && result.indexOf(this.selectedDatabase) < 0) {
+              this.selectedDatabase = null
+            }
+
+            if (this.selectedDatabase) {
+              return this.refreshTables()
+            }
+          })
+      },
+
       refreshDatabases() {
         return this.connection.getDatabases()
           .then(result => this.databases = result)
@@ -176,17 +182,20 @@
       },
 
       execute() {
-        if (!this.query.trim()) {
+        const query = this.query.trim()
+        const date = Date.now()
+
+        if (!query) {
           return
         }
 
         this.queryError = false
         this.isQuering = true
 
-        return this.connection.query(this.query)
+        return this.connection.query(query)
           .then(([result, fields]) => {
             this.results.push({
-              result, fields
+              query, result, fields, date
             })
 
             this.selectedResult = this.results[this.results.length - 1]
