@@ -8,7 +8,12 @@
           option(v-for="database in databases", :key="database", :value="database") {{ database }}
       .flex-grow
         .abs.abs-full-size.overflow-auto
-          tableitem(v-for="table in tables", :key="table.name", :table="table")
+          tableitem(v-for="table in tables"
+            :key="table.name"
+            :table="table"
+            :connection="connection"
+            :database="selectedDatabase"
+          )
 
       .flex-no-grow.flex-no-shrink.btn-group.btn-group-justified
         .btn-group

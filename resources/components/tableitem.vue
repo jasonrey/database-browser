@@ -1,14 +1,16 @@
 <template lang="pug">
   .item
     .item-hover.flex.flex-align-items-center(@click="showFields = !showFields")
-      span.caret.flex-no-shrink
-      .tablename.small.flex-grow(:title="table.name")=" {{ table.name }}"
-      .label.label-default.label-xs.flex-no-shrink {{ table.total }}
+      span.caret.flex-no-shrink.mh-5
+      .tablename.small.flex-grow.pv-10(:title="table.name")
+        strong {{ table.name }}
+      .label.label-default.label-xs.flex-no-shrink.mh-5 {{ table.total }}
 
-    ul(v-show="showFields")
-      li.monospace(v-for="field in fields", :key="field.name")
-        span.field-name {{ field.name }}
-        span.field-type {{ field.type }}
+    .ph-5.pb-5.small(v-if="showFields")
+      .fields
+        .field.p-5.pl-10.flex(v-for="field in fields", :key="field.name")
+          .flex-grow {{ field.name }}
+          .flex-no-shrink.monospace {{ field.type + (field.length ? '(' + field.length + ')' : '')}}
 </template>
 
 <style lang="sass" scoped>
@@ -21,22 +23,21 @@
       border-bottom: 0
 
   .tablename
-    padding: 10px 0
     white-space: pre
     text-overflow: ellipsis
     overflow: hidden
 
-  .field-type
-    &::before
-      content: ' ['
+  .fields
+    border-top: 1px solid $gray-light
 
-    &::after
-      content: ']'
+  .field
+    &:hover
+      background-color: $gray-lighter
 </style>
 
 <script>
   export default {
-    props: ['table'],
+    props: ['table', 'connection', 'database'],
 
     data() {
       return {
@@ -55,6 +56,8 @@
 
     methods: {
       initFields() {
+        return this.connection.getColumns(this.database, this.table.name)
+          .then(fields => this.fields = fields)
       }
     }
   }

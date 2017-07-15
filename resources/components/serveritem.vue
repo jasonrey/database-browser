@@ -1,7 +1,7 @@
 <template lang="pug">
   .item.clearfix(:data-tag="server && server.data.color")
     .tag.abs.abs-full-height
-    .connectionname.item-hover(@click="selectServer(server)", @dblclick="connectServer(server)")
+    .connectionname.item-hover.p-10(@click="selectServer(server)", @dblclick="connectServer(server)")
       span(v-if="server") {{ connectionname }}
       strong(v-else) Quick Connect
 
@@ -30,7 +30,6 @@
       background-color: rgba($brand-info, 0.1)
 
   .connectionname
-    padding: 5px 10px
     color: $gray
 
   .actions

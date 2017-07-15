@@ -108,6 +108,29 @@ class Connection {
   getResult(query) {
     return this.query(query)
   }
+
+  getColumns(db, table) {
+    return this.query('show full columns from ??.??', [db, table])
+      .then(([result, fields]) => {
+        return result.map(item => {
+          let openBracketIndex = item.Type.indexOf('(')
+          let closeBracketIndex = item.Type.indexOf(')')
+          let type = item.Type
+          let length = 0
+
+          if (openBracketIndex >= 0) {
+            type = item.Type.slice(0, openBracketIndex)
+            length = item.Type.slice(openBracketIndex + 1, closeBracketIndex)
+          }
+
+          return {
+            name: item.Field,
+            type,
+            length
+          }
+        })
+      })
+  }
 }
 
 Connection.adapters = {}
