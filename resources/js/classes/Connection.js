@@ -13,7 +13,7 @@ class Connection {
 
     this.adapter = new adapters[adapter](filteredData)
 
-    this.data = filteredData
+    this.server = filteredData
 
     store.commit('log/action', {
       action: 'createConnection',
@@ -28,8 +28,6 @@ class Connection {
   connect() {
     return this.adapter.connect()
       .then(() => {
-        this.id = this.adapter.id
-
         store.commit('log/action', {
           action: 'connect',
           connection: this.adapter.connectioninfo,

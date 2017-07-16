@@ -3,7 +3,7 @@
     .sidebar.flex-no-shrink.flex.flex-column
       .select.flex-no-shrink
         .caret
-        select.form-control(v-model="selectedDatabase")
+        select.form-control(v-model="selectedDatabase", @change="selectDatabase(selectedDatabase)")
           option(disabled, :value="null") Select Database
           option(
             v-for="database in databases"
@@ -56,8 +56,8 @@
           .active-only.active-flex.flex-column(:class="{ active: queryTab === '' || queryTab === 'editor' }")
             textarea.form-control.flex-grow.monospace(
               v-model="query"
-              @keyup.ctrl.enter="execute"
-              @keyup.meta.enter="execute"
+              @keyup.ctrl.enter="execute(query)"
+              @keyup.meta.enter="execute(query)"
               :class="{ querying: isQuerying, queryerror: queryError }"
             )
             .bg-muted.flex.flex-align-items-center
@@ -67,7 +67,7 @@
                 i.glyphicon.glyphicon-star-empty
               button.btn.btn-link.btn-sm(@click="query = ''")
                 i.glyphicon.glyphicon-remove
-              button.btn.btn-link.btn-sm(@click="execute")
+              button.btn.btn-link.btn-sm(@click="execute(query)")
                 i.glyphicon.glyphicon-ok
           .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'saved' }")
             querysaveditem(
@@ -76,9 +76,14 @@
             )
           .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'history' }")
             queryhistoryitem(
-              v-for="(item, index) in historyqueries"
-              :key="index"
+              v-for="item in history"
+              :key="item.id"
+              :item="item"
+              @click="executeHistory(item)"
             )
+
+            button.btn.btn-block.btn-warning.mv-10(v-if="history.length", @click="clearHistory")
+              strong Clear History
 
       .content-result.flex-grow(:class="{ 'full-result': selectedResult }")
         resultitem(
@@ -132,7 +137,7 @@
       background-color: rgba($brand-danger, .1)
 
   .content-result
-    border-top: 1px solid $gray-light
+    border-top: 3px solid $gray-light
 </style>
 
 <script>
@@ -140,6 +145,8 @@
   import resultitem from './resultitem.vue'
   import querysaveditem from './querysaveditem.vue'
   import queryhistoryitem from './queryhistoryitem.vue'
+
+  import Config from '../js/classes/Config.js'
 
   export default {
     components: {
@@ -172,25 +179,31 @@
       }
     },
 
-    watch: {
-      selectedDatabase(newValue) {
-        if (!newValue) {
-          this.tables = []
-          return
-        }
-
-        this.connection.useDatabase(newValue)
-          .then(() => this.refreshTables())
+    computed: {
+      history() {
+        return this.historyqueries.slice().reverse()
       }
     },
 
     created() {
       this.refreshDatabases()
         .then(() => {
-          if (this.connection.data.database && this.databases.indexOf(this.connection.data.database) >= 0) {
-            this.selectedDatabase = this.connection.data.database
+          if (this.connection.server.database && this.databases.indexOf(this.connection.server.database) >= 0) {
+            this.selectDatabase(this.connection.server.database)
           }
         })
+
+      if (this.connection.server.id) {
+        let config = Config.get(this.connection.server.id, {})
+
+        if (config.history) {
+          this.historyqueries = config.history
+        }
+
+        if (config.saved) {
+          this.savedqueries = config.saved
+        }
+      }
     },
 
     methods: {
@@ -198,7 +211,7 @@
         return this.refreshDatabases()
           .then(result => {
             if (this.selectedDatabase && result.indexOf(this.selectedDatabase) < 0) {
-              this.selectedDatabase = null
+              this.selectDatabase(null)
             }
 
             if (this.selectedDatabase) {
@@ -222,9 +235,28 @@
           .then(result => this.tables = result)
       },
 
-      execute() {
-        const query = this.query.trim()
+      syncHistory() {
+        if (this.connection.server.id) {
+          Config.set(this.connection.server.id + '.history', JSON.parse(JSON.stringify(this.historyqueries)))
+        }
+      },
+
+      selectDatabase(db) {
+        this.selectedDatabase = db
+
+        if (!db) {
+          this.tables = []
+          return Promise.resolve()
+        }
+
+        return this.connection.useDatabase(db)
+          .then(() => this.refreshTables())
+      },
+
+      execute(query, recordHistory = true) {
         const date = Date.now()
+
+        query = query.trim()
 
         if (!query) {
           return
@@ -232,6 +264,20 @@
 
         this.queryError = false
         this.isQuering = true
+
+        let historydata = {
+          id: date + '.' + Math.random().toString().slice(2),
+          query,
+          date,
+          selectedDatabase: this.selectedDatabase,
+          state: null
+        }
+
+        const historyqueriesIndex = this.historyqueries.length
+
+        if (recordHistory) {
+          this.historyqueries.push(historydata)
+        }
 
         return this.connection.query(query)
           .then(([result, fields]) => {
@@ -243,11 +289,62 @@
 
             this.isQuerying = false
 
+            if (recordHistory) {
+              historydata.state = true
+              historydata.result = result
+              historydata.fields = fields
+              historydata.time = Date.now() - date
+
+              this.historyqueries.splice(historyqueriesIndex, 1, historydata)
+
+              this.syncHistory()
+            }
           })
           .catch(err => {
             this.isQuerying = false
             this.queryError = err
+
+            if (recordHistory) {
+              historydata.state = false
+              historydata.err = err
+              historydata.time = Date.now() - date
+
+              this.historyqueries.splice(historyqueriesIndex, 1, historydata)
+
+              this.syncHistory()
+            }
           })
+      },
+
+      executeHistory(item) {
+        let result = true
+
+        const processes = []
+
+        if (this.selectedDatabase !== item.selectedDatabase) {
+          result = confirm('Query database and selected database is different. This will change the current database.')
+
+          if (result) {
+            processes.push(this.selectDatabase(item.selectedDatabase))
+          }
+        }
+
+        if (!result) {
+          return
+        }
+
+        return Promise.all(processes)
+          .then(() => this.execute(item.query, false))
+      },
+
+      clearHistory() {
+        if (!confirm('This will clear all history items.')) {
+          return
+        }
+
+        this.historyqueries = []
+
+        this.syncHistory()
       }
     }
   }

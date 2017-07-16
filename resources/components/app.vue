@@ -2,8 +2,8 @@
   main.flex.flex-column
     ul.nav.nav-tabs.flex-no-grow.flex-no-shrink.bg-muted
       servernav(
-        v-for="(connection, index) in connections"
-        :key="connection.id"
+        v-for="connection in connections"
+        :key="connection.adapter.id"
         :connection="connection"
         :class="{ active: connection === selectedConnection }"
       )
@@ -21,8 +21,8 @@
         a(href="javascript:;") Log
     .flex-grow
       servercontent(
-        v-for="(connection, index) in connections"
-        :key="connection.id"
+        v-for="connection in connections"
+        :key="connection.adapter.id"
         :connection="connection",
         :class="{ active: connection === selectedConnection }"
       )
@@ -303,9 +303,13 @@
         newconnection: 'form'
       }),
 
-      ...mapState('log', {
-        logs: 'items'
-      }),
+      logs() {
+        if (!this.$store) {
+          return []
+        }
+
+        return this.$store.state.log.items.slice().reverse()
+      },
 
       formFilled() {
         if (!this.newconnection.host ||
