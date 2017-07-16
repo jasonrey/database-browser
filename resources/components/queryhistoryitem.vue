@@ -5,10 +5,10 @@
   )
     .monospace.mb-5 {{ item.query }}
     .meta.flex.small.text-muted(v-if="item.state === true")
-      span.mr-5(v-if="item.selectedDatabase") @{{ item.selectedDatabase }}
-      span.mr-5(v-if="item.fields && item.result") {{ item.result.length }} row{{ item.result.length > 1 ? 's' : '' }}
-      span {{ (item.time / 1000).toFixed(2) }}s
+      span(v-if="item.selectedDatabase") @{{ item.selectedDatabase }}
       span.flex-grow
+      span.mr-5(v-if="item.fields && item.result") {{ item.result.length }} row{{ item.result.length > 1 ? 's' : '' }}
+      span.mr-5 {{ (item.time / 1000).toFixed(2) }}s
       span {{ date }}
     .bg-danger.p-10(v-if="item.state === false") {{ item.err }}
 </template>

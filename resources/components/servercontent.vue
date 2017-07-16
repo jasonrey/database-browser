@@ -63,7 +63,7 @@
             .bg-muted.flex.flex-align-items-center
               .small.p-5(v-if="query") Count: {{ query.length }}
               .flex-grow
-              button.btn.btn-link.btn-sm
+              button.btn.btn-link.btn-sm(@click="save(query)")
                 i.glyphicon.glyphicon-star-empty
               button.btn.btn-link.btn-sm(@click="query = ''")
                 i.glyphicon.glyphicon-remove
@@ -71,8 +71,11 @@
                 i.glyphicon.glyphicon-ok
           .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'saved' }")
             querysaveditem(
-              v-for="(item, index) in savedqueries"
-              :key="index"
+              v-for="item in savedqueries"
+              :key="item.id"
+              :item="item"
+              @click="executeSave(item)"
+              @remove="removeSave(item)"
             )
           .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'history' }")
             queryhistoryitem(
@@ -235,12 +238,6 @@
           .then(result => this.tables = result)
       },
 
-      syncHistory() {
-        if (this.connection.server.id) {
-          Config.set(this.connection.server.id + '.history', JSON.parse(JSON.stringify(this.historyqueries)))
-        }
-      },
-
       selectDatabase(db) {
         this.selectedDatabase = db
 
@@ -345,6 +342,68 @@
         this.historyqueries = []
 
         this.syncHistory()
+      },
+
+      syncHistory() {
+        if (this.connection.server.id) {
+          Config.set(this.connection.server.id + '.history', JSON.parse(JSON.stringify(this.historyqueries)))
+        }
+      },
+
+      save(query) {
+        if (!query.trim()) {
+          return
+        }
+
+        const date = Date.now()
+
+        let savedata = {
+          id: date + '.' + Math.random().toString().slice(2),
+          query,
+          date,
+          selectedDatabase: this.selectedDatabase
+        }
+
+        this.savedqueries.push(savedata)
+
+        this.syncSave()
+      },
+
+      executeSave(item) {
+        let result = true
+
+        const processes = []
+
+        if (this.selectedDatabase !== item.selectedDatabase) {
+          result = confirm('Query database and selected database is different. This will change the current database.')
+
+          if (result) {
+            processes.push(this.selectDatabase(item.selectedDatabase))
+          }
+        }
+
+        if (!result) {
+          return
+        }
+
+        return Promise.all(processes)
+          .then(() => this.execute(item.query))
+      },
+
+      removeSave(item) {
+        if (!confirm(`Delete the saved query: ${item.query}?`)) {
+          return
+        }
+
+        this.savedqueries.splice(this.savedqueries.indexOf(item), 1)
+
+        this.syncSave()
+      },
+
+      syncSave() {
+        if (this.connection.server.id) {
+          Config.set(this.connection.server.id + '.saved', JSON.parse(JSON.stringify(this.savedqueries)))
+        }
       }
     }
   }
