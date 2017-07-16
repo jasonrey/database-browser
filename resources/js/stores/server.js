@@ -17,7 +17,7 @@ export default {
     add(state, item) {
       state.items.push(item)
 
-      Config.set('servers', state.items.map(item => item.data))
+      Config.set('servers', state.items)
     },
 
     set(state, item) {
@@ -27,13 +27,13 @@ export default {
     update(state, item) {
       state.selected.update(item)
 
-      Config.set('servers', state.items.map(item => item.data))
+      Config.set('servers', state.items)
     },
 
     remove(state, item) {
       state.items.splice(state.items.indexOf(item), 1)
 
-      Config.set('servers', state.items.map(item => item.data))
+      Config.set('servers', state.items)
     }
   },
 
@@ -53,7 +53,7 @@ export default {
         return commit('connection/resetForm', null, {root: true})
       }
 
-      return commit('connection/setForm', item.data, {root: true})
+      return commit('connection/setForm', item, {root: true})
     },
 
     save({commit, state}, item) {

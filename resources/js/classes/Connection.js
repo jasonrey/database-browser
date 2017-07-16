@@ -136,6 +136,7 @@ class Connection {
 Connection.adapters = {}
 
 Connection.dataKeys = [
+  'id',
   'name',
   'host',
   'username',

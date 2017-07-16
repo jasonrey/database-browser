@@ -1,18 +1,21 @@
 class Server {
   constructor(data) {
-    this.data = {}
-
     this.update(data)
+
+    if (!this.id) {
+      this.id = Date.now() + '.' + Math.random().toString().slice(2)
+    }
   }
 
   update(data) {
-    Server.dataKeys.map(key => this.data[key] = data[key])
+    Server.dataKeys.map(key => this[key] = data[key])
 
     return this
   }
 }
 
 Server.dataKeys = [
+  'id',
   'name',
   'host',
   'username',

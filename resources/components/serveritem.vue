@@ -1,5 +1,5 @@
 <template lang="pug">
-  .item.clearfix(:data-tag="server && server.data.color")
+  .item.clearfix(:data-tag="server && server.color")
     .tag.abs.abs-full-height
     .connectionname.item-hover.p-10(@click="selectServer(server)", @dblclick="connectServer(server)")
       span(v-if="server") {{ connectionname }}
@@ -82,7 +82,7 @@
           return ''
         }
 
-        return this.server.data.name || (this.server.data.username + '@' + this.server.data.host + (parseInt(this.server.data.port) !== 3306 ? ':' + this.server.data.port : ''))
+        return this.server.name || (this.server.username + '@' + this.server.host + (parseInt(this.server.port) !== 3306 ? ':' + this.server.port : ''))
       },
 
       ...mapState({
@@ -106,7 +106,7 @@
       },
 
       deleteServer(server) {
-        const result = confirm('Delete the server - ' + (server.data.name || server.data.host))
+        const result = confirm('Delete the server - ' + (server.name || server.host))
 
         if (result) {
           this.$store.dispatch('server/delete', server)

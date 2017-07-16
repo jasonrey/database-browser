@@ -5,10 +5,15 @@
         .caret
         select.form-control(v-model="selectedDatabase")
           option(disabled, :value="null") Select Database
-          option(v-for="database in databases", :key="database", :value="database") {{ database }}
+          option(
+            v-for="database in databases"
+            :key="database"
+            :value="database"
+          ) {{ database }}
       .flex-grow
         .abs.abs-full-size.overflow-auto
-          tableitem(v-for="table in tables"
+          tableitem(
+            v-for="table in tables"
             :key="table.name"
             :table="table"
             :connection="connection"
@@ -31,16 +36,30 @@
     .flex.flex-grow.flex-column
       .content-query
         ul.nav.nav-tabs
-          li(:class="{ active: queryTab === '' || queryTab === 'editor' }", @click="queryTab = 'editor'")
+          li(
+            :class="{ active: queryTab === '' || queryTab === 'editor' }"
+            @click="queryTab = 'editor'"
+          )
             a(href="javascript:;") Editor
-          li(:class="{ active: queryTab === 'saved' }", @click="queryTab = 'saved'")
+          li(
+            :class="{ active: queryTab === 'saved' }"
+            @click="queryTab = 'saved'"
+          )
             a(href="javascript:;") Saved
-          li(:class="{ active: queryTab === 'history' }", @click="queryTab = 'history'")
+          li(
+            :class="{ active: queryTab === 'history' }"
+            @click="queryTab = 'history'"
+          )
             a(href="javascript:;") History
 
         .nav-contents
           .active-only.active-flex.flex-column(:class="{ active: queryTab === '' || queryTab === 'editor' }")
-            textarea.form-control.flex-grow.monospace(v-model="query", @keyup.ctrl.enter="execute", :class="{ querying: isQuerying, queryerror: queryError }")
+            textarea.form-control.flex-grow.monospace(
+              v-model="query"
+              @keyup.ctrl.enter="execute"
+              @keyup.meta.enter="execute"
+              :class="{ querying: isQuerying, queryerror: queryError }"
+            )
             .bg-muted.flex.flex-align-items-center
               .small.p-5(v-if="query") Count: {{ query.length }}
               .flex-grow
@@ -51,15 +70,32 @@
               button.btn.btn-link.btn-sm(@click="execute")
                 i.glyphicon.glyphicon-ok
           .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'saved' }")
-            querysaveditem(v-for="(item, index) in savedqueries", :key="index")
+            querysaveditem(
+              v-for="(item, index) in savedqueries"
+              :key="index"
+            )
           .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'history' }")
-            queryhistoryitem(v-for="(item, index) in historyqueries", :key="index")
+            queryhistoryitem(
+              v-for="(item, index) in historyqueries"
+              :key="index"
+            )
 
       .content-result.flex-grow(:class="{ 'full-result': selectedResult }")
-        resultitem(v-if="selectedResult", :selected="selectedResult", @viewHistory="selectedResult = null", :item="selectedResult")
+        resultitem(
+          v-if="selectedResult"
+          @viewHistory="selectedResult = null"
+          :selected="selectedResult"
+          :item="selectedResult"
+        )
 
         .abs.abs-full-size.p-10.overflow-auto(v-else)
-          resultitem(v-for="(item, index) in results", :key="index", :selected="selectedResult", @viewResult="selectedResult = item", :item="item")
+          resultitem(
+            v-for="(item, index) in results"
+            @viewResult="selectedResult = item"
+            :key="index"
+            :selected="selectedResult"
+            :item="item"
+          )
 
 </template>
 
