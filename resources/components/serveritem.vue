@@ -6,7 +6,7 @@
       strong(v-else) Quick Connect
 
     .actions(v-if="server !== null")
-      button.btn.btn-sm.btn-link(@click="deleteServer(server)")
+      button.btn.btn-sm.btn-link(@click="$emit('delete')")
         i.glyphicon.glyphicon-remove
 </template>
 
@@ -103,14 +103,6 @@
         this.selectServer(server)
 
         this.createConnection()
-      },
-
-      deleteServer(server) {
-        const result = confirm('Delete the server - ' + (server.name || server.host))
-
-        if (result) {
-          this.$store.dispatch('server/delete', server)
-        }
       }
     }
   }

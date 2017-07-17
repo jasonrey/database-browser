@@ -6,7 +6,7 @@ class Log {
 
     Object.keys(item).map(key => this[key] = item[key])
 
-    this.hash = Date.now() + Math.random().toString().slice(1)
+    this.hash = Date.now() + '-' + Math.random().toString().slice(2)
   }
 
   get date() {

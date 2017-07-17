@@ -38,10 +38,25 @@ export default {
   },
 
   actions: {
-    delete({commit, state, dispatch}, item) {
+    delete({commit, state, dispatch, rootState}, item) {
+      let found = false
+
+      for (let i = 0; i < rootState.connection.items.length; i++) {
+        if (rootState.connection.items[i].server.id === item.id) {
+          found = true
+          break;
+        }
+      }
+
+      if (found) {
+        return false
+      }
+
       if (item === state.selected) {
         dispatch('select', null)
       }
+
+      Config.set(item.id, null)
 
       commit('remove', item)
     },

@@ -263,7 +263,7 @@
         this.isQuering = true
 
         let historydata = {
-          id: date + '.' + Math.random().toString().slice(2),
+          id: date + '-' + Math.random().toString().slice(2),
           query,
           date,
           selectedDatabase: this.selectedDatabase,
@@ -360,7 +360,7 @@
         const date = Date.now()
 
         let savedata = {
-          id: date + '.' + Math.random().toString().slice(2),
+          id: date + '-' + Math.random().toString().slice(2),
           query,
           date,
           selectedDatabase: this.selectedDatabase

@@ -10,6 +10,7 @@
         :key="server.id"
         :server="server"
         :class="{ active: selectedServer === server }"
+        @delete="deleteServer(server)"
       )
 
     .connection-form.flex-grow.flex.overflow-auto
@@ -155,15 +156,19 @@
               :disabled="!formFilled"
             )
               i.glyphicon.glyphicon-ok
+
+    modal(:modal="modal")
 </template>
 
 <script>
   import { mapState, mapActions } from 'vuex'
 
+  import modal from './modal.vue'
   import serveritem from './serveritem.vue'
 
   export default {
     components: {
+      modal,
       serveritem
     },
 
@@ -200,6 +205,19 @@
       }
     },
 
+    data() {
+      return {
+        modal: {
+          show: false,
+          type: '',
+          title: '',
+          content: '',
+          cancel: null,
+          ok: null
+        }
+      }
+    },
+
     methods: {
       ...mapActions('connection', {
         createConnection: 'create'
@@ -208,7 +226,28 @@
       ...mapActions('server', {
         selectServer: 'select',
         saveServer: 'save'
-      })
+      }),
+
+      deleteServer(server) {
+        this.modal.type = 'remove'
+        this.modal.title = 'Delete Server'
+        this.modal.content = 'Delete the server: ' + (server.name || server.host) + '?'
+
+        this.modal.ok = () => {
+          this.$store.dispatch('server/delete', server)
+            .then(res => {
+              if (res === false) {
+                this.modal.type = 'error'
+                this.modal.title = 'Error'
+                this.modal.content = 'Error deleting the server: ' + (server.name || server.host) + '. Close the connection and try again.'
+
+                this.modal.show = true
+              }
+            })
+        }
+
+        this.modal.show = true
+      }
     }
   }
 

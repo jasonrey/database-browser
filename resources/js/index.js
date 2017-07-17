@@ -4,7 +4,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import app from '../components/app.vue'
-import modal from '../components/modal.vue'
 
 import Server from './classes/Server.js'
 
@@ -20,7 +19,6 @@ new Vue({
   store: store,
   el: '#app',
   components: {
-    app,
-    modal
+    app
   }
 })

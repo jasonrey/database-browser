@@ -3,7 +3,7 @@ class Server {
     this.update(data)
 
     if (!this.id) {
-      this.id = Date.now() + '.' + Math.random().toString().slice(2)
+      this.id = Date.now() + '-' + Math.random().toString().slice(2)
     }
   }
 
