@@ -85,7 +85,7 @@
               @click="executeHistory(item)"
             )
 
-            button.btn.btn-block.btn-warning.mv-10(v-if="history.length", @click="clearHistory")
+            button.btn.btn-block.btn-default.mv-10(v-if="history.length", @click="clearHistory")
               strong Clear History
 
       .content-result.flex-grow(:class="{ 'full-result': selectedResult }")
@@ -278,8 +278,10 @@
 
         return this.connection.query(query)
           .then(([result, fields]) => {
+            const time = Date.now() - date
+
             this.results.push({
-              query, result, fields, date
+              query, result, fields, date, time
             })
 
             this.selectedResult = this.results[this.results.length - 1]
@@ -290,7 +292,7 @@
               historydata.state = true
               historydata.result = result
               historydata.fields = fields
-              historydata.time = Date.now() - date
+              historydata.time = time
 
               this.historyqueries.splice(historyqueriesIndex, 1, historydata)
 

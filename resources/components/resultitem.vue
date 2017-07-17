@@ -7,7 +7,7 @@
       .flex-grow.monospace.p-5 {{ item.query }}
 
       span.small.flex-no-shrink.m-5(v-if="hasCount") {{ count }} row{{ count > 1 ? 's' : '' }}
-      span.small.flex-no-shrink.m-5 1.12s
+      span.small.flex-no-shrink.m-5 {{ (item.time / 1000).toFixed(2) }}s
       span.small.flex-no-shrink.m-5 {{ date }}
 
       button.btn.btn-link.btn-xs.flex-no-shrink(v-if="!selected", @click="$emit('viewResult')") View Full Result
