@@ -29,12 +29,7 @@
 
       newconnection(:class="{ active: selectedConnection === null }")
 
-      .active-only.abs.abs-full-size.overflow-auto(:class="{ active: selectedConnection === false }")
-        logitem(
-          v-for="log in logs"
-          :key="log.hash"
-          :item="log"
-        )
+      logs(:class="{ active: selectedConnection === false }")
 
 </template>
 
@@ -123,7 +118,7 @@
   import servercontent from './servercontent.vue'
   import newconnection from './newconnection.vue'
 
-  import logitem from './logitem.vue'
+  import logs from './logs.vue'
 
   import Connection from '../js/classes/Connection.js'
   import Server from '../js/classes/Server.js'
@@ -133,7 +128,7 @@
       servernav,
       servercontent,
       newconnection,
-      logitem
+      logs
     },
 
     computed: {
@@ -148,15 +143,7 @@
         isConnecting: 'connecting',
         connectionError: 'error',
         newconnection: 'form'
-      }),
-
-      logs() {
-        if (!this.$store) {
-          return []
-        }
-
-        return this.$store.state.log.items.slice().reverse()
-      }
+      })
     },
 
     created() {
