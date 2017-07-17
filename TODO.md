@@ -1,0 +1,8 @@
+- Colored tab
+- Result toolbar for pagination
+- Code editor
+- Table content editor
+- Add database
+- SSH tunnel
+- Keep alive
+- Notification
