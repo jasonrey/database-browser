@@ -14,6 +14,7 @@
       )
         a(href="javascript:;")
           i.glyphicon.glyphicon-plus
+
       li.pull-right(
         :class="{ active: selectedConnection === false }"
         @click="selectConnection(false)"
@@ -107,6 +108,12 @@
     .purple
       &::before
         background-color: $tag-purple
+
+  .nav-tabs
+    > li
+      > a
+        &:hover
+          background-color: white
 
 </style>
 

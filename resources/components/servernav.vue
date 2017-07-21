@@ -1,34 +1,80 @@
 <template lang="pug">
-  li
-    a(href="javascript:;", @click="selectConnection(connection)", :data-status="status")
-      .inline-block {{ connection.name }}
+  li(:class="'tag-' + connection.server.color")
+    a(
+      href="javascript:;"
+      @click="selectConnection(connection)"
+      :data-status="status"
+    )
+      .mh-10 {{ connection.name }}
 
     button.btn.btn-link.btn-xs(@click="closeConnection(connection)")
       i.glyphicon.glyphicon-remove
 </template>
 
 <style lang="sass" scoped>
-  a
-    &::before
-      content: ''
-      display: inline-block
-      vertical-align: middle
-      width: 6px
-      height: 6px
-      border-radius: 50%
-      background-color: red
-      margin: 0 4px 0 0
+  @import '../sass/colors'
 
-    &[data-status="connecting"]
+  $tagColors: (red: $tag-red, orange: $tag-orange, yellow: $tag-yellow, green: $tag-green, blue: $tag-blue, purple: $tag-purple)
+
+  .nav-tabs > li
+    overflow: hidden
+
+    > a
+      &::after
+        content: ''
+        position: absolute
+        top: 50%
+        left: 10px
+        width: 6px
+        height: 6px
+        border-radius: 50%
+        background-color: red
+        transform: translateY(-50%)
+
+      &[data-status="connecting"]
+        &::after
+          background-color: yellow
+
+      &[data-status="connected"]
+        &::after
+          background-color: green
+
       &::before
-        background-color: yellow
+        content: ''
+        position: absolute
+        bottom: 0
+        left: 0
+        width: 100%
+        height: 3px
+        transform: translateY(4px)
+        transition: transform .1s
 
-    &[data-status="connected"]
-      &::before
-        background-color: green
+    @each $tag, $color in $tagColors
+      &.tag-#{$tag}
+        > a
+          background-color: rgba($color, .1)
 
-    .inline-block
-      margin: 0 10px 0 5px
+          &::before
+            background-color: $color
+
+    &:hover
+      @each $tag, $color in $tagColors
+        &.tag-#{$tag}
+          > a
+            &::before
+              transform: translateY(3px)
+
+    &.active
+      @each $tag, $color in $tagColors
+        &.tag-#{$tag}
+          > a
+            &::before
+              transform: translateY(1px)
+
+  li
+    &:hover
+      button
+        display: block
 
   button
     position: absolute
@@ -36,11 +82,6 @@
     right: 4px
     transform: translateY(-50%)
     display: none
-
-  li
-    &:hover
-      button
-        display: block
 </style>
 
 <script>

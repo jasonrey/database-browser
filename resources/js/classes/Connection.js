@@ -135,6 +135,7 @@ Connection.adapters = {}
 
 Connection.dataKeys = [
   'id',
+  'color',
   'name',
   'host',
   'username',
