@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "watch": "webpack-dev-server",
-    "dev": "NODE_ENV=development electron .",
+    "dev": "NODE_ENV=development electron --js-flags=\"--harmony\" .",
     "prod": "NODE_ENV=production electron .",
     "start": "npm run dev",
     "lint": "npm run lint:vue && npm run lint:js",

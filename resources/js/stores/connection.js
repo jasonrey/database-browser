@@ -97,26 +97,25 @@ export default {
       commit('select', state.items[0])
     },
 
-    create({commit, dispatch, state}) {
+    async create({commit, dispatch, state}) {
       commit('setConnecting')
       commit('clearError')
 
-      let connection = new Connection(state.form)
+      const connection = new Connection(state.form)
 
-      connection.connect()
-        .then(() => {
-          commit('setConnecting', false)
+      await connection.connect()
 
-          commit('add', connection)
-          commit('select', connection)
-          commit('setConnectedStatus', connection)
-          dispatch('server/select', null, {root: true})
+      try {
+        commit('setConnecting', false)
 
-        })
-        .catch(res => {
-          commit('setConnecting', false)
-          commit('setError', res.message)
-        })
+        commit('add', connection)
+        commit('select', connection)
+        commit('setConnectedStatus', connection)
+        dispatch('server/select', null, {root: true})
+      } catch (err) {
+        commit('setConnecting', false)
+        commit('setError', err.message)
+      }
     }
   }
 }
