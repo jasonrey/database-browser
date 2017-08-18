@@ -7,7 +7,10 @@
     "watch": "webpack-dev-server",
     "dev": "NODE_ENV=development electron .",
     "prod": "NODE_ENV=production electron .",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "lint": "npm run lint:vue && npm run lint:js",
+    "lint:vue": "eslint --config ./.eslintrc.json --ext vue resources/components",
+    "lint:js": "eslint --config ./.eslintrc.json resources/js"
   },
   "repository": {
     "type": "git",
@@ -36,6 +39,13 @@
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "bootstrap-sass": "^3.3.7",
     "css-loader": "^0.28.4",
+    "eslint": "^4.4.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "eslint-plugin-vue": "^3.12.0",
     "extract-text-webpack-plugin": "^2.1.2",
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.29.0",
