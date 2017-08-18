@@ -1,0 +1,37 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:vue/recommended"
+  ],
+  "rules": {
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "never"],
+    "comma-dangle": ["error"],
+    "comma-spacing": ["error"],
+    "key-spacing": ["error"],
+    "no-multiple-empty-lines": ["error"],
+    "no-whitespace-before-property": ["error"],
+    "object-curly-spacing": ["error"],
+    "space-before-blocks": ["error"],
+    "space-unary-ops": ["error"],
+    "space-infix-ops": ["error"],
+    "curly": ["error"],
+    "array-bracket-spacing": ["error"],
+    "func-call-spacing": ["error"],
+    "space-in-parens": ["error"],
+    "keyword-spacing": ["error"],
+    "computed-property-spacing": ["error"],
+    "no-useless-escape": "off",
+    "vue/valid-template-root": ["off"]
+  }
+}
