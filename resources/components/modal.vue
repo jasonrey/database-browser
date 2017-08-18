@@ -24,31 +24,31 @@
 </style>
 
 <script>
-  import remove from './modals/remove.vue'
-  import error from './modals/error.vue'
+import remove from './modals/remove.vue'
+import error from './modals/error.vue'
 
-  export default {
-    props: ['modal'],
+export default {
+  props: ['modal'],
 
-    components: {
-      remove,
-      error
+  components: {
+    remove,
+    error
+  },
+
+  methods: {
+    cancel() {
+      this.modal.show = false
+
+      return Promise.resolve(typeof this.modal.cancel === 'function' ? this.modal.cancel() : true)
+        .then(() => this.modal.cancel = null)
     },
 
-    methods: {
-      cancel() {
-        this.modal.show = false
+    ok() {
+      this.modal.show = false
 
-        return Promise.resolve(typeof this.modal.cancel === 'function' ? this.modal.cancel() : true)
-          .then(() => this.modal.cancel = null)
-      },
-
-      ok() {
-        this.modal.show = false
-
-        return Promise.resolve(typeof this.modal.ok === 'function' ? this.modal.ok() : true)
-          .then(() => this.modal.ok = null)
-      }
+      return Promise.resolve(typeof this.modal.ok === 'function' ? this.modal.ok() : true)
+        .then(() => this.modal.ok = null)
     }
   }
+}
 </script>

@@ -8,21 +8,21 @@
 </template>
 
 <script>
-  import logitem from './logitem.vue'
+import logitem from './logitem.vue'
 
-  export default {
-    components: {
-      logitem
-    },
+export default {
+  components: {
+    logitem
+  },
 
-    computed: {
-      logs() {
-        if (!this.$store) {
-          return []
-        }
-
-        return this.$store.state.log.items.slice().reverse()
+  computed: {
+    logs() {
+      if (!this.$store) {
+        return []
       }
+
+      return this.$store.state.log.items.slice().reverse()
     }
   }
+}
 </script>

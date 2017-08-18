@@ -15,7 +15,6 @@
         tbody
           tr(v-for="(row, index) in item.result", :key="index")
             td(v-for="field in item.fields", :key="index + '-' + field.name") {{ row[field.name] }}
-
 </template>
 
 <style lang="sass" scoped>
@@ -25,13 +24,13 @@
 </style>
 
 <script>
-  export default {
-    props: ['item'],
+export default {
+  props: ['item'],
 
-    data() {
-      return {
-        showResult: false
-      }
+  data() {
+    return {
+      showResult: false
     }
   }
+}
 </script>

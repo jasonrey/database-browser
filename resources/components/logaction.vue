@@ -6,7 +6,7 @@
 </style>
 
 <script>
-  export default {
-    props: ['item']
-  }
+export default {
+  props: ['item']
+}
 </script>

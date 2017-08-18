@@ -19,15 +19,15 @@
 </style>
 
 <script>
-  const moment = require('moment')
+const moment = require('moment')
 
-  export default {
-    props: ['item'],
+export default {
+  props: ['item'],
 
-    computed: {
-      date() {
-        return moment(this.item.date).format('YYYY-MM-DD HH:mm:ss')
-      }
+  computed: {
+    date() {
+      return moment(this.item.date).format('YYYY-MM-DD HH:mm:ss')
     }
   }
+}
 </script>

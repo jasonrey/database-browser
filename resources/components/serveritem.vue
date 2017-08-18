@@ -71,39 +71,39 @@
 </style>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+import {mapState, mapActions} from 'vuex'
 
-  export default {
-    props: ['server'],
+export default {
+  props: ['server'],
 
-    computed: {
-      connectionname() {
-        if (this.server === null) {
-          return ''
-        }
+  computed: {
+    connectionname() {
+      if (this.server === null) {
+        return ''
+      }
 
-        return this.server.name || (this.server.username + '@' + this.server.host + (parseInt(this.server.port) !== 3306 ? ':' + this.server.port : ''))
-      },
-
-      ...mapState({
-        selectedServer: 'server/selected'
-      })
+      return this.server.name || (this.server.username + '@' + this.server.host + (parseInt(this.server.port) !== 3306 ? ':' + this.server.port : ''))
     },
 
-    methods: {
-      ...mapActions('server', {
-        selectServer: 'select'
-      }),
+    ...mapState({
+      selectedServer: 'server/selected'
+    })
+  },
 
-      ...mapActions('connection', {
-        createConnection: 'create'
-      }),
+  methods: {
+    ...mapActions('server', {
+      selectServer: 'select'
+    }),
 
-      connectServer(server) {
-        this.selectServer(server)
+    ...mapActions('connection', {
+      createConnection: 'create'
+    }),
 
-        this.createConnection()
-      }
+    connectServer(server) {
+      this.selectServer(server)
+
+      this.createConnection()
     }
   }
+}
 </script>

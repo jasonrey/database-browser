@@ -85,29 +85,29 @@
 </style>
 
 <script>
-  import { mapMutations, mapActions } from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
 
-  export default {
-    props: ['connection'],
+export default {
+  props: ['connection'],
 
-    computed: {
-      status() {
-        if (this.connection.status === null) {
-          return 'connecting';
-        }
-
-        return this.connection.status ? 'connected' : false;
+  computed: {
+    status() {
+      if (this.connection.status === null) {
+        return 'connecting'
       }
-    },
 
-    methods: {
-      ...mapMutations({
-        selectConnection: 'connection/select'
-      }),
-
-      ...mapActions({
-        closeConnection: 'connection/close'
-      })
+      return this.connection.status ? 'connected' : false
     }
+  },
+
+  methods: {
+    ...mapMutations({
+      selectConnection: 'connection/select'
+    }),
+
+    ...mapActions({
+      closeConnection: 'connection/close'
+    })
   }
+}
 </script>

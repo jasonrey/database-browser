@@ -118,49 +118,45 @@
 </style>
 
 <script>
-  import { mapState, mapMutations } from 'vuex'
+import {mapState, mapMutations} from 'vuex'
 
+import servernav from './servernav.vue'
+import servercontent from './servercontent.vue'
+import newconnection from './newconnection.vue'
 
-  import servernav from './servernav.vue'
-  import servercontent from './servercontent.vue'
-  import newconnection from './newconnection.vue'
+import logs from './logs.vue'
 
-  import logs from './logs.vue'
+export default {
+  components: {
+    servernav,
+    servercontent,
+    newconnection,
+    logs
+  },
 
-  import Connection from '../js/classes/Connection.js'
-  import Server from '../js/classes/Server.js'
+  computed: {
+    ...mapState('server', {
+      servers: 'items',
+      selectedServer: 'selected'
+    }),
 
-  export default {
-    components: {
-      servernav,
-      servercontent,
-      newconnection,
-      logs
-    },
+    ...mapState('connection', {
+      connections: 'items',
+      selectedConnection: 'selected',
+      isConnecting: 'connecting',
+      connectionError: 'error',
+      newconnection: 'form'
+    })
+  },
 
-    computed: {
-      ...mapState('server', {
-        servers: 'items',
-        selectedServer: 'selected',
-      }),
+  created() {
+    this.$store.commit('server/init')
+  },
 
-      ...mapState('connection', {
-        connections: 'items',
-        selectedConnection: 'selected',
-        isConnecting: 'connecting',
-        connectionError: 'error',
-        newconnection: 'form'
-      })
-    },
-
-    created() {
-      this.$store.commit('server/init')
-    },
-
-    methods: {
-      ...mapMutations('connection', {
-        selectConnection: 'select'
-      })
-    }
+  methods: {
+    ...mapMutations('connection', {
+      selectConnection: 'select'
+    })
   }
+}
 </script>

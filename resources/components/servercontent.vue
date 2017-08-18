@@ -144,269 +144,269 @@
 </style>
 
 <script>
-  import tableitem from './tableitem.vue'
-  import resultitem from './resultitem.vue'
-  import querysaveditem from './querysaveditem.vue'
-  import queryhistoryitem from './queryhistoryitem.vue'
+import tableitem from './tableitem.vue'
+import resultitem from './resultitem.vue'
+import querysaveditem from './querysaveditem.vue'
+import queryhistoryitem from './queryhistoryitem.vue'
 
-  import Config from '../js/classes/Config.js'
+import Config from '../js/classes/Config.js'
 
-  export default {
-    components: {
-      tableitem,
-      resultitem,
-      querysaveditem,
-      queryhistoryitem
-    },
+export default {
+  components: {
+    tableitem,
+    resultitem,
+    querysaveditem,
+    queryhistoryitem
+  },
 
-    props: ['connection'],
+  props: ['connection'],
 
-    data() {
-      return {
-        queryTab: '',
+  data() {
+    return {
+      queryTab: '',
 
-        databases: [],
-        tables: [],
-        results: [],
-        savedqueries: [],
-        historyqueries: [],
+      databases: [],
+      tables: [],
+      results: [],
+      savedqueries: [],
+      historyqueries: [],
 
-        selectedResult: null,
+      selectedResult: null,
 
-        selectedDatabase: null,
+      selectedDatabase: null,
 
-        query: '',
+      query: '',
 
-        isQuerying: false,
-        queryError: ''
+      isQuerying: false,
+      queryError: ''
+    }
+  },
+
+  computed: {
+    history() {
+      return this.historyqueries.slice().reverse()
+    }
+  },
+
+  created() {
+    this.refreshDatabases()
+      .then(() => {
+        if (this.connection.server.database && this.databases.indexOf(this.connection.server.database) >= 0) {
+          this.selectDatabase(this.connection.server.database)
+        }
+      })
+
+    if (this.connection.server.id) {
+      let config = Config.get(this.connection.server.id, {})
+
+      if (config.history) {
+        this.historyqueries = config.history
       }
-    },
 
-    computed: {
-      history() {
-        return this.historyqueries.slice().reverse()
+      if (config.saved) {
+        this.savedqueries = config.saved
       }
-    },
+    }
+  },
 
-    created() {
-      this.refreshDatabases()
-        .then(() => {
-          if (this.connection.server.database && this.databases.indexOf(this.connection.server.database) >= 0) {
-            this.selectDatabase(this.connection.server.database)
+  methods: {
+    refresh() {
+      return this.refreshDatabases()
+        .then(result => {
+          if (this.selectedDatabase && result.indexOf(this.selectedDatabase) < 0) {
+            this.selectDatabase(null)
+          }
+
+          if (this.selectedDatabase) {
+            return this.refreshTables()
           }
         })
+    },
 
+    refreshDatabases() {
+      return this.connection.getDatabases()
+        .then(result => this.databases = result)
+        .catch(err => {
+          alert(err)
+        })
+    },
+
+    refreshTables() {
+      this.tables = []
+
+      return this.connection.getTables(this.selectedDatabase)
+        .then(result => this.tables = result)
+    },
+
+    selectDatabase(db) {
+      this.selectedDatabase = db
+
+      if (!db) {
+        this.tables = []
+        return Promise.resolve()
+      }
+
+      return this.connection.useDatabase(db)
+        .then(() => this.refreshTables())
+    },
+
+    execute(query, recordHistory = true) {
+      const date = Date.now()
+
+      query = query.trim()
+
+      if (!query) {
+        return
+      }
+
+      this.queryError = false
+      this.isQuering = true
+
+      let historydata = {
+        id: date + '-' + Math.random().toString().slice(2),
+        query,
+        date,
+        selectedDatabase: this.selectedDatabase,
+        state: null
+      }
+
+      const historyqueriesIndex = this.historyqueries.length
+
+      if (recordHistory) {
+        this.historyqueries.push(historydata)
+      }
+
+      return this.connection.query(query)
+        .then(([result, fields]) => {
+          const time = Date.now() - date
+
+          this.results.push({
+            query, result, fields, date, time
+          })
+
+          this.selectedResult = this.results[this.results.length - 1]
+
+          this.isQuerying = false
+
+          if (recordHistory) {
+            historydata.state = true
+            historydata.result = result
+            historydata.fields = fields
+            historydata.time = time
+
+            this.historyqueries.splice(historyqueriesIndex, 1, historydata)
+
+            this.syncHistory()
+          }
+        })
+        .catch(err => {
+          this.isQuerying = false
+          this.queryError = err
+
+          if (recordHistory) {
+            historydata.state = false
+            historydata.err = err
+            historydata.time = Date.now() - date
+
+            this.historyqueries.splice(historyqueriesIndex, 1, historydata)
+
+            this.syncHistory()
+          }
+        })
+    },
+
+    executeHistory(item) {
+      let result = true
+
+      const processes = []
+
+      if (this.selectedDatabase !== item.selectedDatabase) {
+        result = confirm('Query database and selected database is different. This will change the current database.')
+
+        if (result) {
+          processes.push(this.selectDatabase(item.selectedDatabase))
+        }
+      }
+
+      if (!result) {
+        return
+      }
+
+      return Promise.all(processes)
+        .then(() => this.execute(item.query, false))
+    },
+
+    clearHistory() {
+      if (!confirm('This will clear all history items.')) {
+        return
+      }
+
+      this.historyqueries = []
+
+      this.syncHistory()
+    },
+
+    syncHistory() {
       if (this.connection.server.id) {
-        let config = Config.get(this.connection.server.id, {})
-
-        if (config.history) {
-          this.historyqueries = config.history
-        }
-
-        if (config.saved) {
-          this.savedqueries = config.saved
-        }
+        Config.set(this.connection.server.id + '.history', JSON.parse(JSON.stringify(this.historyqueries)))
       }
     },
 
-    methods: {
-      refresh() {
-        return this.refreshDatabases()
-          .then(result => {
-            if (this.selectedDatabase && result.indexOf(this.selectedDatabase) < 0) {
-              this.selectDatabase(null)
-            }
+    save(query) {
+      if (!query.trim()) {
+        return
+      }
 
-            if (this.selectedDatabase) {
-              return this.refreshTables()
-            }
-          })
-      },
+      const date = Date.now()
 
-      refreshDatabases() {
-        return this.connection.getDatabases()
-          .then(result => this.databases = result)
-          .catch(err => {
-            alert(err)
-          })
-      },
+      let savedata = {
+        id: date + '-' + Math.random().toString().slice(2),
+        query,
+        date,
+        selectedDatabase: this.selectedDatabase
+      }
 
-      refreshTables() {
-        this.tables = []
+      this.savedqueries.push(savedata)
 
-        return this.connection.getTables(this.selectedDatabase)
-          .then(result => this.tables = result)
-      },
+      this.syncSave()
+    },
 
-      selectDatabase(db) {
-        this.selectedDatabase = db
+    executeSave(item) {
+      let result = true
 
-        if (!db) {
-          this.tables = []
-          return Promise.resolve()
+      const processes = []
+
+      if (this.selectedDatabase !== item.selectedDatabase) {
+        result = confirm('Query database and selected database is different. This will change the current database.')
+
+        if (result) {
+          processes.push(this.selectDatabase(item.selectedDatabase))
         }
+      }
 
-        return this.connection.useDatabase(db)
-          .then(() => this.refreshTables())
-      },
+      if (!result) {
+        return
+      }
 
-      execute(query, recordHistory = true) {
-        const date = Date.now()
+      return Promise.all(processes)
+        .then(() => this.execute(item.query))
+    },
 
-        query = query.trim()
+    removeSave(item) {
+      if (!confirm(`Delete the saved query: ${item.query}?`)) {
+        return
+      }
 
-        if (!query) {
-          return
-        }
+      this.savedqueries.splice(this.savedqueries.indexOf(item), 1)
 
-        this.queryError = false
-        this.isQuering = true
+      this.syncSave()
+    },
 
-        let historydata = {
-          id: date + '-' + Math.random().toString().slice(2),
-          query,
-          date,
-          selectedDatabase: this.selectedDatabase,
-          state: null
-        }
-
-        const historyqueriesIndex = this.historyqueries.length
-
-        if (recordHistory) {
-          this.historyqueries.push(historydata)
-        }
-
-        return this.connection.query(query)
-          .then(([result, fields]) => {
-            const time = Date.now() - date
-
-            this.results.push({
-              query, result, fields, date, time
-            })
-
-            this.selectedResult = this.results[this.results.length - 1]
-
-            this.isQuerying = false
-
-            if (recordHistory) {
-              historydata.state = true
-              historydata.result = result
-              historydata.fields = fields
-              historydata.time = time
-
-              this.historyqueries.splice(historyqueriesIndex, 1, historydata)
-
-              this.syncHistory()
-            }
-          })
-          .catch(err => {
-            this.isQuerying = false
-            this.queryError = err
-
-            if (recordHistory) {
-              historydata.state = false
-              historydata.err = err
-              historydata.time = Date.now() - date
-
-              this.historyqueries.splice(historyqueriesIndex, 1, historydata)
-
-              this.syncHistory()
-            }
-          })
-      },
-
-      executeHistory(item) {
-        let result = true
-
-        const processes = []
-
-        if (this.selectedDatabase !== item.selectedDatabase) {
-          result = confirm('Query database and selected database is different. This will change the current database.')
-
-          if (result) {
-            processes.push(this.selectDatabase(item.selectedDatabase))
-          }
-        }
-
-        if (!result) {
-          return
-        }
-
-        return Promise.all(processes)
-          .then(() => this.execute(item.query, false))
-      },
-
-      clearHistory() {
-        if (!confirm('This will clear all history items.')) {
-          return
-        }
-
-        this.historyqueries = []
-
-        this.syncHistory()
-      },
-
-      syncHistory() {
-        if (this.connection.server.id) {
-          Config.set(this.connection.server.id + '.history', JSON.parse(JSON.stringify(this.historyqueries)))
-        }
-      },
-
-      save(query) {
-        if (!query.trim()) {
-          return
-        }
-
-        const date = Date.now()
-
-        let savedata = {
-          id: date + '-' + Math.random().toString().slice(2),
-          query,
-          date,
-          selectedDatabase: this.selectedDatabase
-        }
-
-        this.savedqueries.push(savedata)
-
-        this.syncSave()
-      },
-
-      executeSave(item) {
-        let result = true
-
-        const processes = []
-
-        if (this.selectedDatabase !== item.selectedDatabase) {
-          result = confirm('Query database and selected database is different. This will change the current database.')
-
-          if (result) {
-            processes.push(this.selectDatabase(item.selectedDatabase))
-          }
-        }
-
-        if (!result) {
-          return
-        }
-
-        return Promise.all(processes)
-          .then(() => this.execute(item.query))
-      },
-
-      removeSave(item) {
-        if (!confirm(`Delete the saved query: ${item.query}?`)) {
-          return
-        }
-
-        this.savedqueries.splice(this.savedqueries.indexOf(item), 1)
-
-        this.syncSave()
-      },
-
-      syncSave() {
-        if (this.connection.server.id) {
-          Config.set(this.connection.server.id + '.saved', JSON.parse(JSON.stringify(this.savedqueries)))
-        }
+    syncSave() {
+      if (this.connection.server.id) {
+        Config.set(this.connection.server.id + '.saved', JSON.parse(JSON.stringify(this.savedqueries)))
       }
     }
   }
+}
 </script>

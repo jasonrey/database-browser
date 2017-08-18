@@ -41,39 +41,39 @@
 </style>
 
 <script>
-  import moment from 'moment'
+import moment from 'moment'
 
-  export default {
-    props: ['selected', 'item'],
+export default {
+  props: ['selected', 'item'],
 
-    computed: {
-      hasCount() {
-        return this.item.fields
-      },
+  computed: {
+    hasCount() {
+      return this.item.fields
+    },
 
-      count() {
-        if (!this.hasCount) {
-          return false
-        }
-
-        return this.item.result.length
-      },
-
-      date() {
-        return moment(this.item.date).format('YYYY-MM-DD HH:mm:ss')
-      },
-
-      rows() {
-        if (!this.item.fields) {
-          return []
-        }
-
-        if (this.selected) {
-          return this.item.result
-        }
-
-        return this.item.result.slice(0, 5)
+    count() {
+      if (!this.hasCount) {
+        return false
       }
+
+      return this.item.result.length
+    },
+
+    date() {
+      return moment(this.item.date).format('YYYY-MM-DD HH:mm:ss')
+    },
+
+    rows() {
+      if (!this.item.fields) {
+        return []
+      }
+
+      if (this.selected) {
+        return this.item.result
+      }
+
+      return this.item.result.slice(0, 5)
     }
   }
+}
 </script>

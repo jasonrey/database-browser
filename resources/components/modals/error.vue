@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  export default {
-    props: ['modal']
-  }
+export default {
+  props: ['modal']
+}
 </script>

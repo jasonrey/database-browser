@@ -161,94 +161,94 @@
 </template>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+import {mapState, mapActions} from 'vuex'
 
-  import modal from './modal.vue'
-  import serveritem from './serveritem.vue'
+import modal from './modal.vue'
+import serveritem from './serveritem.vue'
 
-  export default {
-    components: {
-      modal,
-      serveritem
-    },
+export default {
+  components: {
+    modal,
+    serveritem
+  },
 
-    computed: {
-      ...mapState('server', {
-        servers: 'items',
-        selectedServer: 'selected',
-      }),
+  computed: {
+    ...mapState('server', {
+      servers: 'items',
+      selectedServer: 'selected'
+    }),
 
-      ...mapState('connection', {
-        connections: 'items',
-        isConnecting: 'connecting',
-        connectionError: 'error',
-        newconnection: 'form'
-      }),
+    ...mapState('connection', {
+      connections: 'items',
+      isConnecting: 'connecting',
+      connectionError: 'error',
+      newconnection: 'form'
+    }),
 
-      formFilled() {
-        if (!this.newconnection.host ||
+    formFilled() {
+      if (!this.newconnection.host ||
           !this.newconnection.username ||
           !this.newconnection.password ||
           !this.newconnection.port || (
-            this.newconnection.useSSH && (
-              !this.newconnection.sshhost ||
+          this.newconnection.useSSH && (
+            !this.newconnection.sshhost ||
               !this.newconnection.sshusername ||
               !this.newconnection.sshpassword ||
               !this.newconnection.sshport
-            )
           )
-        ) {
-          return false
-        }
-
-        return true
+        )
+      ) {
+        return false
       }
-    },
 
-    data() {
-      return {
-        modal: {
-          show: false,
-          type: '',
-          title: '',
-          content: '',
-          cancel: null,
-          ok: null
-        }
-      }
-    },
+      return true
+    }
+  },
 
-    methods: {
-      ...mapActions('connection', {
-        createConnection: 'create'
-      }),
-
-      ...mapActions('server', {
-        selectServer: 'select',
-        saveServer: 'save'
-      }),
-
-      deleteServer(server) {
-        this.modal.type = 'remove'
-        this.modal.title = 'Delete Server'
-        this.modal.content = 'Delete the server: ' + (server.name || server.host) + '?'
-
-        this.modal.ok = () => {
-          this.$store.dispatch('server/delete', server)
-            .then(res => {
-              if (res === false) {
-                this.modal.type = 'error'
-                this.modal.title = 'Error'
-                this.modal.content = 'Error deleting the server: ' + (server.name || server.host) + '. Close the connection and try again.'
-
-                this.modal.show = true
-              }
-            })
-        }
-
-        this.modal.show = true
+  data() {
+    return {
+      modal: {
+        show: false,
+        type: '',
+        title: '',
+        content: '',
+        cancel: null,
+        ok: null
       }
     }
+  },
+
+  methods: {
+    ...mapActions('connection', {
+      createConnection: 'create'
+    }),
+
+    ...mapActions('server', {
+      selectServer: 'select',
+      saveServer: 'save'
+    }),
+
+    deleteServer(server) {
+      this.modal.type = 'remove'
+      this.modal.title = 'Delete Server'
+      this.modal.content = 'Delete the server: ' + (server.name || server.host) + '?'
+
+      this.modal.ok = () => {
+        this.$store.dispatch('server/delete', server)
+          .then(res => {
+            if (res === false) {
+              this.modal.type = 'error'
+              this.modal.title = 'Error'
+              this.modal.content = 'Error deleting the server: ' + (server.name || server.host) + '. Close the connection and try again.'
+
+              this.modal.show = true
+            }
+          })
+      }
+
+      this.modal.show = true
+    }
   }
+}
 
 </script>

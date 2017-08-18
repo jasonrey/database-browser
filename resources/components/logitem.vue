@@ -21,17 +21,17 @@
 </style>
 
 <script>
-  import logaction from './logaction.vue'
-  import logerror from './logerror.vue'
-  import logquery from './logquery.vue'
+import logaction from './logaction.vue'
+import logerror from './logerror.vue'
+import logquery from './logquery.vue'
 
-  export default {
-    props: ['item'],
+export default {
+  props: ['item'],
 
-    components: {
-      logaction,
-      logerror,
-      logquery
-    }
+  components: {
+    logaction,
+    logerror,
+    logquery
   }
+}
 </script>
