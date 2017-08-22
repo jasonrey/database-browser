@@ -55,9 +55,10 @@ export default {
   },
 
   methods: {
-    initFields() {
-      return this.connection.getColumns(this.database, this.table.name)
-        .then(fields => this.fields = fields)
+    async initFields() {
+      const fields = await this.connection.getColumns(this.database, this.table.name)
+
+      this.fields = fields
     }
   }
 }

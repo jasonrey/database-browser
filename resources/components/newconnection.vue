@@ -233,17 +233,16 @@ export default {
       this.modal.title = 'Delete Server'
       this.modal.content = 'Delete the server: ' + (server.name || server.host) + '?'
 
-      this.modal.ok = () => {
-        this.$store.dispatch('server/delete', server)
-          .then(res => {
-            if (res === false) {
-              this.modal.type = 'error'
-              this.modal.title = 'Error'
-              this.modal.content = 'Error deleting the server: ' + (server.name || server.host) + '. Close the connection and try again.'
+      this.modal.ok = async () => {
+        const res = await this.$store.dispatch('server/delete', server)
 
-              this.modal.show = true
-            }
-          })
+        if (res === false) {
+          this.modal.type = 'error'
+          this.modal.title = 'Error'
+          this.modal.content = 'Error deleting the server: ' + (server.name || server.host) + '. Close the connection and try again.'
+
+          this.modal.show = true
+        }
       }
 
       this.modal.show = true

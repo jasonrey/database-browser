@@ -36,18 +36,20 @@ export default {
   },
 
   methods: {
-    cancel() {
+    async cancel() {
       this.modal.show = false
 
-      return Promise.resolve(typeof this.modal.cancel === 'function' ? this.modal.cancel() : true)
-        .then(() => this.modal.cancel = null)
+      await Promise.resolve(typeof this.modal.cancel === 'function' ? this.modal.cancel() : true)
+
+      this.modal.cancel = null
     },
 
-    ok() {
+    async ok() {
       this.modal.show = false
 
-      return Promise.resolve(typeof this.modal.ok === 'function' ? this.modal.ok() : true)
-        .then(() => this.modal.ok = null)
+      await Promise.resolve(typeof this.modal.ok === 'function' ? this.modal.ok() : true)
+
+      this.modal.ok = null
     }
   }
 }

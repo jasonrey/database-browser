@@ -50,15 +50,14 @@ const createWindow = () => {
   appWindow.on('closed', () => appWindow = null)
 }
 
-app.on('ready', () => {
+app.on('ready', async () => {
   if (env === 'development') {
     BrowserWindow.addDevToolsExtension('node_modules/vue-devtools')
   }
 
-  Promise.all(initProcesses)
-    .then(() => {
-      createWindow()
-    })
+  await Promise.all(initProcesses)
+
+  createWindow()
 })
 
 app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())

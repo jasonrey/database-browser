@@ -188,14 +188,7 @@ export default {
     }
   },
 
-  created() {
-    this.refreshDatabases()
-      .then(() => {
-        if (this.connection.server.database && this.databases.indexOf(this.connection.server.database) >= 0) {
-          this.selectDatabase(this.connection.server.database)
-        }
-      })
-
+  async created() {
     if (this.connection.server.id) {
       let config = Config.get(this.connection.server.id, {})
 
@@ -207,38 +200,42 @@ export default {
         this.savedqueries = config.saved
       }
     }
+
+    await this.refreshDatabases()
+
+    if (this.connection.server.database && this.databases.indexOf(this.connection.server.database) >= 0) {
+      this.selectDatabase(this.connection.server.database)
+    }
   },
 
   methods: {
-    refresh() {
-      return this.refreshDatabases()
-        .then(result => {
-          if (this.selectedDatabase && result.indexOf(this.selectedDatabase) < 0) {
-            this.selectDatabase(null)
-          }
+    async refresh() {
+      const result = await this.refreshDatabases()
 
-          if (this.selectedDatabase) {
-            return this.refreshTables()
-          }
-        })
+      if (this.selectedDatabase && result.indexOf(this.selectedDatabase) < 0) {
+        this.selectDatabase(null)
+      }
+
+      if (this.selectedDatabase) {
+        return await this.refreshTables()
+      }
     },
 
-    refreshDatabases() {
-      return this.connection.getDatabases()
-        .then(result => this.databases = result)
-        .catch(err => {
-          alert(err)
-        })
+    async refreshDatabases() {
+      try {
+        this.databases = await this.connection.getDatabases()
+
+        return this.databases
+      } catch (err) {
+        alert(err)
+      }
     },
 
-    refreshTables() {
-      this.tables = []
-
-      return this.connection.getTables(this.selectedDatabase)
-        .then(result => this.tables = result)
+    async refreshTables() {
+      this.tables = await this.connection.getTables(this.selectedDatabase)
     },
 
-    selectDatabase(db) {
+    async selectDatabase(db) {
       this.selectedDatabase = db
 
       if (!db) {
@@ -246,11 +243,12 @@ export default {
         return Promise.resolve()
       }
 
-      return this.connection.useDatabase(db)
-        .then(() => this.refreshTables())
+      await this.connection.useDatabase(db)
+
+      return await this.refreshTables()
     },
 
-    execute(query, recordHistory = true) {
+    async execute(query, recordHistory = true) {
       const date = Date.now()
 
       query = query.trim()
@@ -276,46 +274,46 @@ export default {
         this.historyqueries.push(historydata)
       }
 
-      return this.connection.query(query)
-        .then(([result, fields]) => {
-          const time = Date.now() - date
+      try {
+        const [result, fields] = await this.connection.query(query)
 
-          this.results.push({
-            query, result, fields, date, time
-          })
+        const time = Date.now() - date
 
-          this.selectedResult = this.results[this.results.length - 1]
-
-          this.isQuerying = false
-
-          if (recordHistory) {
-            historydata.state = true
-            historydata.result = result
-            historydata.fields = fields
-            historydata.time = time
-
-            this.historyqueries.splice(historyqueriesIndex, 1, historydata)
-
-            this.syncHistory()
-          }
+        this.results.push({
+          query, result, fields, date, time
         })
-        .catch(err => {
-          this.isQuerying = false
-          this.queryError = err
 
-          if (recordHistory) {
-            historydata.state = false
-            historydata.err = err
-            historydata.time = Date.now() - date
+        this.selectedResult = this.results[this.results.length - 1]
 
-            this.historyqueries.splice(historyqueriesIndex, 1, historydata)
+        this.isQuerying = false
 
-            this.syncHistory()
-          }
-        })
+        if (recordHistory) {
+          historydata.state = true
+          historydata.result = result
+          historydata.fields = fields
+          historydata.time = time
+
+          this.historyqueries.splice(historyqueriesIndex, 1, historydata)
+
+          this.syncHistory()
+        }
+      } catch (err) {
+        this.isQuerying = false
+        this.queryError = err
+
+        if (recordHistory) {
+          historydata.state = false
+          historydata.err = err
+          historydata.time = Date.now() - date
+
+          this.historyqueries.splice(historyqueriesIndex, 1, historydata)
+
+          this.syncHistory()
+        }
+      }
     },
 
-    executeHistory(item) {
+    async executeHistory(item) {
       let result = true
 
       const processes = []
@@ -332,8 +330,9 @@ export default {
         return
       }
 
-      return Promise.all(processes)
-        .then(() => this.execute(item.query, false))
+      await Promise.all(processes)
+
+      this.execute(item.query, false)
     },
 
     clearHistory() {
@@ -371,7 +370,7 @@ export default {
       this.syncSave()
     },
 
-    executeSave(item) {
+    async executeSave(item) {
       let result = true
 
       const processes = []
@@ -388,8 +387,9 @@ export default {
         return
       }
 
-      return Promise.all(processes)
-        .then(() => this.execute(item.query))
+      await Promise.all(processes)
+
+      this.execute(item.query)
     },
 
     removeSave(item) {

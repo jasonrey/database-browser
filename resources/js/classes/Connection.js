@@ -1,3 +1,4 @@
+/* global store */
 import mysql from '../adapters/mysql.js'
 
 const adapters = {
@@ -25,54 +26,54 @@ class Connection {
     return this.adapter.connectionname
   }
 
-  connect() {
-    return this.adapter.connect()
-      .then(() => {
-        store.commit('log/action', {
-          action: 'connect',
-          connection: this.adapter.connectioninfo,
-          payload: {
-            id: this.id
-          }
-        })
-      })
-      .catch(err => {
-        store.commit('log/error', {
-          connection: this.adapter.connectioninfo,
-          action: 'connect',
-          err
-        })
+  async connect() {
+    try {
+      await this.adapter.connect()
 
-        throw new Error(err)
+      store.commit('log/action', {
+        action: 'connect',
+        connection: this.adapter.connectioninfo,
+        payload: {
+          id: this.id
+        }
       })
+    } catch (err) {
+      store.commit('log/error', {
+        connection: this.adapter.connectioninfo,
+        action: 'connect',
+        err
+      })
+
+      throw err
+    }
   }
 
-  query(query, values) {
-    return this.adapter.query(query, values)
-      .then(([result, fields]) => {
-        store.commit('log/query', {
-          connection: this.adapter.connectioninfo,
+  async query(query, values) {
+    try {
+      const [result, fields] = await this.adapter.query(query, values)
+
+      store.commit('log/query', {
+        connection: this.adapter.connectioninfo,
+        query,
+        values,
+        result,
+        fields
+      })
+
+      return [result, fields]
+    } catch (err) {
+      store.commit('log/error', {
+        connection: this.adapter.connectioninfo,
+        action: 'query',
+        err,
+        payload: {
           query,
-          values,
-          result,
-          fields
-        })
-
-        return [result, fields]
+          values
+        }
       })
-      .catch(err => {
-        store.commit('log/error', {
-          connection: this.adapter.connectioninfo,
-          action: 'query',
-          err,
-          payload: {
-            query,
-            values
-          }
-        })
 
-        throw new Error(err)
-      })
+      throw err
+    }
   }
 
   end() {
@@ -84,50 +85,53 @@ class Connection {
     return this.adapter.end()
   }
 
-  getDatabases() {
-    return this.query('show databases')
-      .then(([result]) => result.map(item => item.Database).filter(item => [
+  async getDatabases() {
+    const [result] = await this.query('show databases')
+
+    return result
+      .map(item => item.Database)
+      .filter(item => [
         'performance_schema',
         'information_schema',
         'mysql',
         'sys'
-      ].indexOf(item) === -1))
+      ].indexOf(item) === -1)
   }
 
   useDatabase(db) {
     return this.query('use ??', [db])
   }
 
-  getTables(db) {
-    return this.query('select table_name as name, table_rows as total from information_schema.tables where table_schema = ?', [db])
-      .then(([result, fields]) => result)
+  async getTables(db) {
+    const [result] = await this.query('select table_name as name, table_rows as total from information_schema.tables where table_schema = ?', [db])
+
+    return result
   }
 
   getResult(query) {
     return this.query(query)
   }
 
-  getColumns(db, table) {
-    return this.query('show full columns from ??.??', [db, table])
-      .then(([result, fields]) => {
-        return result.map(item => {
-          let openBracketIndex = item.Type.indexOf('(')
-          let closeBracketIndex = item.Type.indexOf(')')
-          let type = item.Type
-          let length = 0
+  async getColumns(db, table) {
+    const [result] = await this.query('show full columns from ??.??', [db, table])
 
-          if (openBracketIndex >= 0) {
-            type = item.Type.slice(0, openBracketIndex)
-            length = item.Type.slice(openBracketIndex + 1, closeBracketIndex)
-          }
+    return result.map(item => {
+      const openBracketIndex = item.Type.indexOf('(')
+      const closeBracketIndex = item.Type.indexOf(')')
+      let type = item.Type
+      let length = 0
 
-          return {
-            name: item.Field,
-            type,
-            length
-          }
-        })
-      })
+      if (openBracketIndex >= 0) {
+        type = item.Type.slice(0, openBracketIndex)
+        length = item.Type.slice(openBracketIndex + 1, closeBracketIndex)
+      }
+
+      return {
+        name: item.Field,
+        type,
+        length
+      }
+    })
   }
 }
 
