@@ -120,6 +120,49 @@ button
 .monospace
   font-family: monospace
 
+@keyframes loader-bar
+  0%
+    transform: translateX(0)
+
+  100%
+    transform: translateX(100%)
+
+@keyframes loader-bar-dot
+  0%
+    transform: scaleX(.5)
+
+  50%
+    transform: scaleX(1)
+
+  100%
+    transform: scaleX(.5)
+
+.loader-bar
+  @extend .abs
+  top: 0
+  left: -10px
+  right: 30px
+  height: 3px
+  animation-name: loader-bar
+  animation-duration: 1s
+  animation-iteration-count: infinite
+  animation-direction: alternate
+  animation-timing-function: ease-in-out
+  z-index: 1
+
+  &::before
+    content: ''
+    @extend .abs
+    @extend .abs-full-height
+    left: 0
+    width: 40px
+    background-color: $brand-primary
+    animation-name: loader-bar-dot
+    animation-duration: 1s
+    animation-iteration-count: infinite
+    animation-direction: alternate
+    animation-timing-function: ease-in-out
+
 .p-0
   @extend .pv-0
   @extend .ph-0

@@ -11,6 +11,7 @@
             :value="database"
           ) {{ database }}
       .flex-grow
+        .loader-bar.active-only(:class="{ active: isLoadingTable }")
         .abs.abs-full-size.overflow-auto
           tableitem(
             v-for="table in tables"
@@ -89,6 +90,7 @@
               strong Clear History
 
       .content-result.flex-grow(:class="{ 'full-result': selectedResult }")
+        .loader-bar.active-only(:class="{ active: isQuerying }")
         resultitem(
           v-if="selectedResult"
           @viewHistory="selectedResult = null"
@@ -178,7 +180,9 @@ export default {
       query: '',
 
       isQuerying: false,
-      queryError: ''
+      queryError: '',
+
+      isLoadingTable: false
     }
   },
 
@@ -232,7 +236,11 @@ export default {
     },
 
     async refreshTables() {
+      this.isLoadingTable = true
+
       this.tables = await this.connection.getTables(this.selectedDatabase)
+
+      this.isLoadingTable = false
     },
 
     async selectDatabase(db) {
@@ -258,7 +266,7 @@ export default {
       }
 
       this.queryError = false
-      this.isQuering = true
+      this.isQuerying = true
 
       let historydata = {
         id: date + '-' + Math.random().toString().slice(2),
