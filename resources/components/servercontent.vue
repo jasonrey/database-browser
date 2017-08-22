@@ -23,7 +23,7 @@
 
       .flex-no-grow.flex-no-shrink.btn-group.btn-group-justified
         .btn-group
-          button.btn.btn-default
+          button.btn.btn-default(@click="newtable")
             i.glyphicon.glyphicon-plus
         .btn-group
           button.btn.btn-default(@click="refresh")
@@ -106,7 +106,7 @@
             :selected="selectedResult"
             :item="item"
           )
-
+    modal(:modal="modal")
 </template>
 
 <style lang="sass" scoped>
@@ -151,6 +151,8 @@ import resultitem from './resultitem.vue'
 import querysaveditem from './querysaveditem.vue'
 import queryhistoryitem from './queryhistoryitem.vue'
 
+import modal from './modal.vue'
+
 import Config from '../js/classes/Config.js'
 
 export default {
@@ -158,7 +160,8 @@ export default {
     tableitem,
     resultitem,
     querysaveditem,
-    queryhistoryitem
+    queryhistoryitem,
+    modal
   },
 
   props: ['connection'],
@@ -182,7 +185,16 @@ export default {
       isQuerying: false,
       queryError: '',
 
-      isLoadingTable: false
+      isLoadingTable: false,
+
+      modal: {
+        show: false,
+        type: '',
+        title: '',
+        content: '',
+        cancel: null,
+        ok: null
+      }
     }
   },
 
@@ -414,6 +426,11 @@ export default {
       if (this.connection.server.id) {
         Config.set(this.connection.server.id + '.saved', JSON.parse(JSON.stringify(this.savedqueries)))
       }
+    },
+
+    newtable() {
+      this.modal.type = 'newtable'
+      this.modal.show = true
     }
   }
 }

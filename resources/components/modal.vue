@@ -26,13 +26,15 @@
 <script>
 import remove from './modals/remove.vue'
 import error from './modals/error.vue'
+import newtable from './modals/newtable.vue'
 
 export default {
   props: ['modal'],
 
   components: {
     remove,
-    error
+    error,
+    newtable
   },
 
   methods: {
