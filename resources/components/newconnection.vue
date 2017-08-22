@@ -14,10 +14,10 @@
       )
 
     .connection-form.flex-grow.flex.overflow-auto
-      .col-xs-6.col-xs-offset-3.text-center(v-show="isConnecting")
+      .col-sm-6.col-sm-offset-3.col-xs-12.text-center(v-show="isConnecting")
         p Connecting...
         .btn.btn-danger(@click="isConnecting = false") Cancel
-      form.col-xs-6.col-xs-offset-3(@submit.prevent="createConnection", v-show="!isConnecting")
+      form.col-sm-6.col-sm-offset-3.col-xs-12(@submit.prevent="createConnection", v-show="!isConnecting")
         .alert.alert-warning(v-if="connectionError") {{ connectionError }}
         .form-group
           input.form-control(placeholder="Connection Name", v-model="newconnection.name", tabindex="1")
