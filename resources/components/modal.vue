@@ -27,6 +27,7 @@
 import remove from './modals/remove.vue'
 import error from './modals/error.vue'
 import newtable from './modals/newtable.vue'
+import newdatabase from './modals/newdatabase.vue'
 
 export default {
   props: ['modal'],
@@ -34,7 +35,8 @@ export default {
   components: {
     remove,
     error,
-    newtable
+    newtable,
+    newdatabase
   },
 
   methods: {
