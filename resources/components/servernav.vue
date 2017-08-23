@@ -68,6 +68,8 @@
       @each $tag, $color in $tagColors
         &.tag-#{$tag}
           > a
+            background-color: rgba($color, .2)
+
             &::before
               transform: translateY(1px)
 

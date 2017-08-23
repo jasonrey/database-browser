@@ -1,5 +1,5 @@
 <template lang="pug">
-  .active-only.active-flex.abs.abs-full-size
+  .active-only.active-flex.abs.abs-full-size(:class="'tag-' + connection.server.color")
     .sidebar.flex-no-shrink.flex.flex-column
       .select.flex-no-shrink
         .caret
@@ -112,6 +112,12 @@
 <style lang="sass" scoped>
   @import '../sass/colors'
 
+  $tagColors: (red: $tag-red, orange: $tag-orange, yellow: $tag-yellow, green: $tag-green, blue: $tag-blue, purple: $tag-purple)
+
+  @each $tag, $color in $tagColors
+    .tag-#{$tag}
+      background-color: rgba($color, .05)
+
   .nav.nav-tabs
     border-bottom-width: 1px
 
@@ -119,6 +125,7 @@
       a
         border: 0
         margin-right: 0
+        background-color: transparent
 
       &.active
         border-bottom: 2px solid $gray-dark
@@ -134,6 +141,7 @@
     border: 0
     resize: none
     z-index: 1
+    background-color: transparent
 
     &.querying
       background-color: rgba($brand-warning, .1)
