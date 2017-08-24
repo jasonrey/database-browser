@@ -1,4 +1,8 @@
 /* global store */
+const tunnel = require('open-ssh-tunnel')
+const getPort = require('get-port')
+const fs = require('fs')
+
 import mysql from '../adapters/mysql.js'
 
 const adapters = {
@@ -26,8 +30,52 @@ class Connection {
     return this.adapter.connectionname
   }
 
+  async createTunnel() {
+    const freeport = await getPort()
+
+    return new Promise(async (resolve, reject) => {
+      const options = {
+        username: this.server.sshusername,
+        host: this.server.sshhost,
+        port: this.server.sshport,
+        dstAddr: this.server.host,
+        dstPort: this.server.port,
+        localAddr: '127.0.0.1',
+        localPort: freeport,
+        srcAddr: '127.0.0.1',
+        srcPort: freeport,
+        readyTimeout: 5000,
+        forwardTimeout: 5000
+      }
+
+      if (this.server.sshpassword) {
+        options.password = this.server.sshpassword
+      } else {
+        try {
+          options.privateKey = fs.readFileSync((this.server.sshprivatekey || '~/.ssh/id_rsa').replace('~', process.env.HOME))
+        } catch (err) {
+          return reject(err)
+        }
+      }
+
+      try {
+        this.tunnel = await tunnel(options)
+      } catch (err) {
+        return reject(err)
+      }
+
+      this.adapter.data.port = freeport
+
+      resolve(this.tunnel)
+    })
+  }
+
   async connect() {
     try {
+      if (this.server.useSSH) {
+        await this.createTunnel()
+      }
+
       await this.adapter.connect()
 
       store.commit('log/action', {
@@ -81,6 +129,10 @@ class Connection {
       action: 'end',
       connection: this.adapter.connectioninfo
     })
+
+    if (this.server.useSSH) {
+      this.tunnel.close()
+    }
 
     return this.adapter.end()
   }
@@ -150,6 +202,7 @@ Connection.dataKeys = [
   'sshhost',
   'sshusername',
   'sshpassword',
+  'sshprivatekey',
   'sshport',
   'status'
 ]

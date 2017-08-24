@@ -21,6 +21,7 @@ export default {
       sshhost: '',
       sshusername: '',
       sshpassword: '',
+      sshprivatekey: '',
       sshport: 22,
       color: null,
       status: null
@@ -103,9 +104,9 @@ export default {
 
       const connection = new Connection(state.form)
 
-      await connection.connect()
-
       try {
+        await connection.connect()
+
         commit('setConnecting', false)
 
         commit('add', connection)

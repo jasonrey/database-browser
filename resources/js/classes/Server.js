@@ -26,6 +26,7 @@ Server.dataKeys = [
   'sshhost',
   'sshusername',
   'sshpassword',
+  'sshprivatekey',
   'sshport',
   'status',
   'color'

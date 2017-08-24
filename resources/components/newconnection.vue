@@ -16,7 +16,7 @@
     .connection-form.flex-grow.flex.overflow-auto
       .col-sm-6.col-sm-offset-3.col-xs-12.text-center(v-show="isConnecting")
         p Connecting...
-        .btn.btn-danger(@click="isConnecting = false") Cancel
+        .btn.btn-danger(@click="cancelConnect") Cancel
       form.col-sm-6.col-sm-offset-3.col-xs-12(@submit.prevent="createConnection", v-show="!isConnecting")
         .alert.alert-warning(v-if="connectionError") {{ connectionError }}
         .form-group
@@ -116,6 +116,12 @@
           )
           input.form-control(
             tabindex="11"
+            type="text"
+            placeholder="SSH Private Key (~/.ssh/id_rsa)"
+            v-model="newconnection.sshprivatekey"
+          )
+          input.form-control(
+            tabindex="12"
             type="number"
             placeholder="SSH Port"
             v-model="newconnection.sshport"
@@ -193,7 +199,6 @@ export default {
           this.newconnection.useSSH && (
             !this.newconnection.sshhost ||
               !this.newconnection.sshusername ||
-              !this.newconnection.sshpassword ||
               !this.newconnection.sshport
           )
         )
@@ -227,6 +232,10 @@ export default {
       selectServer: 'select',
       saveServer: 'save'
     }),
+
+    cancelConnect() {
+      this.$store.commit('connection/setConnecting', false)
+    },
 
     deleteServer(server) {
       this.modal.type = 'remove'
