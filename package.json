@@ -24,6 +24,7 @@
   "homepage": "https://github.com/jasonrey/database-browser#readme",
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "brace": "^0.10.0",
     "electron": "^1.7.4",
     "electron-config": "^1.0.0",
     "feather-icons": "^3.1.0",

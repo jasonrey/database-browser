@@ -55,20 +55,20 @@
 
         .nav-contents
           .active-only.active-flex.flex-column(:class="{ active: queryTab === '' || queryTab === 'editor' }")
-            textarea.form-control.flex-grow.monospace(
-              v-model="query"
-              @keyup.ctrl.enter="execute(query)"
-              @keyup.meta.enter="execute(query)"
-              :class="{ querying: isQuerying, queryerror: queryError }"
+            .query-editor(
+              :id="editorId"
+              @keyup.ctrl.enter="execute()"
+              @keyup.meta.enter="execute()"
             )
+
             .bg-muted.flex.flex-align-items-center
               .small.p-5(v-if="query") Count: {{ query.length }}
               .flex-grow
-              button.btn.btn-link.btn-sm(@click="save(query)")
+              button.btn.btn-link.btn-sm(@click="save")
                 i.glyphicon.glyphicon-star-empty
-              button.btn.btn-link.btn-sm(@click="query = ''")
+              button.btn.btn-link.btn-sm(@click="clearQuery")
                 i.glyphicon.glyphicon-remove
-              button.btn.btn-link.btn-sm(@click="execute(query)")
+              button.btn.btn-link.btn-sm(@click="execute()")
                 i.glyphicon.glyphicon-ok
           .active-only.overflow-auto.ph-10(:class="{ active: queryTab === 'saved' }")
             querysaveditem(
@@ -118,6 +118,9 @@
     .tag-#{$tag}
       background-color: rgba($color, .05)
 
+  .query-editor
+    height: 100%
+
   .nav.nav-tabs
     border-bottom-width: 1px
 
@@ -143,9 +146,6 @@
     z-index: 1
     background-color: transparent
 
-    &.querying
-      background-color: rgba($brand-warning, .1)
-
     &.queryerror
       background-color: rgba($brand-danger, .1)
 
@@ -162,6 +162,10 @@ import queryhistoryitem from './queryhistoryitem.vue'
 import modal from './modal.vue'
 
 import Config from '../js/classes/Config.js'
+
+import Ace from 'brace'
+import 'brace/mode/sql'
+import 'brace/theme/sqlserver'
 
 export default {
   components: {
@@ -190,6 +194,9 @@ export default {
 
       query: '',
 
+      editorId: '',
+      editor: null,
+
       isQuerying: false,
       queryError: '',
 
@@ -213,6 +220,8 @@ export default {
   },
 
   async created() {
+    this.editorId = 'editor-' + Math.random().toString().slice(2) + Date.now()
+
     if (this.connection.server.id) {
       let config = Config.get(this.connection.server.id, {})
 
@@ -230,6 +239,13 @@ export default {
     if (this.connection.server.database && this.databases.indexOf(this.connection.server.database) >= 0) {
       this.selectDatabase(this.connection.server.database)
     }
+  },
+
+  mounted() {
+    this.editor = ace.edit(this.editorId)
+
+    this.editor.getSession().setMode('ace/mode/sql')
+    this.editor.setTheme('ace/theme/sqlserver')
   },
 
   methods: {
@@ -279,7 +295,10 @@ export default {
     async execute(query, recordHistory = true) {
       const date = Date.now()
 
-      query = query.trim()
+      query = (query ||
+        this.editor.session.getTextRange(this.editor.getSelectionRange()) ||
+        this.editor.getValue()
+      ).trim()
 
       if (!query) {
         return
@@ -339,6 +358,10 @@ export default {
           this.syncHistory()
         }
       }
+    },
+
+    clearQuery() {
+      this.editor.setValue('')
     },
 
     async executeHistory(item) {
